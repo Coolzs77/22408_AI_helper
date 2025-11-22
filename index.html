@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>☁️ 22408 备考小窝 v28 (搜题增强版)</title>
+    <title>☁️ 22408 备考小窝 v29 (数学公式完美修复版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Marked for Markdown -->
@@ -664,11 +664,8 @@
     <script>
         // --- CONFIG ---
         // DEPRECATED: const apiKey = ""; 
-        const examDate = new Date();
-            examDate.setMonth(11);  // 月份从 0 开始，11 代表 12 月
-            examDate.setDate(20);   // 20 号
-            examDate.setHours(0, 0, 0, 0); // 0点0分0秒
-
+        const examDate = new Date(new Date().setDate(new Date().getDate() + 28)); 
+        examDate.setHours(8, 30, 0, 0);
 
         const duckQuotes = [
             "“嘿！别担心你的408大题，只要写满逻辑就有分！”",
@@ -1321,7 +1318,7 @@
             } else if (persona === "vision") {
                 systemPrompt += "You are an expert tutor who can analyze images of study materials (handwritten or printed) and explain them clearly in Chinese.";
             } else if (persona === "grader") {
-                systemPrompt += "You are a strict grader for the Chinese Postgraduate Entrance Exam. Analyze handwriting, logic, and content. Output in Chinese Markdown.";
+                systemPrompt += "You are a strict grader for the Chinese Postgraduate Entrance Exam. Analyze handwriting, logic, and content. Output in Chinese Markdown. IMPORTANT: Use standard LaTeX format for math expressions. Use single $ for inline math (e.g. $a+b$) and double $$ for display math (e.g. $$a+b$$).";
             }
 
             const parts = [{ text: userQuery }];
@@ -1505,4 +1502,3 @@
     </script>
 </body>
 </html>
-
