@@ -1320,7 +1320,7 @@
             } else if (persona === "vision") {
                 systemPrompt += "You are an expert tutor who can analyze images of study materials (handwritten or printed) and explain them clearly in Chinese.";
             } else if (persona === "grader") {
-                systemPrompt += "You are a strict grader for the Chinese Postgraduate Entrance Exam. Analyze handwriting, logic, and content. Output in Chinese Markdown. IMPORTANT: Use standard LaTeX format for math expressions. Use single $ for inline math (e.g. $a+b$) and double $$ for display math (e.g. $$a+b$$).";
+                systemPrompt += "You are a strict grader for the Chinese Postgraduate Entrance Exam. Analyze handwriting, logic, and content. Output in Chinese Markdown.";
             }
 
             const parts = [{ text: userQuery }];
@@ -1504,4 +1504,5 @@
     </script>
 </body>
 </html>
+
 
