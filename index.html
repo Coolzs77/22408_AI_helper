@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>☁️ 22408 备考小窝 v27 (英语每日一练版)</title>
+    <title>☁️ 22408 备考小窝 v28 (搜题增强版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Marked for Markdown -->
@@ -123,23 +123,39 @@
         }
         .glass-card:hover { transform: translateY(-2px); }
         
-        /* AI Response Typography */
-        .ai-content p { margin-bottom: 0.8em; line-height: 1.8; }
-        .ai-content ul { list-style-type: disc; padding-left: 1.2em; margin-bottom: 0.8em; }
-        .ai-content ol { list-style-type: decimal; padding-left: 1.2em; margin-bottom: 0.8em; }
+        /* AI Response Typography - Clean & Readable */
+        .ai-content { font-size: 0.95rem; line-height: 1.7; color: #334155; }
+        .dark .ai-content { color: #e2e8f0; }
+        
+        .ai-content h1, .ai-content h2, .ai-content h3 { 
+            margin-top: 1.2em; margin-bottom: 0.6em; font-weight: 800; color: #1e293b; letter-spacing: -0.02em;
+        }
+        .dark .ai-content h1, .dark .ai-content h2, .dark .ai-content h3 { color: #f1f5f9; }
+        
+        .ai-content p { margin-bottom: 1em; }
+        
+        .ai-content ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1em; }
+        .ai-content ol { list-style-type: decimal; padding-left: 1.5em; margin-bottom: 1em; }
         .ai-content li { margin-bottom: 0.4em; }
+        
         .ai-content strong { color: #db2777; font-weight: 700; }
         .dark .ai-content strong { color: #f472b6; }
+        
+        .ai-content blockquote { 
+            border-left: 4px solid #cbd5e1; padding-left: 1em; 
+            color: #64748b; font-style: italic; margin-bottom: 1em; background: #f8fafc; padding: 0.5em 1em; border-radius: 0 8px 8px 0;
+        }
+        .dark .ai-content blockquote { 
+            border-color: #475569; color: #94a3b8; background: #1e293b; 
+        }
+
         .ai-content code { 
             background-color: #f1f5f9; color: #ec4899; padding: 0.1em 0.3em; 
             border-radius: 0.2em; font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
         }
         .dark .ai-content code { background-color: #334155; color: #fbcfe8; }
-        .katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.5em 0; }
         
-        /* Accordion */
-        details > summary { list-style: none; }
-        details > summary::-webkit-details-marker { display: none; }
+        .katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.5em 0; }
         
         /* Tabs */
         .tab-btn.active {
@@ -1485,5 +1501,4 @@
         }
     </script>
 </body>
-
 </html>
