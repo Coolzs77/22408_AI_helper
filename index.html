@@ -390,8 +390,11 @@
                         <button onclick="switchAiTab('concept')" id="tab-concept" class="tab-btn whitespace-nowrap text-xs font-bold text-slate-500 pb-2 flex items-center gap-1">
                             <i data-lucide="puzzle" class="w-3 h-3"></i> 概念卡片
                         </button>
-                        <button onclick="switchAiTab('map')" id="tab-map" class="tab-btn whitespace-nowrap text-xs font-bold text-slate-500 pb-2 flex items-center gap-1 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
-                            <i data-lucide="git-fork" class="w-3 h-3"></i> 思维导图
+                        <button onclick="switchAiTab('bigessay')" id="tab-bigessay" class="tab-btn whitespace-nowrap text-xs font-bold text-slate-500 pb-2 flex items-center gap-1 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
+                            <i data-lucide="file-pen" class="w-3 h-3"></i> 英语大作文
+                        </button>
+                        <button onclick="switchAiTab('smallessay')" id="tab-smallessay" class="tab-btn whitespace-nowrap text-xs font-bold text-slate-500 pb-2 flex items-center gap-1 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
+                            <i data-lucide="file-edit" class="w-3 h-3"></i> 英语小作文
                         </button>
                          <button onclick="switchAiTab('interview')" id="tab-interview" class="tab-btn whitespace-nowrap text-xs font-bold text-slate-500 pb-2 flex items-center gap-1 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
                             <i data-lucide="mic" class="w-3 h-3"></i> 模拟面试
@@ -403,6 +406,7 @@
                     
                     <!-- Content: Vision -->
                     <div id="content-vision" class="space-y-4">
+                        <p class="text-xs text-slate-400">上传题目图片或输入文字问题，AI 帮你解答。支持图片和文字双模式。</p>
                         <div class="flex flex-col gap-3">
                             <label class="upload-box flex flex-col items-center justify-center w-full h-32 rounded-xl cursor-pointer group">
                                 <div class="flex flex-col items-center justify-center pt-5 pb-6">
@@ -416,10 +420,21 @@
                                 <img id="vision-preview" class="w-full h-48 object-contain bg-black/5 dark:bg-black/20">
                                 <button onclick="clearGenericImage('vision-preview', 'vision-file')" class="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"><i data-lucide="x" class="w-3 h-3"></i></button>
                             </div>
+
+                            <div class="flex items-center gap-2 text-xs text-slate-400">
+                                <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+                                <span>或输入文字问题</span>
+                                <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+                            </div>
+
+                            <textarea id="vision-text-input" class="w-full h-20 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:outline-none focus:border-indigo-400 resize-none" placeholder="输入你的问题（可与图片配合使用，或单独提问）..."></textarea>
                             
                             <button onclick="analyzeImage()" id="vision-btn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">开始解析</button>
                         </div>
                         <div id="vision-output" class="hidden ai-content bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
+                        <button id="vision-save-btn" onclick="saveToNotebook('cs', 'vision-output')" class="hidden w-full mt-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 py-2 rounded-xl text-sm font-bold hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors flex items-center justify-center gap-2">
+                            <i data-lucide="bookmark-plus" class="w-4 h-4"></i> 保存到错题本
+                        </button>
                     </div>
 
                     <!-- Content: Quiz -->
@@ -442,10 +457,33 @@
 
                     <!-- Content: Sentence -->
                     <div id="content-sentence" class="hidden space-y-4">
-                        <p class="text-xs text-slate-400">粘贴看不懂的英语长难句，AI 帮你划分成分并翻译。</p>
+                        <p class="text-xs text-slate-400">粘贴或上传图片中的英语长难句，AI 帮你划分成分并翻译。支持文字和图片输入。</p>
+                        
+                        <label class="upload-box flex flex-col items-center justify-center w-full h-24 rounded-xl cursor-pointer group">
+                            <div class="flex flex-col items-center justify-center">
+                                <i data-lucide="image-plus" class="w-6 h-6 text-slate-400 mb-1 group-hover:text-indigo-500 transition-colors"></i>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">上传长难句图片（可选）</p>
+                            </div>
+                            <input type="file" class="hidden" id="sentence-file" accept="image/*" onchange="handleGenericImageUpload(event, 'sentence-preview', 'sentence-file')">
+                        </label>
+                        
+                        <div id="sentence-preview-container" class="hidden relative rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+                            <img id="sentence-preview" class="w-full h-32 object-contain bg-black/5 dark:bg-black/20">
+                            <button onclick="clearGenericImage('sentence-preview', 'sentence-file')" class="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"><i data-lucide="x" class="w-3 h-3"></i></button>
+                        </div>
+
+                        <div class="flex items-center gap-2 text-xs text-slate-400">
+                            <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+                            <span>或输入文字</span>
+                            <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+                        </div>
+
                         <textarea id="sentence-input" class="w-full h-24 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:outline-none focus:border-indigo-400 resize-none" placeholder="Paste English sentence here..."></textarea>
                         <button onclick="breakSentence()" id="sentence-btn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">一键拆解</button>
                         <div id="sentence-output" class="hidden ai-content bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
+                        <button id="sentence-save-btn" onclick="saveToNotebook('eng', 'sentence-output')" class="hidden w-full mt-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 py-2 rounded-xl text-sm font-bold hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors flex items-center justify-center gap-2">
+                            <i data-lucide="bookmark-plus" class="w-4 h-4"></i> 保存到错题本
+                        </button>
                     </div>
 
                     <!-- Content: Memory -->
@@ -454,6 +492,9 @@
                         <textarea id="memory-input" class="w-full h-24 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:outline-none focus:border-indigo-400 resize-none" placeholder="例如：互斥、请求与保持、不剥夺、循环等待"></textarea>
                         <button onclick="generateMnemonic()" id="memory-btn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">生成记忆宫殿</button>
                         <div id="memory-output" class="hidden ai-content bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
+                        <button id="memory-save-btn" onclick="saveToNotebook('cs', 'memory-output')" class="hidden w-full mt-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 py-2 rounded-xl text-sm font-bold hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors flex items-center justify-center gap-2">
+                            <i data-lucide="bookmark-plus" class="w-4 h-4"></i> 保存到错题本
+                        </button>
                     </div>
 
                     <!-- Content: Concept -->
@@ -463,17 +504,42 @@
                             <button onclick="explainConcept()" id="concept-btn" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-bold">生成</button>
                         </div>
                         <div id="concept-output" class="hidden ai-content bg-purple-50/50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-xl p-5 text-sm"></div>
+                        <button id="concept-save-btn" onclick="saveToNotebook('cs', 'concept-output')" class="hidden w-full mt-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 py-2 rounded-xl text-sm font-bold hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors flex items-center justify-center gap-2">
+                            <i data-lucide="bookmark-plus" class="w-4 h-4"></i> 保存到错题本
+                        </button>
                     </div>
 
-                    <!-- Content: Knowledge Map -->
-                    <div id="content-map" class="hidden space-y-4">
-                        <p class="text-xs text-slate-400">输入核心知识点，AI 生成可视化的思维导图。</p>
+                    <!-- Content: Big Essay (English) - NEW -->
+                    <div id="content-bigessay" class="hidden space-y-4">
+                        <p class="text-xs text-slate-400">输入作文主题关键词，AI 生成英语二大作文模板、高频句型和写作技巧。</p>
                         <div class="flex gap-2 mb-4">
-                            <input type="text" id="map-input" class="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400" placeholder="例如: 红黑树, 操作系统的四大特征...">
-                            <button onclick="generateMap()" id="map-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">生成导图</button>
+                            <input type="text" id="bigessay-input" class="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-green-400" placeholder="例如: 环境保护, 科技发展, 传统文化...">
+                            <button onclick="generateBigEssay()" id="bigessay-btn" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">生成模板</button>
                         </div>
-                        <div id="map-output" class="hidden mermaid text-sm"></div>
-                        <div id="map-error" class="hidden ai-content bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300 p-4 rounded-xl text-xs"></div>
+                        <div id="bigessay-output" class="hidden ai-content bg-green-50/50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
+                        <button id="bigessay-save-btn" onclick="saveToNotebook('eng', 'bigessay-output')" class="hidden w-full mt-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 py-2 rounded-xl text-sm font-bold hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors flex items-center justify-center gap-2">
+                            <i data-lucide="bookmark-plus" class="w-4 h-4"></i> 保存到错题本
+                        </button>
+                    </div>
+
+                    <!-- Content: Small Essay (English) - NEW -->
+                    <div id="content-smallessay" class="hidden space-y-4">
+                        <p class="text-xs text-slate-400">输入小作文类型关键词，AI 生成英语二应用文模板、格式要求和常用表达。</p>
+                        <select id="smallessay-type" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-400 mb-2">
+                            <option value="letter">书信 (Letter)</option>
+                            <option value="notice">通知 (Notice)</option>
+                            <option value="email">邮件 (Email)</option>
+                            <option value="memo">备忘录 (Memo)</option>
+                            <option value="report">报告 (Report)</option>
+                        </select>
+                        <div class="flex gap-2 mb-4">
+                            <input type="text" id="smallessay-input" class="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-400" placeholder="例如: 邀请函, 投诉信, 建议信...">
+                            <button onclick="generateSmallEssay()" id="smallessay-btn" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">生成模板</button>
+                        </div>
+                        <div id="smallessay-output" class="hidden ai-content bg-teal-50/50 dark:bg-teal-900/20 border border-teal-100 dark:border-teal-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
+                        <button id="smallessay-save-btn" onclick="saveToNotebook('eng', 'smallessay-output')" class="hidden w-full mt-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 py-2 rounded-xl text-sm font-bold hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors flex items-center justify-center gap-2">
+                            <i data-lucide="bookmark-plus" class="w-4 h-4"></i> 保存到错题本
+                        </button>
                     </div>
 
                     <!-- Content: Document AI -->
@@ -508,12 +574,19 @@
                         </div>
                     </div>
 
-                    <!-- Content: Code Explainer (NEW) -->
+                    <!-- Content: Code Translator (Updated) -->
                     <div id="content-code" class="hidden space-y-4">
-                        <p class="text-xs text-slate-400">粘贴 C++/伪代码，AI 逐行解释并分析复杂度。</p>
-                        <textarea id="code-input" class="w-full h-32 bg-slate-900 text-slate-300 border border-slate-700 rounded-lg p-3 text-xs font-mono focus:outline-none focus:border-blue-500 resize-none" placeholder="// 粘贴你的代码片段..."></textarea>
-                        <button onclick="explainCode()" id="code-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">解释代码</button>
+                        <p class="text-xs text-slate-400">输入算法描述或需求，AI 生成代码模板；或粘贴代码让 AI 逐行解释并分析复杂度。</p>
+                        <select id="code-mode" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400 mb-2">
+                            <option value="explain">解释代码</option>
+                            <option value="generate">生成代码模板</option>
+                        </select>
+                        <textarea id="code-input" class="w-full h-32 bg-slate-900 text-slate-300 border border-slate-700 rounded-lg p-3 text-xs font-mono focus:outline-none focus:border-blue-500 resize-none" placeholder="// 粘贴代码片段或输入算法描述（如：快速排序、二叉树遍历、LRU缓存）..."></textarea>
+                        <button onclick="explainCode()" id="code-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">执行</button>
                         <div id="code-output" class="hidden ai-content bg-slate-900 border border-slate-700 rounded-xl p-5 text-sm text-slate-300 shadow-sm prose prose-invert max-w-none"></div>
+                        <button id="code-save-btn" onclick="saveToNotebook('cs', 'code-output')" class="hidden w-full mt-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 py-2 rounded-xl text-sm font-bold hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors flex items-center justify-center gap-2">
+                            <i data-lucide="bookmark-plus" class="w-4 h-4"></i> 保存到错题本
+                        </button>
                     </div>
 
                     <!-- Content: Mock Interview (NEW) -->
@@ -636,11 +709,12 @@
                     <h2 class="text-xl font-bold text-slate-700 dark:text-slate-200">全真手写阅卷室 2.0</h2>
                 </div>
                 
-                <!-- New 3-Tab Structure -->
+                <!-- New 4-Tab Structure -->
                 <div class="flex gap-2 border-b border-slate-200 dark:border-slate-700 mb-6 overflow-x-auto no-scrollbar">
                     <button onclick="switchGraderTab('eng')" id="tab-grader-eng" class="tab-btn active pb-3 px-3 text-sm font-bold text-slate-500 whitespace-nowrap transition-colors flex items-center gap-1">📝 英语作文</button>
                     <button onclick="switchGraderTab('trans')" id="tab-grader-trans" class="tab-btn pb-3 px-3 text-sm font-bold text-slate-500 whitespace-nowrap transition-colors flex items-center gap-1">🔤 英二翻译·双图</button>
                     <button onclick="switchGraderTab('pol')" id="tab-grader-pol" class="tab-btn pb-3 px-3 text-sm font-bold text-slate-500 whitespace-nowrap transition-colors flex items-center gap-1">⚖️ 政治大题</button>
+                    <button onclick="switchGraderTab('cs408')" id="tab-grader-cs408" class="tab-btn pb-3 px-3 text-sm font-bold text-slate-500 whitespace-nowrap transition-colors flex items-center gap-1">💻 408大题</button>
                 </div>
 
                 <!-- 1. English Essay Grader -->
@@ -668,6 +742,9 @@
                     <button onclick="gradeEssay('english')" id="eng-grade-btn" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-xl font-bold transition-all shadow-md active:scale-95">开始残酷阅卷</button>
                     
                     <div id="eng-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm ai-content prose dark:prose-invert max-w-none"></div>
+                    <button id="eng-save-btn" onclick="saveToNotebook('eng', 'eng-result')" class="hidden w-full mt-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 py-2 rounded-xl text-sm font-bold hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="bookmark-plus" class="w-4 h-4"></i> 保存到错题本
+                    </button>
                 </div>
 
                 <!-- 2. Translation Dual-Image Grader (NEW) -->
@@ -713,6 +790,9 @@
 
                     <button onclick="gradeTranslation()" id="trans-grade-btn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white py-3 rounded-xl font-bold transition-all shadow-md active:scale-95">开始双图对照批改</button>
                     <div id="trans-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm ai-content prose dark:prose-invert max-w-none"></div>
+                    <button id="trans-save-btn" onclick="saveToNotebook('eng', 'trans-result')" class="hidden w-full mt-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 py-2 rounded-xl text-sm font-bold hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="bookmark-plus" class="w-4 h-4"></i> 保存到错题本
+                    </button>
                 </div>
 
                 <!-- 3. Politics Grader -->
@@ -727,7 +807,7 @@
                     <label class="upload-box flex flex-col items-center justify-center w-full h-32 rounded-xl cursor-pointer group">
                         <div class="flex flex-col items-center justify-center pt-5 pb-6">
                             <i data-lucide="scroll-text" class="w-8 h-8 text-slate-400 mb-2 group-hover:text-orange-500 transition-colors"></i>
-                            <p class="text-xs text-slate-500">上传手写大题答案</p>
+                            <p class="text-xs text-slate-500">上传手写答案或题目图片（可选，配合关键词效果更佳）</p>
                         </div>
                         <input type="file" class="hidden" id="pol-answer-file" accept="image/*" onchange="handleGenericImageUpload(event, 'pol-preview', 'pol-answer-file')">
                     </label>
@@ -737,8 +817,47 @@
                         <button onclick="clearGenericImage('pol-preview', 'pol-answer-file')" class="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full hover:bg-red-600 shadow-md"><i data-lucide="x" class="w-4 h-4"></i></button>
                     </div>
 
-                    <button onclick="gradeEssay('politics')" id="pol-grade-btn" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold transition-all shadow-md active:scale-95">分析采分点</button>
+                    <button onclick="gradeEssay('politics')" id="pol-grade-btn" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold transition-all shadow-md active:scale-95">分析采分点 & 生成答案模板</button>
                     <div id="pol-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm ai-content prose dark:prose-invert max-w-none"></div>
+                    <button id="pol-save-btn" onclick="saveToNotebook('pol', 'pol-result')" class="hidden w-full mt-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 py-2 rounded-xl text-sm font-bold hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="bookmark-plus" class="w-4 h-4"></i> 保存到错题本
+                    </button>
+                </div>
+
+                <!-- 4. 408 CS Large Question Grader (NEW) -->
+                <div id="grader-cs408" class="hidden space-y-4">
+                    <div class="bg-purple-50 dark:bg-purple-900/10 p-3 rounded-lg border border-purple-100 dark:border-purple-900/50 flex items-start gap-2">
+                        <i data-lucide="cpu" class="w-4 h-4 text-purple-500 mt-0.5"></i>
+                        <p class="text-xs text-purple-600 dark:text-purple-300">AI 将分析你的408大题答案，检查逻辑完整性、步骤分析和关键得分点，并提供标准答案模板。支持数据结构、操作系统、计算机网络、计算机组成原理。</p>
+                    </div>
+
+                    <select id="cs408-type" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-purple-400 mb-2">
+                        <option value="ds">数据结构</option>
+                        <option value="os">操作系统</option>
+                        <option value="cn">计算机网络</option>
+                        <option value="co">计算机组成原理</option>
+                    </select>
+
+                    <textarea id="cs408-q-input" class="w-full h-16 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-purple-400 mb-2" placeholder="输入题目描述或关键词（例如：快速排序算法描述、页面置换算法计算...）"></textarea>
+
+                    <label class="upload-box flex flex-col items-center justify-center w-full h-32 rounded-xl cursor-pointer group">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <i data-lucide="file-code" class="w-8 h-8 text-slate-400 mb-2 group-hover:text-purple-500 transition-colors"></i>
+                            <p class="text-xs text-slate-500">上传手写408大题答案</p>
+                        </div>
+                        <input type="file" class="hidden" id="cs408-answer-file" accept="image/*" onchange="handleGenericImageUpload(event, 'cs408-preview', 'cs408-answer-file')">
+                    </label>
+
+                    <div id="cs408-preview-container" class="hidden relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <img id="cs408-preview" class="w-full h-auto max-h-48 object-contain bg-black/5">
+                        <button onclick="clearGenericImage('cs408-preview', 'cs408-answer-file')" class="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full hover:bg-red-600 shadow-md"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    </div>
+
+                    <button onclick="gradeCS408()" id="cs408-grade-btn" class="w-full bg-purple-500 hover:bg-purple-600 text-white py-3 rounded-xl font-bold transition-all shadow-md active:scale-95">分析408大题 & 生成标准答案</button>
+                    <div id="cs408-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm ai-content prose dark:prose-invert max-w-none"></div>
+                    <button id="cs408-save-btn" onclick="saveToNotebook('cs', 'cs408-result')" class="hidden w-full mt-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 py-2 rounded-xl text-sm font-bold hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="bookmark-plus" class="w-4 h-4"></i> 保存到错题本
+                    </button>
                 </div>
             </div>
         </div>
@@ -941,7 +1060,7 @@
         }
 
         function switchAiTab(tab) {
-            const contents = ['vision', 'quiz', 'sentence', 'memory', 'concept', 'map', 'doc', 'code', 'interview'];
+            const contents = ['vision', 'quiz', 'sentence', 'memory', 'concept', 'doc', 'code', 'interview', 'bigessay', 'smallessay'];
             contents.forEach(t => {
                 const content = document.getElementById(`content-${t}`);
                 const btn = document.getElementById(`tab-${t}`);
@@ -956,7 +1075,7 @@
         }
 
         function switchGraderTab(tab) {
-            ['eng', 'trans', 'pol'].forEach(t => {
+            ['eng', 'trans', 'pol', 'cs408'].forEach(t => {
                 const el = document.getElementById(`grader-${t}`);
                 const btn = document.getElementById(`tab-grader-${t}`);
                 if(t === tab) { el.classList.remove('hidden'); btn.classList.add('active'); }
@@ -1113,58 +1232,6 @@
             }
         }
 
-        // --- KNOWLEDGE MAP LOGIC (NEW) ---
-        async function generateMap() {
-            const input = document.getElementById('map-input');
-            const btn = document.getElementById('map-btn');
-            const output = document.getElementById('map-output');
-            const errorDiv = document.getElementById('map-error');
-            const topic = input.value.trim();
-
-            if (!topic) return;
-
-            btn.disabled = true;
-            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4 inline"></i>';
-            output.classList.add('hidden');
-            errorDiv.classList.add('hidden');
-            
-            const prompt = `Create a mermaid.js mindmap for the concept: "${topic}". 
-            Focus on key hierarchy and connections relevant to Computer Science or Math exams.
-            Output ONLY the raw mermaid code starting with "mindmap" and ending with the last node. 
-            Do not include markdown code blocks (like \`\`\`mermaid). 
-            Do not add any conversational text.
-            Example format:
-            mindmap
-              root((Main Topic))
-                Subtopic 1
-                  Detail A
-                  Detail B
-                Subtopic 2
-                  Detail C`;
-
-            try {
-                const res = await callGemini(prompt, "tutor");
-                // Clean up potential markdown code blocks if Gemini adds them
-                let cleanCode = res.replace(/```mermaid/g, '').replace(/```/g, '').trim();
-                
-                output.innerHTML = cleanCode;
-                output.classList.remove('hidden');
-                
-                // Render mermaid
-                await mermaid.run({
-                    nodes: [output]
-                });
-                
-            } catch(e) {
-                console.error(e);
-                errorDiv.innerText = "生成失败，请重试。Gemini 偶尔会抽风，再试一次可能就好了。";
-                errorDiv.classList.remove('hidden');
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "生成导图";
-            }
-        }
-
         // --- DOC AI LOGIC (NEW) ---
         async function processDoc() {
             const img = document.getElementById('doc-preview');
@@ -1220,37 +1287,57 @@
             navigator.clipboard.writeText(text).then(() => alert("已复制到剪贴板！"));
         }
 
-        // --- CODE EXPLAINER (NEW) ---
+        // --- CODE TRANSLATOR (Updated) ---
         async function explainCode() {
             const code = document.getElementById('code-input').value.trim();
+            const mode = document.getElementById('code-mode').value;
             const btn = document.getElementById('code-btn');
             const output = document.getElementById('code-output');
+            const saveBtn = document.getElementById('code-save-btn');
 
             if(!code) return;
 
             btn.disabled = true;
-            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4"></i> 分析中...';
+            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4"></i> 处理中...';
             output.classList.remove('hidden');
-            output.innerHTML = '<span class="animate-pulse text-blue-400">正在逐行分析代码逻辑...</span>';
+            output.innerHTML = '<span class="animate-pulse text-blue-400">AI 正在处理...</span>';
 
-            const prompt = `Explain this code snippet (C++/Pseudo-code/Python) for a Computer Science student.
-            Code:
-            ${code}
-            
-            Output in Chinese Markdown:
-            1. **Logic**: Step-by-step explanation.
-            2. **Complexity**: Time and Space complexity analysis (use LaTeX for Big O).
-            3. **Optimization**: Any suggestions to improve it?`;
+            let prompt = "";
+            if (mode === 'generate') {
+                prompt = `你是一位408考研算法专家。根据以下算法描述或需求，生成完整的代码模板。
+                
+                需求描述: ${code}
+                
+                请输出：
+                1. **算法思路**: 简要说明算法核心思想
+                2. **C/C++ 代码模板**: 完整可运行的代码，带有详细注释
+                3. **伪代码**: 考试时可直接使用的伪代码版本
+                4. **复杂度分析**: 时间复杂度和空间复杂度（使用LaTeX，如 $O(n \\log n)$）
+                5. **常见变形**: 该算法的常见变体或考点
+                
+                使用Markdown格式输出，代码使用代码块。`;
+            } else {
+                prompt = `Explain this code snippet (C++/Pseudo-code/Python) for a Computer Science student.
+                Code:
+                ${code}
+                
+                Output in Chinese Markdown:
+                1. **Logic**: Step-by-step explanation.
+                2. **Complexity**: Time and Space complexity analysis (use LaTeX for Big O, e.g. $O(n)$).
+                3. **Optimization**: Any suggestions to improve it?`;
+            }
 
             try {
                 const res = await callGemini(prompt, "tutor");
                 output.innerHTML = marked.parse(res);
                 renderMath('code-output');
+                if(saveBtn) saveBtn.classList.remove('hidden');
+                lucide.createIcons();
             } catch(e) {
-                output.innerText = "分析失败，请重试。";
+                output.innerText = "处理失败，请重试。";
             } finally {
                 btn.disabled = false;
-                btn.innerText = "解释代码";
+                btn.innerText = "执行";
             }
         }
 
@@ -1572,30 +1659,58 @@
             const img = document.getElementById('vision-preview');
             const base64 = img.dataset.base64;
             const mimeType = img.dataset.mimeType;
+            const textInput = document.getElementById('vision-text-input').value.trim();
             const output = document.getElementById('vision-output');
             const btn = document.getElementById('vision-btn');
+            const saveBtn = document.getElementById('vision-save-btn');
 
-            if (!base64) {
-                alert("请先上传图片！");
+            if (!base64 && !textInput) {
+                alert("请上传图片或输入问题！");
                 return;
             }
 
             btn.disabled = true;
-            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4 inline"></i> AI 正在看题...';
+            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4 inline"></i> AI 正在分析...';
             output.classList.remove('hidden');
-            output.innerHTML = '<span class="animate-pulse text-indigo-500">正在分析图片内容...</span>';
+            output.innerHTML = '<span class="animate-pulse text-indigo-500">正在分析内容...</span>';
             
-            const prompt = `You are a tutor for the Chinese Postgraduate Entrance Exam (22408). 
-            1. Identify the subject of this image (Math, English, Politics, or CS 408).
-            2. If it's text, transcribe it.
-            3. Provide a detailed solution or explanation in Chinese.
-            4. Use LaTeX for math formulas.`;
+            let prompt = "";
+            if (base64 && textInput) {
+                // Both image and text
+                prompt = `You are a tutor for the Chinese Postgraduate Entrance Exam (22408).
+                User's question: "${textInput}"
+                
+                Please analyze the image in context of the user's question.
+                1. Identify the subject (Math, English, Politics, or CS 408).
+                2. Provide a detailed solution or explanation in Chinese.
+                3. Use LaTeX for math formulas (e.g., $x^2$, $$\\sum_{i=1}^n$$).
+                4. Use Markdown formatting.`;
+            } else if (base64) {
+                // Image only
+                prompt = `You are a tutor for the Chinese Postgraduate Entrance Exam (22408). 
+                1. Identify the subject of this image (Math, English, Politics, or CS 408).
+                2. If it's text, transcribe it.
+                3. Provide a detailed solution or explanation in Chinese.
+                4. Use LaTeX for math formulas (e.g., $x^2$, $$\\sum_{i=1}^n$$).`;
+            } else {
+                // Text only
+                prompt = `You are a tutor for the Chinese Postgraduate Entrance Exam (22408).
+                User's question: "${textInput}"
+                
+                Please provide a detailed answer in Chinese.
+                1. Identify the subject area.
+                2. Give a comprehensive explanation.
+                3. Use LaTeX for math formulas (e.g., $x^2$, $$\\sum_{i=1}^n$$).
+                4. Use Markdown formatting.`;
+            }
 
             try {
-                // Compatible with array signature
-                const response = await callGemini(prompt, "vision", [{ base64: base64, mimeType: mimeType }]);
+                const images = base64 ? [{ base64: base64, mimeType: mimeType }] : null;
+                const response = await callGemini(prompt, "vision", images);
                 output.innerHTML = marked.parse(response);
                 renderMath('vision-output');
+                if(saveBtn) saveBtn.classList.remove('hidden');
+                lucide.createIcons();
             } catch (e) {
                 output.innerHTML = "解析失败，请检查 API Key 设置。";
                 console.error(e);
@@ -1625,6 +1740,7 @@
             const input = document.getElementById('concept-input');
             const btn = document.getElementById('concept-btn');
             const output = document.getElementById('concept-output');
+            const saveBtn = document.getElementById('concept-save-btn');
             const topic = input.value.trim();
 
             if (!topic) return;
@@ -1638,14 +1754,17 @@
             const prompt = `You are a tutor for the 22408 Computer Science Master's exam. Explain the concept "${topic}". 
             Generate a structured summary in Markdown with these exact sections:
             **核心定义**: 1 sentence.
-            **关键口诀/公式**: Short and memorable. Use standard LaTeX for math (e.g., $$E=mc^2$$).
+            **关键口诀/公式**: Short and memorable. Use standard LaTeX for math (e.g., $O(n)$, $$E=mc^2$$).
             **避坑指南**: What to watch out for in exams.
+            **常考题型**: Common exam question types related to this concept.
             Keep it concise and use Chinese.`;
 
             try {
                 const response = await callGemini(prompt, "tutor");
                 output.innerHTML = marked.parse(response);
                 renderMath('concept-output');
+                if(saveBtn) saveBtn.classList.remove('hidden');
+                lucide.createIcons();
             } catch (e) {
                 output.innerHTML = "生成失败，请检查 API Key 设置。";
             } finally {
@@ -1656,28 +1775,61 @@
 
         async function breakSentence() {
             const input = document.getElementById('sentence-input');
+            const img = document.getElementById('sentence-preview');
             const btn = document.getElementById('sentence-btn');
             const output = document.getElementById('sentence-output');
+            const saveBtn = document.getElementById('sentence-save-btn');
             const text = input.value.trim();
+            const hasImage = img && img.dataset.base64;
 
-            if (!text) return;
+            if (!text && !hasImage) {
+                alert("请输入句子或上传图片！");
+                return;
+            }
 
             btn.disabled = true;
             btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4"></i> 拆解中...';
             output.classList.remove('hidden');
             output.innerHTML = '<span class="animate-pulse text-indigo-500">AI 正在分析句子结构...</span>';
             
-            const prompt = `Analyze this English sentence for a Chinese student preparing for the Postgraduate Entrance Exam (English II).
-            Sentence: "${text}"
-            
-            Output in Markdown:
-            1. **Translation**: Natural Chinese translation.
-            2. **Structure**: Break down the grammar (Subject, Verb, Object, Clauses).
-            3. **Keywords**: 3-5 key words with meanings.`;
+            let prompt = "";
+            if (hasImage && text) {
+                prompt = `Analyze the English sentence in the image, with additional context: "${text}".
+                This is for a Chinese student preparing for the Postgraduate Entrance Exam (English II).
+                
+                Output in Markdown:
+                1. **Transcription**: First transcribe the sentence from the image.
+                2. **Translation**: Natural Chinese translation.
+                3. **Structure**: Break down the grammar (Subject, Verb, Object, Clauses). Use brackets to show structure.
+                4. **Keywords**: 3-5 key words with meanings.
+                5. **Difficulty Points**: What makes this sentence hard to understand?`;
+            } else if (hasImage) {
+                prompt = `Analyze the English sentence in this image for a Chinese student preparing for the Postgraduate Entrance Exam (English II).
+                
+                Output in Markdown:
+                1. **Transcription**: First transcribe the sentence from the image.
+                2. **Translation**: Natural Chinese translation.
+                3. **Structure**: Break down the grammar (Subject, Verb, Object, Clauses). Use brackets to show structure.
+                4. **Keywords**: 3-5 key words with meanings.
+                5. **Difficulty Points**: What makes this sentence hard to understand?`;
+            } else {
+                prompt = `Analyze this English sentence for a Chinese student preparing for the Postgraduate Entrance Exam (English II).
+                Sentence: "${text}"
+                
+                Output in Markdown:
+                1. **Translation**: Natural Chinese translation.
+                2. **Structure**: Break down the grammar (Subject, Verb, Object, Clauses). Use brackets to show structure.
+                3. **Keywords**: 3-5 key words with meanings.
+                4. **Difficulty Points**: What makes this sentence hard to understand?`;
+            }
 
             try {
-                const response = await callGemini(prompt, "tutor");
+                const images = hasImage ? [{ base64: img.dataset.base64, mimeType: img.dataset.mimeType }] : null;
+                const response = await callGemini(prompt, "tutor", images);
                 output.innerHTML = marked.parse(response);
+                renderMath('sentence-output');
+                if(saveBtn) saveBtn.classList.remove('hidden');
+                lucide.createIcons();
             } catch (e) {
                 output.innerHTML = "分析失败，请检查 API Key 设置。";
             } finally {
@@ -1690,6 +1842,7 @@
             const input = document.getElementById('memory-input');
             const btn = document.getElementById('memory-btn');
             const output = document.getElementById('memory-output');
+            const saveBtn = document.getElementById('memory-save-btn');
             const text = input.value.trim();
 
             if (!text) return;
@@ -1704,11 +1857,15 @@
             
             Output in Markdown (Chinese):
             1. **The Mnemonic**: A catchy phrase or funny story.
-            2. **Explanation**: How it maps to the original points.`;
+            2. **Explanation**: How it maps to the original points.
+            3. **Visual Association**: Create a mental image to remember.`;
 
             try {
                 const response = await callGemini(prompt, "tutor");
                 output.innerHTML = marked.parse(response);
+                renderMath('memory-output');
+                if(saveBtn) saveBtn.classList.remove('hidden');
+                lucide.createIcons();
             } catch (e) {
                 output.innerHTML = "生成失败，请检查 API Key 设置。";
             } finally {
@@ -1779,13 +1936,15 @@
             const imgId = isEng ? 'eng-preview' : 'pol-preview';
             const btnId = isEng ? 'eng-grade-btn' : 'pol-grade-btn';
             const resId = isEng ? 'eng-result' : 'pol-result';
+            const saveId = isEng ? 'eng-save-btn' : 'pol-save-btn';
             const qInput = !isEng ? document.getElementById('pol-q-input').value : "";
 
             const img = document.getElementById(imgId);
             const btn = document.getElementById(btnId);
             const out = document.getElementById(resId);
+            const saveBtn = document.getElementById(saveId);
 
-            if(!img.dataset.base64) return alert("请先上传手写图片！");
+            if(!img.dataset.base64 && !qInput) return alert("请上传图片或输入题目关键词！");
 
             btn.disabled = true; btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4 inline"></i> AI 阅卷中...';
             out.classList.remove('hidden'); out.innerHTML = '<span class="animate-pulse">AI 正在辨认字迹、比对采分点...</span>';
@@ -1796,21 +1955,35 @@
                 1. **Handwriting Analysis**: Give a neatness score (0-5) and comment on legibility.
                 2. **Content Grading**: Check grammar, vocabulary, and logic.
                 3. **Strict Score**: Give a score out of 25 based on Exam standards.
-                4. **Advice**: How to improve.`;
+                4. **Advice**: How to improve.
+                Output in Chinese Markdown. Use LaTeX for any formulas.`;
             } else {
-                prompt = `Analyze this handwritten Politics answer image.
-                Context/Question: "${qInput}"
-                1. **Handwriting**: Is it neat enough for the scanner?
-                2. **Xiao Si Check**: Does it contain key points from Xiao Xiurong's 4 sets (Xiao Si)? List the hit keywords.
-                3. **Score**: Estimated score /10.`;
+                prompt = `你是一位考研政治阅卷专家。
+                题目/关键词: "${qInput}"
+                ${img.dataset.base64 ? '请分析图片中的手写答案。' : ''}
+                
+                请完成以下任务：
+                1. **卷面分析**: 如果有图片，评估字迹工整度(0-5分)。
+                2. **采分点检查**: 列出该题目应该包含的关键采分点（参考肖四标准答案）。
+                3. **答案评估**: 如果有答案图片，逐点分析是否踩中采分点。
+                4. **标准答案模板**: 根据题目关键词，生成一份标准答案模板，包含：
+                   - 原理阐述（马原/毛中特/史纲/思修相关原理）
+                   - 结合材料分析
+                   - 总结升华
+                5. **得分预估**: 预估得分 /10 分。
+                
+                请使用Markdown格式输出，公式使用LaTeX（$...$）。`;
             }
 
             try {
-                const res = await callGemini(prompt, "grader", [{ base64: img.dataset.base64, mimeType: img.dataset.mimeType }]);
+                const images = img.dataset.base64 ? [{ base64: img.dataset.base64, mimeType: img.dataset.mimeType }] : null;
+                const res = await callGemini(prompt, "grader", images);
                 out.innerHTML = marked.parse(res);
-                renderMath(resId); // Ensure math is rendered
+                renderMath(resId);
+                if(saveBtn) saveBtn.classList.remove('hidden');
+                lucide.createIcons();
             } catch(e) { out.innerText = "阅卷失败，请检查 API Key 设置。"; }
-            finally { btn.disabled = false; btn.innerText = isEng ? "开始残酷阅卷" : "分析采分点"; }
+            finally { btn.disabled = false; btn.innerText = isEng ? "开始残酷阅卷" : "分析采分点 & 生成答案模板"; }
         }
 
         // --- DUAL IMAGE TRANSLATION (NEW) ---
@@ -1844,9 +2017,216 @@
             try {
                 const res = await callGemini(prompt, "grader", images);
                 out.innerHTML = marked.parse(res);
-                renderMath('trans-result'); // Ensure math is rendered
+                renderMath('trans-result');
+                document.getElementById('trans-save-btn').classList.remove('hidden');
+                lucide.createIcons();
             } catch(e) { out.innerText = "比对失败，请检查 API Key 设置。"; }
             finally { btn.disabled = false; btn.innerText = "开始双图对照批改"; }
+        }
+
+        // --- 408 CS LARGE QUESTION GRADER (NEW) ---
+        async function gradeCS408() {
+            const type = document.getElementById('cs408-type').value;
+            const qInput = document.getElementById('cs408-q-input').value.trim();
+            const img = document.getElementById('cs408-preview');
+            const btn = document.getElementById('cs408-grade-btn');
+            const out = document.getElementById('cs408-result');
+            const saveBtn = document.getElementById('cs408-save-btn');
+
+            const typeNames = { ds: '数据结构', os: '操作系统', cn: '计算机网络', co: '计算机组成原理' };
+
+            if(!img.dataset.base64 && !qInput) return alert("请上传答案图片或输入题目描述！");
+
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4 inline"></i> AI 阅卷中...';
+            out.classList.remove('hidden');
+            out.innerHTML = '<span class="animate-pulse">AI 正在分析408大题答案...</span>';
+
+            const prompt = `你是一位408考研阅卷专家，专攻${typeNames[type]}。
+            
+            题目描述/关键词: "${qInput}"
+            ${img.dataset.base64 ? '请分析图片中的手写答案。' : ''}
+            
+            请完成以下任务：
+            1. **题目分析**: 识别这是什么类型的题目（算法设计/计算题/概念分析/综合应用）
+            2. **采分点列表**: 列出该题目的关键采分点（每个采分点标注分值）
+            3. **答案评估**: ${img.dataset.base64 ? '逐点分析答案是否正确，标注得分情况' : '跳过此步骤'}
+            4. **标准答案模板**: 生成完整的标准答案，包含：
+               - 解题思路
+               - 详细步骤（如需代码，提供伪代码）
+               - 关键公式（使用LaTeX，如 $O(n \\log n)$）
+               - 答案要点
+            5. **常见错误**: 列出该类题目的常见错误和注意事项
+            6. **得分预估**: ${img.dataset.base64 ? '预估得分' : '满分参考'}
+            
+            使用Markdown格式输出，代码使用代码块，公式使用LaTeX。`;
+
+            try {
+                const images = img.dataset.base64 ? [{ base64: img.dataset.base64, mimeType: img.dataset.mimeType }] : null;
+                const res = await callGemini(prompt, "grader", images);
+                out.innerHTML = marked.parse(res);
+                renderMath('cs408-result');
+                if(saveBtn) saveBtn.classList.remove('hidden');
+                lucide.createIcons();
+            } catch(e) {
+                out.innerText = "分析失败，请检查 API Key 设置。";
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "分析408大题 & 生成标准答案";
+            }
+        }
+
+        // --- ENGLISH BIG ESSAY (NEW) ---
+        async function generateBigEssay() {
+            const topic = document.getElementById('bigessay-input').value.trim();
+            const btn = document.getElementById('bigessay-btn');
+            const output = document.getElementById('bigessay-output');
+            const saveBtn = document.getElementById('bigessay-save-btn');
+
+            if(!topic) return alert("请输入作文主题关键词！");
+
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4"></i> 生成中...';
+            output.classList.remove('hidden');
+            output.innerHTML = '<span class="animate-pulse">AI 正在生成大作文模板...</span>';
+
+            const prompt = `你是一位英语二考研作文专家。请根据以下主题生成一份完整的大作文（图表作文）写作模板。
+            
+            主题关键词: "${topic}"
+            
+            请生成：
+            
+            ## 一、作文模板
+            
+            ### 第一段：描述图表（约50词）
+            - 开头句模板
+            - 数据描述句型
+            - 趋势总结句
+            
+            ### 第二段：原因分析（约80词）
+            - 过渡句
+            - 原因一（附例句）
+            - 原因二（附例句）
+            - 原因三（附例句）
+            
+            ### 第三段：总结建议（约50词）
+            - 总结句型
+            - 建议/展望句型
+            - 结尾升华句
+            
+            ## 二、高频词汇与短语
+            列出10个与"${topic}"相关的高频词汇和短语，附中文释义
+            
+            ## 三、高分句型
+            提供5个可直接套用的高分句型，标注适用场景
+            
+            ## 四、写作技巧
+            - 注意事项
+            - 常见错误
+            - 得分要点
+            
+            使用Markdown格式，英文部分保持原文。`;
+
+            try {
+                const res = await callGemini(prompt, "tutor");
+                output.innerHTML = marked.parse(res);
+                renderMath('bigessay-output');
+                if(saveBtn) saveBtn.classList.remove('hidden');
+                lucide.createIcons();
+            } catch(e) {
+                output.innerText = "生成失败，请重试。";
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "生成模板";
+            }
+        }
+
+        // --- ENGLISH SMALL ESSAY (NEW) ---
+        async function generateSmallEssay() {
+            const type = document.getElementById('smallessay-type').value;
+            const topic = document.getElementById('smallessay-input').value.trim();
+            const btn = document.getElementById('smallessay-btn');
+            const output = document.getElementById('smallessay-output');
+            const saveBtn = document.getElementById('smallessay-save-btn');
+
+            const typeNames = { letter: '书信', notice: '通知', email: '邮件', memo: '备忘录', report: '报告' };
+
+            if(!topic) return alert("请输入小作文主题！");
+
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4"></i> 生成中...';
+            output.classList.remove('hidden');
+            output.innerHTML = '<span class="animate-pulse">AI 正在生成小作文模板...</span>';
+
+            const prompt = `你是一位英语二考研应用文专家。请根据以下类型和主题生成一份完整的小作文模板。
+            
+            应用文类型: ${typeNames[type]}
+            主题: "${topic}"
+            
+            请生成：
+            
+            ## 一、格式要求
+            - ${typeNames[type]}的标准格式说明
+            - 称呼、正文、落款的写法
+            
+            ## 二、完整范文模板
+            提供一篇100词左右的完整范文，带有可替换的【】标记
+            
+            ## 三、开头句型（3-5个）
+            针对${typeNames[type]}的万能开头句
+            
+            ## 四、正文常用表达
+            - 表示目的的句型
+            - 表示建议的句型
+            - 表示感谢/道歉的句型
+            - 表示期待回复的句型
+            
+            ## 五、结尾句型（3-5个）
+            针对${typeNames[type]}的万能结尾句
+            
+            ## 六、注意事项
+            - 格式扣分点
+            - 常见错误
+            - 字数控制技巧
+            
+            使用Markdown格式，英文部分保持原文。`;
+
+            try {
+                const res = await callGemini(prompt, "tutor");
+                output.innerHTML = marked.parse(res);
+                renderMath('smallessay-output');
+                if(saveBtn) saveBtn.classList.remove('hidden');
+                lucide.createIcons();
+            } catch(e) {
+                output.innerText = "生成失败，请重试。";
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "生成模板";
+            }
+        }
+
+        // --- SAVE TO NOTEBOOK FUNCTION (NEW) ---
+        function saveToNotebook(subject, outputId) {
+            const output = document.getElementById(outputId);
+            if(!output || !output.innerHTML) return alert("没有可保存的内容！");
+
+            const content = output.innerText || output.textContent;
+            const truncatedContent = content.substring(0, 500) + (content.length > 500 ? '...' : '');
+
+            const newMistake = {
+                id: Date.now(),
+                subject: subject,
+                question: `[AI生成内容] ${truncatedContent.substring(0, 100)}...`,
+                note: truncatedContent,
+                date: new Date().toLocaleDateString(),
+                analysis: output.innerHTML
+            };
+
+            mistakes.unshift(newMistake);
+            localStorage.setItem('22408_mistakes', JSON.stringify(mistakes));
+            
+            alert("已保存到错题本！可在"智能错题本"中查看。");
+            lucide.createIcons();
         }
 
         async function generateDailyReport() {
