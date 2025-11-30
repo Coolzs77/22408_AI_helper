@@ -884,21 +884,6 @@
     </div>
 
     <script>
-        // ==========================================
-        // 核心修复 1: LaTeX 格式保护函数
-        // ==========================================
-        // 作用：防止 Marked 解析器把 \[ 识别为转义的 [，导致公式失效
-        function formatLaTeX(content) {
-            if (!content) return content;
-            return content
-                // 保护块级公式 \[ ... \] -> \\[ ... \\]
-                .replace(/\\\[/g, '\\\\[')
-                .replace(/\\\]/g, '\\\\]')
-                // 保护行内公式 \( ... \) -> \\( ... \\)
-                .replace(/\\\(/g, '\\\\(')
-                .replace(/\\\)/g, '\\\\)');
-        }
-        
         const examDate = new Date();
         examDate.setMonth(11); // 12月
         examDate.setDate(20);
@@ -917,9 +902,7 @@
 
         // --- INIT ---
         document.addEventListener('DOMContentLoaded', init);
-        // ==========================================
-        // 核心修复 3: 在 Init 中注入全局补丁
-        // ==========================================
+
         function init() {
             lucide.createIcons();
             startCountdown();
@@ -930,21 +913,6 @@
             checkApiKeyStatus(); 
             renderMistakes();
             
-            // ---【全局修复补丁 Start】---
-            // 劫持 marked.parse 方法，自动处理所有 LaTeX 公式
-            // 这样你不需要去改 gradeCS, generateQuiz 等任何具体函数！
-            if (typeof marked !== 'undefined' && marked.parse) {
-                const originalParse = marked.parse;
-                marked.parse = function(src, options) {
-                    // 1. 先保护公式
-                    const protectedSrc = formatLaTeX(src);
-                    // 2. 再进行 Markdown 解析
-                    return originalParse(protectedSrc, options);
-                };
-                console.log("✅ LaTeX Global Patch Applied!");
-            }
-            // ---【全局修复补丁 End】---
-
             if(localStorage.getItem('theme') === 'dark') {
                 document.documentElement.classList.add('dark');
             }
@@ -959,28 +927,21 @@
         }
 
         // --- COMMON UTIL ---
-                // ==========================================
-        // 核心修复 2: 修改 renderMath 优先级
-        // ==========================================
+        
         function renderMath(elementId) {
             const element = document.getElementById(elementId);
             if(element) {
                 renderMathInElement(element, {
                     delimiters: [
-                        // 优先级调整：标准 LaTeX 写法放最前
-                        {left: '\\[', right: 'authState', display: true},   // 块级
-                        {left: '\\[', right: '\\]', display: true},   // 修复为标准写法
-                        {left: '\\(', right: '\\)', display: false},  // 行内
-                        // 兼容写法放后面
                         {left: '$$', right: '$$', display: true},
-                        {left: '$', right: '$', display: false}
+                        {left: '$', right: '$', display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
                     ],
                     throwOnError: false
                 });
             }
         }
-        
-
         // --- API & AI CORE ---
         // AUTO INJECT API KEY FROM ENVIRONMENT
         const apiKey = ""; 
