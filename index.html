@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>☁️ 22408 备考小窝 v35 (全能智囊版)</title>
-    <!-- Fixed Links: Removed markdown formatting from src/href attributes -->
+    <title>☁️ 22408 备考小窝 v4.1 (Latex增强版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Marked for Markdown -->
@@ -13,8 +12,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-    <!-- Mermaid for Mindmaps -->
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
     
     <script>
         tailwind.config = {
@@ -201,23 +198,14 @@
         .tag-cs { @apply bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300; }
         .tag-eng { @apply bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300; }
         .tag-pol { @apply bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-300; }
-        
-        /* Mermaid Center - FIXED */
-        .mermaid {
-            display: flex;
-            justify-content: center;
-            background: #f8fafc;
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            overflow-x: auto;
+
+        /* Mistake Preview Truncation handled carefully with Math */
+        .mistake-preview-content {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
-        .dark .mermaid { background: #1e293b; }
-        /* Ensure SVG text is visible in dark mode */
-        .dark .mermaid text { fill: #e2e8f0 !important; }
-        .dark .mermaid .node rect, .dark .mermaid .node circle, .dark .mermaid .node polygon { 
-            fill: #334155 !important; stroke: #94a3b8 !important; 
-        }
-        .dark .mermaid .edgePath .path { stroke: #64748b !important; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden selection:bg-pink-100 bg-[#fdfbf7] dark:bg-darkbg text-slate-600 dark:text-slate-300">
@@ -378,20 +366,20 @@
                         <button onclick="switchAiTab('quiz')" id="tab-quiz" class="tab-btn whitespace-nowrap text-xs font-bold text-slate-500 pb-2 flex items-center gap-1">
                             <i data-lucide="graduation-cap" class="w-3 h-3"></i> 每日一练
                         </button>
+                        <button onclick="switchAiTab('eng-write')" id="tab-eng-write" class="tab-btn whitespace-nowrap text-xs font-bold text-slate-500 pb-2 hover:text-slate-800 dark:hover:text-slate-200 transition-colors flex items-center gap-1">
+                            <i data-lucide="pen-tool" class="w-3 h-3"></i> 英语作文
+                        </button>
                         <button onclick="switchAiTab('sentence')" id="tab-sentence" class="tab-btn whitespace-nowrap text-xs font-bold text-slate-500 pb-2 hover:text-slate-800 dark:hover:text-slate-200 transition-colors flex items-center gap-1">
                             <i data-lucide="languages" class="w-3 h-3"></i> 长难句拆解
                         </button>
                          <button onclick="switchAiTab('code')" id="tab-code" class="tab-btn whitespace-nowrap text-xs font-bold text-slate-500 pb-2 hover:text-slate-800 dark:hover:text-slate-200 transition-colors flex items-center gap-1">
-                            <i data-lucide="code-2" class="w-3 h-3"></i> 代码随身译
+                            <i data-lucide="code-2" class="w-3 h-3"></i> 代码模板
                         </button>
                         <button onclick="switchAiTab('memory')" id="tab-memory" class="tab-btn whitespace-nowrap text-xs font-bold text-slate-500 pb-2 hover:text-slate-800 dark:hover:text-slate-200 transition-colors flex items-center gap-1">
                             <i data-lucide="brain" class="w-3 h-3"></i> 记忆宫殿
                         </button>
                         <button onclick="switchAiTab('concept')" id="tab-concept" class="tab-btn whitespace-nowrap text-xs font-bold text-slate-500 pb-2 flex items-center gap-1">
                             <i data-lucide="puzzle" class="w-3 h-3"></i> 概念卡片
-                        </button>
-                        <button onclick="switchAiTab('map')" id="tab-map" class="tab-btn whitespace-nowrap text-xs font-bold text-slate-500 pb-2 flex items-center gap-1 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
-                            <i data-lucide="git-fork" class="w-3 h-3"></i> 思维导图
                         </button>
                          <button onclick="switchAiTab('interview')" id="tab-interview" class="tab-btn whitespace-nowrap text-xs font-bold text-slate-500 pb-2 flex items-center gap-1 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
                             <i data-lucide="mic" class="w-3 h-3"></i> 模拟面试
@@ -401,13 +389,15 @@
                         </button>
                     </div>
                     
-                    <!-- Content: Vision -->
+                    <!-- Content: Vision (Text + Image) -->
                     <div id="content-vision" class="space-y-4">
                         <div class="flex flex-col gap-3">
-                            <label class="upload-box flex flex-col items-center justify-center w-full h-32 rounded-xl cursor-pointer group">
-                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                    <i data-lucide="image-plus" class="w-8 h-8 text-slate-400 mb-2 group-hover:text-indigo-500 transition-colors"></i>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400">点击上传或拖拽图片</p>
+                            <textarea id="vision-text" class="w-full h-20 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:outline-none focus:border-indigo-400 resize-none" placeholder="输入问题描述（可选，如有图片可不填）..."></textarea>
+                            
+                            <label class="upload-box flex flex-col items-center justify-center w-full h-24 rounded-xl cursor-pointer group">
+                                <div class="flex flex-col items-center justify-center">
+                                    <i data-lucide="image-plus" class="w-6 h-6 text-slate-400 mb-1 group-hover:text-indigo-500 transition-colors"></i>
+                                    <p class="text-[10px] text-slate-500 dark:text-slate-400">点击上传图片 (可选)</p>
                                 </div>
                                 <input type="file" class="hidden" id="vision-file" accept="image/*" onchange="handleGenericImageUpload(event, 'vision-preview', 'vision-file')">
                             </label>
@@ -420,6 +410,7 @@
                             <button onclick="analyzeImage()" id="vision-btn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">开始解析</button>
                         </div>
                         <div id="vision-output" class="hidden ai-content bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
+                        <button onclick="saveResultToNotebook('vision', 'vision-text', 'vision-output')" class="hidden mt-2 text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500 ml-auto" id="vision-save-btn"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
                     </div>
 
                     <!-- Content: Quiz -->
@@ -437,15 +428,37 @@
                             <div id="quiz-question" class="ai-content bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300"></div>
                             <button onclick="document.getElementById('quiz-answer').classList.remove('hidden')" class="text-xs text-indigo-500 hover:underline">偷看答案与解析</button>
                             <div id="quiz-answer" class="hidden ai-content bg-green-50/50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-xl p-5 text-sm"></div>
+                            <button onclick="saveResultToNotebook('quiz', 'quiz-question', 'quiz-answer')" class="text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500 ml-auto"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
                         </div>
                     </div>
 
-                    <!-- Content: Sentence -->
+                    <!-- Content: English Writing (NEW) -->
+                    <div id="content-eng-write" class="hidden space-y-4">
+                        <div class="flex gap-2">
+                            <button onclick="setEngType('small')" id="eng-type-small" class="flex-1 py-2 rounded-lg border text-sm font-bold bg-green-500 text-white border-green-500">英语二·小作文</button>
+                            <button onclick="setEngType('big')" id="eng-type-big" class="flex-1 py-2 rounded-lg border text-sm font-bold bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700">英语二·大作文</button>
+                        </div>
+                        <textarea id="eng-write-input" class="w-full h-24 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:outline-none focus:border-green-400 resize-none" placeholder="输入作文关键词/主题（例如：通知，邀请信，柱状图，手机依赖，环保...）"></textarea>
+                        <button onclick="generateEngComposition()" id="eng-write-btn" class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">生成背诵模板 & 技巧</button>
+                        <div id="eng-write-output" class="hidden ai-content bg-green-50/50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
+                        <button onclick="saveResultToNotebook('eng-write', 'eng-write-input', 'eng-write-output')" id="eng-write-save-btn" class="hidden mt-2 text-xs flex items-center gap-1 text-slate-400 hover:text-green-500 ml-auto"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                    </div>
+
+                    <!-- Content: Sentence (Image + Text) -->
                     <div id="content-sentence" class="hidden space-y-4">
-                        <p class="text-xs text-slate-400">粘贴看不懂的英语长难句，AI 帮你划分成分并翻译。</p>
-                        <textarea id="sentence-input" class="w-full h-24 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:outline-none focus:border-indigo-400 resize-none" placeholder="Paste English sentence here..."></textarea>
+                        <p class="text-xs text-slate-400">输入或拍照上传看不懂的英语长难句。</p>
+                        <textarea id="sentence-input" class="w-full h-20 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:outline-none focus:border-indigo-400 resize-none" placeholder="Paste sentence here..."></textarea>
+                        <label class="flex items-center gap-2 cursor-pointer w-fit">
+                            <span class="bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded text-xs text-slate-500 hover:bg-slate-200"><i data-lucide="image-plus" class="w-3 h-3 inline mr-1"></i> 上传图片</span>
+                            <input type="file" class="hidden" id="sentence-file" accept="image/*" onchange="handleGenericImageUpload(event, 'sentence-preview', 'sentence-file')">
+                        </label>
+                        <div id="sentence-preview-container" class="hidden relative rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 w-full">
+                            <img id="sentence-preview" class="h-24 object-contain bg-black/5 dark:bg-black/20">
+                            <button onclick="clearGenericImage('sentence-preview', 'sentence-file')" class="absolute top-1 left-1 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"><i data-lucide="x" class="w-3 h-3"></i></button>
+                        </div>
                         <button onclick="breakSentence()" id="sentence-btn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">一键拆解</button>
                         <div id="sentence-output" class="hidden ai-content bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
+                        <button onclick="saveResultToNotebook('sentence', 'sentence-input', 'sentence-output')" id="sentence-save-btn" class="hidden mt-2 text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500 ml-auto"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
                     </div>
 
                     <!-- Content: Memory -->
@@ -454,6 +467,7 @@
                         <textarea id="memory-input" class="w-full h-24 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:outline-none focus:border-indigo-400 resize-none" placeholder="例如：互斥、请求与保持、不剥夺、循环等待"></textarea>
                         <button onclick="generateMnemonic()" id="memory-btn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">生成记忆宫殿</button>
                         <div id="memory-output" class="hidden ai-content bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
+                        <button onclick="saveResultToNotebook('memory', 'memory-input', 'memory-output')" id="memory-save-btn" class="hidden mt-2 text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500 ml-auto"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
                     </div>
 
                     <!-- Content: Concept -->
@@ -463,17 +477,7 @@
                             <button onclick="explainConcept()" id="concept-btn" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-bold">生成</button>
                         </div>
                         <div id="concept-output" class="hidden ai-content bg-purple-50/50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-xl p-5 text-sm"></div>
-                    </div>
-
-                    <!-- Content: Knowledge Map -->
-                    <div id="content-map" class="hidden space-y-4">
-                        <p class="text-xs text-slate-400">输入核心知识点，AI 生成可视化的思维导图。</p>
-                        <div class="flex gap-2 mb-4">
-                            <input type="text" id="map-input" class="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400" placeholder="例如: 红黑树, 操作系统的四大特征...">
-                            <button onclick="generateMap()" id="map-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">生成导图</button>
-                        </div>
-                        <div id="map-output" class="hidden mermaid text-sm"></div>
-                        <div id="map-error" class="hidden ai-content bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300 p-4 rounded-xl text-xs"></div>
+                        <button onclick="saveResultToNotebook('concept', 'concept-input', 'concept-output')" id="concept-save-btn" class="hidden mt-2 text-xs flex items-center gap-1 text-slate-400 hover:text-purple-500 ml-auto"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
                     </div>
 
                     <!-- Content: Document AI -->
@@ -505,15 +509,17 @@
                                 <h4 class="font-bold text-slate-500 dark:text-slate-400 mb-2 text-xs uppercase tracking-wider">提取原文</h4>
                                 <div id="doc-text" class="text-xs font-mono text-slate-600 dark:text-slate-400 whitespace-pre-wrap max-h-60 overflow-y-auto"></div>
                             </div>
+                            <button onclick="saveResultToNotebook('doc', 'doc-preview', 'doc-summary')" class="text-xs flex items-center gap-1 text-slate-400 hover:text-orange-500 ml-auto"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
                         </div>
                     </div>
 
-                    <!-- Content: Code Explainer (NEW) -->
+                    <!-- Content: Code Templates (UPDATED) -->
                     <div id="content-code" class="hidden space-y-4">
-                        <p class="text-xs text-slate-400">粘贴 C++/伪代码，AI 逐行解释并分析复杂度。</p>
-                        <textarea id="code-input" class="w-full h-32 bg-slate-900 text-slate-300 border border-slate-700 rounded-lg p-3 text-xs font-mono focus:outline-none focus:border-blue-500 resize-none" placeholder="// 粘贴你的代码片段..."></textarea>
-                        <button onclick="explainCode()" id="code-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">解释代码</button>
+                        <p class="text-xs text-slate-400">输入算法名称，AI 生成408手写适用的标准代码模板。</p>
+                        <textarea id="code-input" class="w-full h-16 bg-slate-900 text-slate-300 border border-slate-700 rounded-lg p-3 text-xs font-mono focus:outline-none focus:border-blue-500 resize-none" placeholder="例如：QuickSort (快速排序), Dijkstra算法..."></textarea>
+                        <button onclick="explainCode()" id="code-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">生成代码模板</button>
                         <div id="code-output" class="hidden ai-content bg-slate-900 border border-slate-700 rounded-xl p-5 text-sm text-slate-300 shadow-sm prose prose-invert max-w-none"></div>
+                        <button onclick="saveResultToNotebook('code', 'code-input', 'code-output')" id="code-save-btn" class="hidden mt-2 text-xs flex items-center gap-1 text-slate-400 hover:text-blue-500 ml-auto"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
                     </div>
 
                     <!-- Content: Mock Interview (NEW) -->
@@ -535,6 +541,7 @@
                             <textarea id="interview-answer" class="w-full h-24 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm resize-none focus:border-green-500 outline-none" placeholder="输入你的回答..."></textarea>
                             <button onclick="submitInterviewAnswer()" id="interview-submit-btn" class="w-full bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-bold">提交回答</button>
                             <div id="interview-feedback" class="hidden ai-content bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-xl p-4 text-sm"></div>
+                            <button onclick="saveResultToNotebook('interview', 'interview-question', 'interview-feedback')" id="interview-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-green-500 ml-auto"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
                         </div>
                     </div>
                 </div>
@@ -628,29 +635,55 @@
             <div id="report-area" class="mt-4 hidden bg-white dark:bg-darkcard p-4 rounded-xl ai-content"></div>
         </div>
 
-        <!-- VIEW: GRADER (UPDATED TO V2.0: IMAGES & TABS) -->
+        <!-- VIEW: GRADER (UPDATED TO V4.0) -->
         <div id="view-grader" class="hidden space-y-6 animate-in fade-in zoom-in duration-300">
             <div class="glass-card p-6 min-h-screen md:min-h-0">
                 <div class="flex items-center gap-2 mb-4">
                     <div class="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center text-pink-500"><i data-lucide="pen-tool" class="w-4 h-4"></i></div>
-                    <h2 class="text-xl font-bold text-slate-700 dark:text-slate-200">全真手写阅卷室 2.0</h2>
+                    <h2 class="text-xl font-bold text-slate-700 dark:text-slate-200">AI 阅卷室 4.0</h2>
                 </div>
                 
-                <!-- New 3-Tab Structure -->
+                <!-- 4-Tab Structure -->
                 <div class="flex gap-2 border-b border-slate-200 dark:border-slate-700 mb-6 overflow-x-auto no-scrollbar">
-                    <button onclick="switchGraderTab('eng')" id="tab-grader-eng" class="tab-btn active pb-3 px-3 text-sm font-bold text-slate-500 whitespace-nowrap transition-colors flex items-center gap-1">📝 英语作文</button>
-                    <button onclick="switchGraderTab('trans')" id="tab-grader-trans" class="tab-btn pb-3 px-3 text-sm font-bold text-slate-500 whitespace-nowrap transition-colors flex items-center gap-1">🔤 英二翻译·双图</button>
+                    <button onclick="switchGraderTab('cs')" id="tab-grader-cs" class="tab-btn active pb-3 px-3 text-sm font-bold text-slate-500 whitespace-nowrap transition-colors flex items-center gap-1">💻 408 大题</button>
+                    <button onclick="switchGraderTab('eng')" id="tab-grader-eng" class="tab-btn pb-3 px-3 text-sm font-bold text-slate-500 whitespace-nowrap transition-colors flex items-center gap-1">📝 英语作文</button>
+                    <button onclick="switchGraderTab('trans')" id="tab-grader-trans" class="tab-btn pb-3 px-3 text-sm font-bold text-slate-500 whitespace-nowrap transition-colors flex items-center gap-1">🔤 翻译·双图</button>
                     <button onclick="switchGraderTab('pol')" id="tab-grader-pol" class="tab-btn pb-3 px-3 text-sm font-bold text-slate-500 whitespace-nowrap transition-colors flex items-center gap-1">⚖️ 政治大题</button>
                 </div>
 
-                <!-- 1. English Essay Grader -->
-                <div id="grader-eng" class="space-y-4">
+                <!-- 1. CS 408 Grader (NEW) -->
+                <div id="grader-cs" class="space-y-4">
+                     <div class="bg-purple-50 dark:bg-purple-900/10 p-3 rounded-lg border border-purple-100 dark:border-purple-900/50 flex items-start gap-2">
+                        <i data-lucide="cpu" class="w-4 h-4 text-purple-500 mt-0.5"></i>
+                        <p class="text-xs text-purple-600 dark:text-purple-300">上传 408 大题手写答案（或仅上传题目），AI 帮你批改逻辑并给出标准步骤。</p>
+                    </div>
+
+                    <label class="upload-box flex flex-col items-center justify-center w-full h-40 rounded-xl cursor-pointer group">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <i data-lucide="image-plus" class="w-8 h-8 text-slate-400 mb-2 group-hover:text-purple-500 transition-colors"></i>
+                            <p class="text-xs text-slate-500 font-medium">拍照上传题目/答案</p>
+                        </div>
+                        <input type="file" class="hidden" id="cs-grader-file" accept="image/*" onchange="handleGenericImageUpload(event, 'cs-grader-preview', 'cs-grader-file')">
+                    </label>
+
+                    <div id="cs-grader-preview-container" class="hidden relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <img id="cs-grader-preview" class="w-full h-auto max-h-64 object-contain bg-black/5">
+                        <button onclick="clearGenericImage('cs-grader-preview', 'cs-grader-file')" class="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full hover:bg-red-600 shadow-md"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    </div>
+
+                    <button onclick="gradeCS()" id="cs-grade-btn" class="w-full bg-purple-500 hover:bg-purple-600 text-white py-3 rounded-xl font-bold transition-all shadow-md active:scale-95">开始 408 批改</button>
+                    
+                    <div id="cs-grade-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm ai-content prose dark:prose-invert max-w-none"></div>
+                    <button onclick="saveResultToNotebook('grader-cs', 'cs-grader-preview', 'cs-grade-result')" id="cs-save-btn" class="hidden mt-2 text-xs flex items-center gap-1 text-slate-400 hover:text-purple-500 ml-auto"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                </div>
+
+                <!-- 2. English Essay Grader -->
+                <div id="grader-eng" class="hidden space-y-4">
                     <div class="bg-blue-50 dark:bg-blue-900/10 p-3 rounded-lg border border-blue-100 dark:border-blue-900/50 flex items-start gap-2">
                         <i data-lucide="info" class="w-4 h-4 text-blue-500 mt-0.5"></i>
                         <p class="text-xs text-blue-600 dark:text-blue-300">AI 将模仿阅卷老师，先看字迹工整度（卷面分），再看语法逻辑，最后给出“狠心”打分。</p>
                     </div>
 
-                    <!-- Upload Area -->
                     <label class="upload-box flex flex-col items-center justify-center w-full h-40 rounded-xl cursor-pointer group">
                         <div class="flex flex-col items-center justify-center pt-5 pb-6">
                             <i data-lucide="camera" class="w-8 h-8 text-slate-400 mb-2 group-hover:text-pink-500 transition-colors"></i>
@@ -659,7 +692,6 @@
                         <input type="file" class="hidden" id="eng-essay-file" accept="image/*" onchange="handleGenericImageUpload(event, 'eng-preview', 'eng-essay-file')">
                     </label>
 
-                    <!-- Preview -->
                     <div id="eng-preview-container" class="hidden relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm">
                         <img id="eng-preview" class="w-full h-auto max-h-64 object-contain bg-black/5">
                         <button onclick="clearGenericImage('eng-preview', 'eng-essay-file')" class="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full hover:bg-red-600 shadow-md"><i data-lucide="x" class="w-4 h-4"></i></button>
@@ -668,9 +700,10 @@
                     <button onclick="gradeEssay('english')" id="eng-grade-btn" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-xl font-bold transition-all shadow-md active:scale-95">开始残酷阅卷</button>
                     
                     <div id="eng-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm ai-content prose dark:prose-invert max-w-none"></div>
+                    <button onclick="saveResultToNotebook('grader-eng', 'eng-preview', 'eng-result')" id="eng-save-btn" class="hidden mt-2 text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
                 </div>
 
-                <!-- 2. Translation Dual-Image Grader (NEW) -->
+                <!-- 3. Translation Dual-Image Grader -->
                 <div id="grader-trans" class="hidden space-y-6">
                     <div class="bg-indigo-50 dark:bg-indigo-900/10 p-3 rounded-lg border border-indigo-100 dark:border-indigo-900/50 flex items-start gap-2">
                         <i data-lucide="sparkles" class="w-4 h-4 text-indigo-500 mt-0.5"></i>
@@ -713,21 +746,22 @@
 
                     <button onclick="gradeTranslation()" id="trans-grade-btn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white py-3 rounded-xl font-bold transition-all shadow-md active:scale-95">开始双图对照批改</button>
                     <div id="trans-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm ai-content prose dark:prose-invert max-w-none"></div>
+                    <button onclick="saveResultToNotebook('grader-trans', 'trans-source-preview', 'trans-result')" id="trans-save-btn" class="hidden mt-2 text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500 ml-auto"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
                 </div>
 
-                <!-- 3. Politics Grader -->
+                <!-- 4. Politics Template Generator (UPDATED) -->
                 <div id="grader-pol" class="hidden space-y-4">
                      <div class="bg-orange-50 dark:bg-orange-900/10 p-3 rounded-lg border border-orange-100 dark:border-orange-900/50 flex items-start gap-2">
                         <i data-lucide="alert-circle" class="w-4 h-4 text-orange-500 mt-0.5"></i>
-                        <p class="text-xs text-orange-600 dark:text-orange-300">AI 将分析你的卷面整洁度，并判断是否踩中了“肖四”的采分点。</p>
+                        <p class="text-xs text-orange-600 dark:text-orange-300">输入关键词或上传题目，AI 将生成标准的、可背诵的答题模板。</p>
                     </div>
 
-                    <textarea id="pol-q-input" class="w-full h-12 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-orange-400 mb-2" placeholder="输入题目关键词（例如：马原 认识论 结合材料...）"></textarea>
+                    <textarea id="pol-q-input" class="w-full h-20 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-orange-400 mb-2" placeholder="输入题目/关键词（例如：马原 认识论 结合材料...）"></textarea>
 
-                    <label class="upload-box flex flex-col items-center justify-center w-full h-32 rounded-xl cursor-pointer group">
-                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                            <i data-lucide="scroll-text" class="w-8 h-8 text-slate-400 mb-2 group-hover:text-orange-500 transition-colors"></i>
-                            <p class="text-xs text-slate-500">上传手写大题答案</p>
+                    <label class="upload-box flex flex-col items-center justify-center w-full h-24 rounded-xl cursor-pointer group">
+                        <div class="flex flex-col items-center justify-center pt-2 pb-2">
+                            <i data-lucide="scroll-text" class="w-6 h-6 text-slate-400 mb-1 group-hover:text-orange-500 transition-colors"></i>
+                            <p class="text-xs text-slate-500">上传题目图片(可选)</p>
                         </div>
                         <input type="file" class="hidden" id="pol-answer-file" accept="image/*" onchange="handleGenericImageUpload(event, 'pol-preview', 'pol-answer-file')">
                     </label>
@@ -737,13 +771,14 @@
                         <button onclick="clearGenericImage('pol-preview', 'pol-answer-file')" class="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full hover:bg-red-600 shadow-md"><i data-lucide="x" class="w-4 h-4"></i></button>
                     </div>
 
-                    <button onclick="gradeEssay('politics')" id="pol-grade-btn" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold transition-all shadow-md active:scale-95">分析采分点</button>
+                    <button onclick="solvePolitics()" id="pol-grade-btn" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold transition-all shadow-md active:scale-95">生成标准答题模板</button>
                     <div id="pol-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm ai-content prose dark:prose-invert max-w-none"></div>
+                    <button onclick="saveResultToNotebook('grader-pol', 'pol-q-input', 'pol-result')" id="pol-save-btn" class="hidden mt-2 text-xs flex items-center gap-1 text-slate-400 hover:text-orange-500 ml-auto"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
                 </div>
             </div>
         </div>
 
-        <!-- VIEW: NOTEBOOK (NEW!) -->
+        <!-- VIEW: NOTEBOOK -->
         <div id="view-notebook" class="hidden space-y-6 animate-in fade-in zoom-in duration-300">
             <div class="glass-card p-6 min-h-[80vh]">
                 <div class="flex items-center justify-between mb-6">
@@ -783,10 +818,6 @@
                         <button onclick="setTimer(180)" class="px-4 py-2 rounded-full bg-white dark:bg-darkcard shadow-sm border border-slate-100 dark:border-slate-700 text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-purple-500 hover:border-purple-200 transition">3h 模考</button>
                         <button onclick="resetTimer()" class="w-10 h-10 rounded-full bg-white dark:bg-darkcard shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-white"><i data-lucide="rotate-ccw" class="w-4 h-4"></i></button>
                     </div>
-                    <div class="flex items-center gap-2 bg-white dark:bg-darkcard px-3 py-1.5 rounded-full border border-slate-100 dark:border-slate-700 shadow-sm">
-                        <input type="number" id="custom-min" class="w-12 text-center text-xs font-bold text-slate-700 dark:text-slate-200 bg-transparent focus:outline-none border-b border-slate-200 dark:border-slate-600" placeholder="min" min="1" max="180">
-                        <button onclick="setCustomTimer()" class="text-xs font-bold text-slate-400 hover:text-blue-500">Set</button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -804,7 +835,7 @@
             </div>
             
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
-                为了使用 AI 功能（阅卷、对话、搜题），你需要填入自己的 Google Gemini API Key。<br>
+                为了使用 AI 功能，你需要填入自己的 Google Gemini API Key。<br>
                 <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-500 underline font-bold hover:text-indigo-600">点击这里获取免费 Key</a>
             </p>
 
@@ -819,7 +850,7 @@
         </div>
     </div>
 
-    <!-- ADD MISTAKE MODAL (NEW) -->
+    <!-- ADD MISTAKE MODAL -->
     <div id="mistake-modal" class="hidden fixed inset-0 z-[100] modal-overlay flex items-center justify-center p-4 animate-in fade-in duration-200">
         <div class="bg-white dark:bg-darkcard w-full max-w-lg rounded-2xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700">
             <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">记录错题</h3>
@@ -830,8 +861,8 @@
                     <option value="eng">英语</option>
                     <option value="pol">政治</option>
                 </select>
-                <textarea id="m-question" class="w-full h-24 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-3 text-sm resize-none" placeholder="题目描述 / 知识点..."></textarea>
-                <textarea id="m-note" class="w-full h-20 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-3 text-sm resize-none" placeholder="我的错误原因..."></textarea>
+                <textarea id="m-question" class="w-full h-24 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-3 text-sm resize-none" placeholder="题目描述 / 知识点 (支持 Markdown & Latex)..."></textarea>
+                <textarea id="m-note" class="w-full h-20 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-3 text-sm resize-none" placeholder="AI 解析 / 我的笔记..."></textarea>
                 <div class="flex gap-2 justify-end mt-4">
                     <button onclick="document.getElementById('mistake-modal').classList.add('hidden')" class="px-4 py-2 rounded-lg text-sm text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">取消</button>
                     <button onclick="saveMistake()" class="px-4 py-2 rounded-lg text-sm bg-indigo-500 text-white hover:bg-indigo-600 font-bold">保存</button>
@@ -840,7 +871,7 @@
         </div>
     </div>
 
-    <!-- MISTAKE DETAIL MODAL (NEW) -->
+    <!-- MISTAKE DETAIL MODAL -->
     <div id="mistake-detail-modal" class="hidden fixed inset-0 z-[100] modal-overlay flex items-center justify-center p-4 animate-in fade-in duration-200">
         <div class="bg-white dark:bg-darkcard w-full max-w-2xl max-h-[80vh] overflow-y-auto rounded-2xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 relative">
             <button onclick="document.getElementById('mistake-detail-modal').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -853,12 +884,10 @@
     </div>
 
     <script>
-        // --- CONFIG ---
-        // DEPRECATED: const apiKey = ""; 
         const examDate = new Date();
-            examDate.setMonth(11);  // 月份从 0 开始，11 代表 12 月
-            examDate.setDate(20);   // 20 号
-            examDate.setHours(0, 0, 0, 0); // 0点0分0秒
+        examDate.setMonth(11); // 12月
+        examDate.setDate(20);
+        examDate.setHours(0, 0, 0, 0);
         
         const duckQuotes = [
             "“嘿！别担心你的408大题，只要写满逻辑就有分！”",
@@ -868,6 +897,8 @@
             "“政治不需要智商，只需要你哪怕多看一眼肖四。”",
             "“深呼吸——吸气——呼气——大脑重启成功！”"
         ];
+
+        let engWriteType = 'small'; // 'small' or 'big'
 
         // --- INIT ---
         document.addEventListener('DOMContentLoaded', init);
@@ -880,13 +911,12 @@
             changeQuote();
             updateProgress();
             checkApiKeyStatus(); 
-            renderMistakes(); // Initial render
+            renderMistakes();
             
             if(localStorage.getItem('theme') === 'dark') {
                 document.documentElement.classList.add('dark');
             }
             
-            // Memo Auto-save
             const memo = document.getElementById('quick-memo');
             if(memo) {
                 memo.addEventListener('input', () => {
@@ -896,7 +926,26 @@
             }
         }
 
-        // --- API KEY MANAGEMENT ---
+        // --- COMMON UTIL ---
+        function renderMath(elementId) {
+            const element = document.getElementById(elementId);
+            if(element) {
+                renderMathInElement(element, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '\\[', right: '\\]', display: true}, // Preferred
+                        {left: '\\(', right: '\\)', display: false}, // Preferred
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        // --- API & AI CORE ---
+        // AUTO INJECT API KEY FROM ENVIRONMENT
+        const apiKey = ""; 
+
         function toggleKeyModal() {
             const modal = document.getElementById('key-modal');
             modal.classList.toggle('hidden');
@@ -918,16 +967,76 @@
         }
 
         function checkApiKeyStatus() {
-            const hasKey = !!localStorage.getItem('gemini_user_key');
+            const hasKey = !!getUserKey();
             const txt = document.getElementById('key-status-text');
             if(txt) txt.innerText = hasKey ? "API Key 已配置" : "设置 API Key (未配置)";
         }
 
         function getUserKey() {
+            if (apiKey) return apiKey; // Use Environment Key if available
             return localStorage.getItem('gemini_user_key');
         }
 
-        // --- NAVIGATION ---
+        async function callGemini(userQuery, persona, imageData = null) {
+            const userKey = getUserKey();
+            if (!userKey) {
+                toggleKeyModal();
+                throw new Error("Missing API Key");
+            }
+
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${userKey}`;
+            
+            let systemPrompt = "你是考研备考小窝的智能助手。请始终使用中文简体回答。";
+            systemPrompt += " IMPORTANT: 对于数学公式，必须使用标准LaTeX格式。行内公式使用 `\\(` 和 `\\)` 包裹。独立公式块使用 `\\[` 和 `\\]` 包裹。禁止使用 `$` 或 `$$`。";
+
+            if(persona === "duck") {
+                systemPrompt += " 你的说话风格要可爱、治愈、幽默（偶尔带点'嘎'）。回复简短（150字内）。";
+            } else if (persona === "tutor") {
+                systemPrompt += " 你是专业的考研辅导老师。解释清晰，逻辑严密。";
+            } else if (persona === "grader") {
+                systemPrompt += " 你是考研阅卷老师。你需要根据图片内容进行评分和分析。";
+            } else if (persona === "eng-tutor") {
+                systemPrompt += " 你是考研英语二（English II）的专家。擅长生成作文模板和长难句分析。";
+            } else if (persona === "pol-tutor") {
+                systemPrompt += " 你是考研政治专家，熟悉肖秀荣等主流体系。擅长给出标准背诵答案。";
+            }
+
+            const parts = [{ text: userQuery }];
+            
+            let images = [];
+            if (Array.isArray(imageData)) {
+                images = imageData;
+            } else if (imageData && typeof imageData === 'object' && imageData.base64) {
+                images = [imageData];
+            }
+
+            images.forEach(img => {
+                if (img.base64 && img.mimeType) {
+                    parts.push({ inlineData: { mimeType: img.mimeType, data: img.base64 } });
+                }
+            });
+
+            const payload = {
+                contents: [{ parts: parts }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                const data = await response.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "鸭鸭没听清，再说一遍？";
+            } catch (e) {
+                throw e;
+            }
+        }
+
+        // --- NAVIGATION & TABS ---
         function showView(viewId) {
             ['dashboard', 'schedule', 'grader', 'focus', 'notebook'].forEach(v => {
                 document.getElementById('view-' + v).classList.add('hidden');
@@ -941,7 +1050,7 @@
         }
 
         function switchAiTab(tab) {
-            const contents = ['vision', 'quiz', 'sentence', 'memory', 'concept', 'map', 'doc', 'code', 'interview'];
+            const contents = ['vision', 'quiz', 'eng-write', 'sentence', 'code', 'memory', 'concept', 'interview', 'doc'];
             contents.forEach(t => {
                 const content = document.getElementById(`content-${t}`);
                 const btn = document.getElementById(`tab-${t}`);
@@ -956,7 +1065,7 @@
         }
 
         function switchGraderTab(tab) {
-            ['eng', 'trans', 'pol'].forEach(t => {
+            ['cs', 'eng', 'trans', 'pol'].forEach(t => {
                 const el = document.getElementById(`grader-${t}`);
                 const btn = document.getElementById(`tab-grader-${t}`);
                 if(t === tab) { el.classList.remove('hidden'); btn.classList.add('active'); }
@@ -964,12 +1073,428 @@
             });
         }
 
-        // --- MISTAKE NOTEBOOK LOGIC (NEW) ---
+        // --- FEATURE LOGIC ---
+
+        // 1. Vision (Photo + Text)
+        async function analyzeImage() {
+            const text = document.getElementById('vision-text').value.trim();
+            const img = document.getElementById('vision-preview');
+            const output = document.getElementById('vision-output');
+            const btn = document.getElementById('vision-btn');
+            const saveBtn = document.getElementById('vision-save-btn');
+
+            if (!text && !img.dataset.base64) return alert("请输入问题描述或上传图片！");
+
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4 inline"></i> AI 思考中...';
+            output.classList.remove('hidden');
+            output.innerHTML = '<span class="animate-pulse text-indigo-500">正在解析...</span>';
+            saveBtn.classList.add('hidden');
+
+            const prompt = `User Question: "${text}". 
+            (There may be an image associated with this question).
+            Please solve this problem step-by-step. 
+            If it's Math/CS, use LaTeX for formulas.
+            If it's English, translate and explain.
+            If it's Politics, provide the standard answer.`;
+
+            try {
+                const res = await callGemini(prompt, "tutor", img.dataset.base64 ? { base64: img.dataset.base64, mimeType: img.dataset.mimeType } : null);
+                output.innerHTML = marked.parse(res);
+                renderMath('vision-output');
+                saveBtn.classList.remove('hidden');
+            } catch (e) {
+                output.innerHTML = "解析失败，请检查 API Key。";
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "开始解析";
+            }
+        }
+
+        // 2. English Writing (NEW)
+        function setEngType(type) {
+            engWriteType = type;
+            const btnS = document.getElementById('eng-type-small');
+            const btnB = document.getElementById('eng-type-big');
+            if(type === 'small') {
+                btnS.className = "flex-1 py-2 rounded-lg border text-sm font-bold bg-green-500 text-white border-green-500 transition-colors";
+                btnB.className = "flex-1 py-2 rounded-lg border text-sm font-bold bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 transition-colors";
+            } else {
+                btnB.className = "flex-1 py-2 rounded-lg border text-sm font-bold bg-green-500 text-white border-green-500 transition-colors";
+                btnS.className = "flex-1 py-2 rounded-lg border text-sm font-bold bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 transition-colors";
+            }
+        }
+
+        async function generateEngComposition() {
+            const input = document.getElementById('eng-write-input').value.trim();
+            const btn = document.getElementById('eng-write-btn');
+            const output = document.getElementById('eng-write-output');
+            const saveBtn = document.getElementById('eng-write-save-btn');
+
+            if(!input) return alert("请输入关键词或主题");
+
+            btn.disabled = true; btn.innerText = "正在生成模版...";
+            output.classList.remove('hidden'); output.innerHTML = '<span class="animate-pulse text-green-500">正在构建高分模板...</span>';
+            saveBtn.classList.add('hidden');
+
+            const typeStr = engWriteType === 'small' ? "Small Composition (Letter/Notice)" : "Big Composition (Chart/Graph)";
+            const prompt = `Generate a template for English II (考研英语二) ${typeStr}.
+            Topic/Keywords: "${input}".
+            
+            Output in Markdown:
+            1. **Writing Strategy**: Brief tips.
+            2. **Template**: A fill-in-the-blank template suitable for recitation.
+            3. **High-Frequency Phrases**: 5+ useful phrases for this topic.
+            4. **Sentence Structures**: 3+ advanced sentence patterns.`;
+
+            try {
+                const res = await callGemini(prompt, "eng-tutor");
+                output.innerHTML = marked.parse(res);
+                saveBtn.classList.remove('hidden');
+            } catch(e) { output.innerHTML = "生成失败"; }
+            finally { btn.disabled = false; btn.innerText = "生成背诵模板 & 技巧"; }
+        }
+
+        // 3. Code Templates (Modified)
+        async function explainCode() {
+            const input = document.getElementById('code-input').value.trim();
+            const btn = document.getElementById('code-btn');
+            const output = document.getElementById('code-output');
+            const saveBtn = document.getElementById('code-save-btn');
+
+            if(!input) return;
+
+            btn.disabled = true; btn.innerText = "正在生成...";
+            output.classList.remove('hidden'); output.innerHTML = '<span class="animate-pulse text-blue-400">正在手写代码...</span>';
+            saveBtn.classList.add('hidden');
+
+            const prompt = `Generate a standard C++ code template for the algorithm/data structure: "${input}".
+            Target: 408 Computer Science Exam (Handwriting style).
+            
+            Output:
+            1. **Code Template**: Clean C++ code, easy to memorize.
+            2. **Complexity**: Time & Space (use LaTeX).
+            3. **Key Points**: What to be careful about when writing this on paper.`;
+
+            try {
+                const res = await callGemini(prompt, "tutor");
+                output.innerHTML = marked.parse(res);
+                renderMath('code-output');
+                saveBtn.classList.remove('hidden');
+            } catch(e) { output.innerHTML = "生成失败"; }
+            finally { btn.disabled = false; btn.innerText = "生成代码模板"; }
+        }
+
+        // 4. Sentence Breakdown (Image Supported)
+        async function breakSentence() {
+            const text = document.getElementById('sentence-input').value.trim();
+            const img = document.getElementById('sentence-preview');
+            const btn = document.getElementById('sentence-btn');
+            const output = document.getElementById('sentence-output');
+            const saveBtn = document.getElementById('sentence-save-btn');
+
+            if(!text && !img.dataset.base64) return alert("请输入句子或上传图片");
+
+            btn.disabled = true; btn.innerText = "解析中...";
+            output.classList.remove('hidden'); output.innerHTML = '<span class="animate-pulse text-indigo-500">正在拆解长难句...</span>';
+            saveBtn.classList.add('hidden');
+
+            const prompt = `Analyze this English sentence (for English II exam).
+            Text: "${text}"
+            (If image is provided, OCR it first).
+            
+            Output:
+            1. **Translation**: Chinese translation.
+            2. **Structure Analysis**: Subject, Predicate, Object, Clauses.
+            3. **Key Vocabulary**.`;
+
+            try {
+                const res = await callGemini(prompt, "eng-tutor", img.dataset.base64 ? {base64: img.dataset.base64, mimeType: img.dataset.mimeType} : null);
+                output.innerHTML = marked.parse(res);
+                saveBtn.classList.remove('hidden');
+            } catch(e) { output.innerHTML = "解析失败"; }
+            finally { btn.disabled = false; btn.innerText = "一键拆解"; }
+        }
+
+        // 5. Politics Standard Template (Modified)
+        async function solvePolitics() {
+            const text = document.getElementById('pol-q-input').value.trim();
+            const img = document.getElementById('pol-preview');
+            const btn = document.getElementById('pol-grade-btn');
+            const output = document.getElementById('pol-result');
+            const saveBtn = document.getElementById('pol-save-btn');
+
+            if(!text && !img.dataset.base64) return alert("请输入关键词或上传图片");
+
+            btn.disabled = true; btn.innerText = "生成中...";
+            output.classList.remove('hidden'); output.innerHTML = '<span class="animate-pulse text-orange-500">正在检索标准答案...</span>';
+            saveBtn.classList.add('hidden');
+
+            const prompt = `Based on the input (Politics Question/Keywords), provide a STANDARD ANSWER TEMPLATE suitable for memorization.
+            Input: "${text}".
+            
+            Output:
+            1. **Core Principle (原理)**: The Marxist/Maoist principle involved.
+            2. **Standard Answer (背诵版)**: The template answer to write on the exam sheet.
+            3. **Keywords to hit**: What gives you points?`;
+
+            try {
+                const res = await callGemini(prompt, "pol-tutor", img.dataset.base64 ? {base64: img.dataset.base64, mimeType: img.dataset.mimeType} : null);
+                output.innerHTML = marked.parse(res);
+                saveBtn.classList.remove('hidden');
+            } catch(e) { output.innerHTML = "生成失败"; }
+            finally { btn.disabled = false; btn.innerText = "生成标准答题模板"; }
+        }
+
+        // 6. CS 408 Grader (NEW)
+        async function gradeCS() {
+            const img = document.getElementById('cs-grader-preview');
+            const btn = document.getElementById('cs-grade-btn');
+            const output = document.getElementById('cs-grade-result');
+            const saveBtn = document.getElementById('cs-save-btn');
+
+            if(!img.dataset.base64) return alert("请上传图片");
+
+            btn.disabled = true; btn.innerText = "阅卷中...";
+            output.classList.remove('hidden'); output.innerHTML = '<span class="animate-pulse text-purple-500">AI 正在批改...</span>';
+            saveBtn.classList.add('hidden');
+
+            const prompt = `You are a grader for the 408 Computer Science exam. 
+            Analyze the image (Question + Handwritten Answer).
+            1. **Identify Question**: What is being asked?
+            2. **Grade Answer**: Is the logic correct? Any errors?
+            3. **Standard Solution**: Provide the correct steps using LaTeX.`;
+
+            try {
+                const res = await callGemini(prompt, "grader", {base64: img.dataset.base64, mimeType: img.dataset.mimeType});
+                output.innerHTML = marked.parse(res);
+                renderMath('cs-grade-result');
+                saveBtn.classList.remove('hidden');
+            } catch(e) { output.innerHTML = "批改失败"; }
+            finally { btn.disabled = false; btn.innerText = "开始 408 批改"; }
+        }
+
+        // --- OTHER EXISTING FEATURES ---
+        async function generateQuiz() {
+            const subject = document.getElementById('quiz-subject').value;
+            const container = document.getElementById('quiz-output-area');
+            const questionEl = document.getElementById('quiz-question');
+            const answerEl = document.getElementById('quiz-answer');
+            const btn = document.getElementById('quiz-btn');
+
+            btn.disabled = true;
+            questionEl.innerHTML = '生成中...';
+            container.classList.remove('hidden');
+            answerEl.classList.add('hidden');
+
+            const prompt = `Generate a ${subject} multiple choice question for exam.
+            Format:
+            **Question**: ...
+            A... B... C... D...
+            |||
+            **Answer**: ...
+            **Analysis**: ...`;
+
+            try {
+                const res = await callGemini(prompt, "tutor");
+                const parts = res.split('|||');
+                questionEl.innerHTML = marked.parse(parts[0]);
+                renderMath('quiz-question');
+                if(parts[1]) {
+                    answerEl.innerHTML = marked.parse(parts[1]);
+                    renderMath('quiz-answer');
+                }
+            } catch(e) { questionEl.innerText = "生成失败"; }
+            finally { btn.disabled = false; }
+        }
+
+        async function generateMnemonic() {
+            const input = document.getElementById('memory-input').value;
+            const output = document.getElementById('memory-output');
+            const btn = document.getElementById('memory-btn');
+            const saveBtn = document.getElementById('memory-save-btn');
+            
+            if(!input) return;
+            btn.disabled = true;
+            output.classList.remove('hidden'); output.innerHTML = '生成中...';
+            saveBtn.classList.add('hidden');
+
+            try {
+                const res = await callGemini(`Create a mnemonic for: ${input}`, "tutor");
+                output.innerHTML = marked.parse(res);
+                saveBtn.classList.remove('hidden');
+            } catch(e) { output.innerHTML = "失败"; }
+            finally { btn.disabled = false; }
+        }
+
+        async function explainConcept() {
+            const input = document.getElementById('concept-input').value;
+            const output = document.getElementById('concept-output');
+            const btn = document.getElementById('concept-btn');
+            const saveBtn = document.getElementById('concept-save-btn');
+            
+            if(!input) return;
+            btn.disabled = true;
+            output.classList.remove('hidden'); output.innerHTML = '生成中...';
+            saveBtn.classList.add('hidden');
+
+            try {
+                const res = await callGemini(`Explain concept: ${input} for exam.`, "tutor");
+                output.innerHTML = marked.parse(res);
+                renderMath('concept-output');
+                saveBtn.classList.remove('hidden');
+            } catch(e) { output.innerHTML = "失败"; }
+            finally { btn.disabled = false; }
+        }
+
+        async function processDoc() {
+            const img = document.getElementById('doc-preview');
+            const output = document.getElementById('doc-summary');
+            const text = document.getElementById('doc-text');
+            const resultArea = document.getElementById('doc-result');
+            const btn = document.getElementById('doc-btn');
+
+            if(!img.dataset.base64) return;
+            btn.disabled = true;
+            resultArea.classList.remove('hidden');
+            output.innerHTML = '识别中...';
+
+            try {
+                const res = await callGemini("OCR and Summarize this document.", "tutor", {base64: img.dataset.base64, mimeType: img.dataset.mimeType});
+                output.innerHTML = marked.parse(res);
+                text.innerText = res; // Simple fallback
+            } catch(e) { output.innerHTML = "失败"; }
+            finally { btn.disabled = false; }
+        }
+
+        function copyDocText() {
+            navigator.clipboard.writeText(document.getElementById('doc-text').innerText);
+            alert("已复制");
+        }
+
+        async function startInterview() {
+            const topic = document.getElementById('interview-topic').value;
+            const qDiv = document.getElementById('interview-question');
+            const area = document.getElementById('interview-area');
+            const btn = document.getElementById('interview-start-btn');
+
+            area.classList.remove('hidden');
+            btn.disabled = true;
+            qDiv.innerText = "面试官思考中...";
+            
+            try {
+                const res = await callGemini(`Ask a tough interview question about ${topic}`, "tutor");
+                qDiv.innerText = res;
+            } catch(e) { qDiv.innerText = "Error"; }
+            finally { btn.disabled = false; }
+        }
+
+        async function submitInterviewAnswer() {
+            const q = document.getElementById('interview-question').innerText;
+            const a = document.getElementById('interview-answer').value;
+            const fb = document.getElementById('interview-feedback');
+            const btn = document.getElementById('interview-submit-btn');
+            const saveBtn = document.getElementById('interview-save-btn');
+
+            if(!a) return;
+            btn.disabled = true;
+            fb.classList.remove('hidden'); fb.innerHTML = '点评中...';
+            saveBtn.classList.add('hidden');
+
+            try {
+                const res = await callGemini(`Question: ${q}\nAnswer: ${a}\nEvaluate this.`, "tutor");
+                fb.innerHTML = marked.parse(res);
+                saveBtn.classList.remove('hidden');
+            } catch(e) { fb.innerHTML = "Error"; }
+            finally { btn.disabled = false; }
+        }
+        
+        async function gradeEssay(type) {
+            const img = document.getElementById('eng-preview');
+            const btn = document.getElementById('eng-grade-btn');
+            const out = document.getElementById('eng-result');
+            const saveBtn = document.getElementById('eng-save-btn');
+
+            if(!img.dataset.base64) return alert("请上传图片");
+            
+            btn.disabled = true;
+            out.classList.remove('hidden'); out.innerHTML = "阅卷中...";
+            saveBtn.classList.add('hidden');
+
+            try {
+                const res = await callGemini("Grade this English Essay. Give score /25.", "grader", {base64: img.dataset.base64, mimeType: img.dataset.mimeType});
+                out.innerHTML = marked.parse(res);
+                saveBtn.classList.remove('hidden');
+            } catch(e) { out.innerHTML = "Error"; }
+            finally { btn.disabled = false; }
+        }
+
+        async function gradeTranslation() {
+            const src = document.getElementById('trans-source-preview');
+            const tgt = document.getElementById('trans-target-preview');
+            const btn = document.getElementById('trans-grade-btn');
+            const out = document.getElementById('trans-result');
+            const saveBtn = document.getElementById('trans-save-btn');
+
+            if(!src.dataset.base64 || !tgt.dataset.base64) return alert("请上传两张图");
+
+            btn.disabled = true;
+            out.classList.remove('hidden'); out.innerHTML = "比对中...";
+            saveBtn.classList.add('hidden');
+
+            const imgs = [
+                {base64: src.dataset.base64, mimeType: src.dataset.mimeType},
+                {base64: tgt.dataset.base64, mimeType: tgt.dataset.mimeType}
+            ];
+
+            try {
+                const res = await callGemini("Compare Source and Translation. Grade it.", "grader", imgs);
+                out.innerHTML = marked.parse(res);
+                saveBtn.classList.remove('hidden');
+            } catch(e) { out.innerHTML = "Error"; }
+            finally { btn.disabled = false; }
+        }
+
+        // --- NOTEBOOK SAVE SYSTEM ---
         let mistakes = JSON.parse(localStorage.getItem('22408_mistakes') || '[]');
 
         function showAddMistakeModal() {
             document.getElementById('m-question').value = '';
             document.getElementById('m-note').value = '';
+            document.getElementById('mistake-modal').classList.remove('hidden');
+        }
+
+        function saveResultToNotebook(sourceId, inputElId, outputElId) {
+            let question = "";
+            let answer = "";
+            let subject = "math"; // default
+
+            // Extract Question
+            const inputEl = document.getElementById(inputElId);
+            if(inputEl) {
+                if(inputEl.tagName === 'IMG') {
+                    question = `[图片错题] (来自 ${sourceId})`; 
+                } else if (inputEl.tagName === 'TEXTAREA' || inputEl.tagName === 'INPUT') {
+                    question = inputEl.value || inputEl.innerText;
+                } else {
+                    question = inputEl.innerText;
+                }
+            }
+            if(!question) question = "AI 生成题目";
+
+            // Extract Answer
+            const outputEl = document.getElementById(outputElId);
+            if(outputEl) answer = outputEl.innerText; // Plain text for preview
+
+            // Determine Subject
+            if(sourceId.includes('eng') || sourceId.includes('sentence') || sourceId.includes('trans')) subject = 'eng';
+            else if(sourceId.includes('pol')) subject = 'pol';
+            else if(sourceId.includes('cs') || sourceId.includes('code')) subject = 'cs';
+
+            // Open Modal with Pre-filled data
+            document.getElementById('m-subject').value = subject;
+            document.getElementById('m-question').value = question;
+            document.getElementById('m-note').value = answer;
             document.getElementById('mistake-modal').classList.remove('hidden');
         }
 
@@ -993,6 +1518,7 @@
             localStorage.setItem('22408_mistakes', JSON.stringify(mistakes));
             renderMistakes();
             document.getElementById('mistake-modal').classList.add('hidden');
+            alert("已保存到错题本！");
         }
 
         function deleteMistake(id) {
@@ -1020,6 +1546,8 @@
                         case 'eng': tagClass = 'tag-eng'; subjName = '英语'; break;
                         case 'pol': tagClass = 'tag-pol'; subjName = '政治'; break;
                     }
+                    
+                    const qHtml = marked.parse(m.question);
 
                     const div = document.createElement('div');
                     div.className = 'bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 p-4 rounded-xl mistake-card cursor-pointer relative group';
@@ -1029,15 +1557,18 @@
                             <span class="text-[10px] font-bold px-2 py-1 rounded ${tagClass}">${subjName}</span>
                             <span class="text-[10px] text-slate-400">${m.date}</span>
                         </div>
-                        <p class="text-sm font-medium text-slate-700 dark:text-slate-200 line-clamp-2 mb-2">${m.question}</p>
+                        <div class="text-sm font-medium text-slate-700 dark:text-slate-200 mb-2 mistake-preview-content prose dark:prose-invert max-w-none prose-p:my-0">
+                            ${qHtml}
+                        </div>
                         <div class="flex justify-between items-center mt-2">
-                            <span class="text-xs text-slate-400 truncate max-w-[70%]">${m.note || '无备注'}</span>
+                            <span class="text-xs text-slate-400 truncate max-w-[70%]">${m.note ? '有笔记/解析' : '无备注'}</span>
                             <button onclick="deleteMistake(${m.id})" class="p-1 text-slate-300 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </div>
                     `;
                     list.appendChild(div);
                 });
                 lucide.createIcons();
+                setTimeout(() => renderMath('mistake-list'), 0);
             }
         }
 
@@ -1050,19 +1581,28 @@
             const analysisDiv = document.getElementById('md-analysis');
             const analysisContent = document.getElementById('md-analysis-content');
 
+            const qHtml = marked.parse(m.question || '');
+            const noteHtml = marked.parse(m.note || '无');
+
             content.innerHTML = `
                 <div class="mb-4">
                     <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Question</span>
-                    <p class="text-base font-medium text-slate-800 dark:text-white mt-1 whitespace-pre-wrap">${m.question}</p>
+                    <div class="text-base font-medium text-slate-800 dark:text-white mt-1 prose dark:prose-invert max-w-none">
+                        ${qHtml}
+                    </div>
                 </div>
                 <div>
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">My Notes</span>
-                    <p class="text-sm text-slate-600 dark:text-slate-300 mt-1 whitespace-pre-wrap">${m.note || '无'}</p>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Note / AI Answer</span>
+                    <div class="text-sm text-slate-600 dark:text-slate-300 mt-1 prose dark:prose-invert max-w-none">
+                        ${noteHtml}
+                    </div>
                 </div>
                 <button onclick="analyzeMistake(${m.id})" class="mt-4 w-full bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-300 py-2 rounded-lg text-sm font-bold hover:bg-indigo-100 transition-colors flex items-center justify-center gap-2">
                     <i data-lucide="brain-circuit" class="w-4 h-4"></i> 让 AI 深度分析此题
                 </button>
             `;
+            
+            setTimeout(() => renderMath('md-content'), 0);
 
             if(m.analysis) {
                 analysisDiv.classList.remove('hidden');
@@ -1087,238 +1627,36 @@
             btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4"></i> 分析中...';
             
             analysisDiv.classList.remove('hidden');
-            analysisContent.innerHTML = '<span class="animate-pulse">AI 正在诊断你的错误点...</span>';
+            analysisContent.innerHTML = '<span class="animate-pulse">AI 正在诊断...</span>';
 
-            const prompt = `我做错了一道考研${m.subject}题。
-            题目/描述：${m.question}
-            我的备注/想法：${m.note}
-            请帮我分析：
-            1. **考察知识点**：这道题考什么？
-            2. **可能的思维误区**：为什么会错？
-            3. **举一反三**：给出一个类似的简短例子或记忆口诀。
-            请用 Markdown 格式输出，公式使用 LaTeX格式（$...$）。`;
+            const prompt = `Analyze this mistake for exam.
+            Question: ${m.question}
+            Student Note: ${m.note}
+            
+            Output:
+            1. Knowledge Point.
+            2. Common Pitfalls.
+            3. A similar short example.`;
 
             try {
                 const res = await callGemini(prompt, "tutor");
-                m.analysis = res; // Save analysis
+                m.analysis = res;
                 localStorage.setItem('22408_mistakes', JSON.stringify(mistakes));
                 
                 analysisContent.innerHTML = marked.parse(res);
                 renderMath('md-analysis-content');
                 btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> 分析完成';
             } catch(e) {
-                analysisContent.innerText = "分析失败，请检查网络或 Key。";
+                analysisContent.innerText = "分析失败";
                 btn.disabled = false;
                 btn.innerText = "重试";
             }
         }
 
-        // --- KNOWLEDGE MAP LOGIC (NEW) ---
-        async function generateMap() {
-            const input = document.getElementById('map-input');
-            const btn = document.getElementById('map-btn');
-            const output = document.getElementById('map-output');
-            const errorDiv = document.getElementById('map-error');
-            const topic = input.value.trim();
-
-            if (!topic) return;
-
-            btn.disabled = true;
-            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4 inline"></i>';
-            output.classList.add('hidden');
-            errorDiv.classList.add('hidden');
-            
-            const prompt = `Create a mermaid.js mindmap for the concept: "${topic}". 
-            Focus on key hierarchy and connections relevant to Computer Science or Math exams.
-            Output ONLY the raw mermaid code starting with "mindmap" and ending with the last node. 
-            Do not include markdown code blocks (like \`\`\`mermaid). 
-            Do not add any conversational text.
-            Example format:
-            mindmap
-              root((Main Topic))
-                Subtopic 1
-                  Detail A
-                  Detail B
-                Subtopic 2
-                  Detail C`;
-
-            try {
-                const res = await callGemini(prompt, "tutor");
-                // Clean up potential markdown code blocks if Gemini adds them
-                let cleanCode = res.replace(/```mermaid/g, '').replace(/```/g, '').trim();
-                
-                output.innerHTML = cleanCode;
-                output.classList.remove('hidden');
-                
-                // Render mermaid
-                await mermaid.run({
-                    nodes: [output]
-                });
-                
-            } catch(e) {
-                console.error(e);
-                errorDiv.innerText = "生成失败，请重试。Gemini 偶尔会抽风，再试一次可能就好了。";
-                errorDiv.classList.remove('hidden');
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "生成导图";
-            }
-        }
-
-        // --- DOC AI LOGIC (NEW) ---
-        async function processDoc() {
-            const img = document.getElementById('doc-preview');
-            const btn = document.getElementById('doc-btn');
-            const resultArea = document.getElementById('doc-result');
-            const summaryArea = document.getElementById('doc-summary');
-            const textArea = document.getElementById('doc-text');
-
-            if(!img.dataset.base64) return alert("请先上传图片");
-
-            btn.disabled = true;
-            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4 inline"></i> 正在识别与分析...';
-            resultArea.classList.remove('hidden');
-            summaryArea.innerHTML = '<span class="animate-pulse">AI 正在阅读文档...</span>';
-            textArea.innerHTML = '...';
-
-            const prompt = `This is an image of a study document (notes, textbook, or exam paper).
-            1. **OCR**: Transcribe the text content accurately.
-            2. **Summary**: Provide a concise summary of the key points in Chinese Markdown.
-            
-            Output format:
-            [SUMMARY_START]
-            (Your summary here)
-            [SUMMARY_END]
-            [TEXT_START]
-            (The transcribed text here)
-            [TEXT_END]`;
-
-            try {
-                const res = await callGemini(prompt, "vision", [{ base64: img.dataset.base64, mimeType: img.dataset.mimeType }]);
-                
-                // Simple parsing
-                const summaryMatch = res.match(/\[SUMMARY_START\]([\s\S]*?)\[SUMMARY_END\]/);
-                const textMatch = res.match(/\[TEXT_START\]([\s\S]*?)\[TEXT_END\]/);
-
-                const summary = summaryMatch ? summaryMatch[1].trim() : "无法生成摘要";
-                const fullText = textMatch ? textMatch[1].trim() : res; // Fallback to full response if format fails
-
-                summaryArea.innerHTML = marked.parse(summary);
-                textArea.innerText = fullText;
-                renderMath('doc-summary');
-
-            } catch(e) {
-                summaryArea.innerText = "识别失败，请检查网络或Key。";
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "提取文字 & 摘要";
-            }
-        }
-
-        function copyDocText() {
-            const text = document.getElementById('doc-text').innerText;
-            navigator.clipboard.writeText(text).then(() => alert("已复制到剪贴板！"));
-        }
-
-        // --- CODE EXPLAINER (NEW) ---
-        async function explainCode() {
-            const code = document.getElementById('code-input').value.trim();
-            const btn = document.getElementById('code-btn');
-            const output = document.getElementById('code-output');
-
-            if(!code) return;
-
-            btn.disabled = true;
-            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4"></i> 分析中...';
-            output.classList.remove('hidden');
-            output.innerHTML = '<span class="animate-pulse text-blue-400">正在逐行分析代码逻辑...</span>';
-
-            const prompt = `Explain this code snippet (C++/Pseudo-code/Python) for a Computer Science student.
-            Code:
-            ${code}
-            
-            Output in Chinese Markdown:
-            1. **Logic**: Step-by-step explanation.
-            2. **Complexity**: Time and Space complexity analysis (use LaTeX for Big O).
-            3. **Optimization**: Any suggestions to improve it?`;
-
-            try {
-                const res = await callGemini(prompt, "tutor");
-                output.innerHTML = marked.parse(res);
-                renderMath('code-output');
-            } catch(e) {
-                output.innerText = "分析失败，请重试。";
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "解释代码";
-            }
-        }
-
-        // --- MOCK INTERVIEW (NEW) ---
-        let interviewHistory = [];
-
-        async function startInterview() {
-            const topic = document.getElementById('interview-topic').value;
-            const area = document.getElementById('interview-area');
-            const qDiv = document.getElementById('interview-question');
-            const btn = document.getElementById('interview-start-btn');
-
-            btn.disabled = true;
-            area.classList.remove('hidden');
-            qDiv.innerHTML = '<span class="animate-pulse">面试官正在翻阅简历...</span>';
-            document.getElementById('interview-feedback').classList.add('hidden');
-            document.getElementById('interview-answer').value = '';
-
-            const prompt = `You are a strict interviewer for a Computer Science Master's degree admission.
-            Topic: ${topic}.
-            Ask me ONE challenging question about this topic. Only output the question.`;
-
-            try {
-                const res = await callGemini(prompt, "tutor");
-                qDiv.innerText = res;
-                interviewHistory = [{role: 'user', parts: [{text: prompt}]}, {role: 'model', parts: [{text: res}]}];
-            } catch(e) {
-                qDiv.innerText = "面试官掉线了...";
-                btn.disabled = false;
-            }
-        }
-
-        async function submitInterviewAnswer() {
-            const answer = document.getElementById('interview-answer').value.trim();
-            const feedbackDiv = document.getElementById('interview-feedback');
-            const btn = document.getElementById('interview-submit-btn');
-
-            if(!answer) return;
-
-            btn.disabled = true;
-            btn.innerText = "面试官点评中...";
-            feedbackDiv.classList.remove('hidden');
-            feedbackDiv.innerHTML = '<span class="animate-pulse">正在评分...</span>';
-
-            const prompt = `My answer: "${answer}".
-            Please evaluate my answer in Chinese.
-            1. **Score**: 1-10.
-            2. **Feedback**: What was good/bad?
-            3. **Better Answer**: How to answer perfectly?`;
-
-            try {
-                const res = await callGemini(prompt, "tutor"); // Context is lost in single turn, but enough for feedback
-                feedbackDiv.innerHTML = marked.parse(res);
-            } catch(e) {
-                feedbackDiv.innerText = "点评失败。";
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "提交回答";
-                document.getElementById('interview-start-btn').disabled = false; // Allow next question
-                document.getElementById('interview-start-btn').innerText = "下一题";
-            }
-        }
-
-
-        // --- DATA BACKUP (NEW) ---
+        // --- DATA BACKUP ---
         function exportData() {
             const data = {
-                v: '30',
+                v: '40',
                 date: new Date().toISOString(),
                 mistakes: JSON.parse(localStorage.getItem('22408_mistakes') || '[]'),
                 mainData: JSON.parse(localStorage.getItem('22408_v23_data') || '{}'),
@@ -1339,33 +1677,27 @@
             reader.onload = (e) => {
                 try {
                     const data = JSON.parse(e.target.result);
-                    if(confirm(`确认恢复 ${data.date.slice(0,10)} 的备份吗？当前数据将被覆盖。`)) {
+                    if(confirm(`确认恢复 ${data.date.slice(0,10)} 的备份吗？`)) {
                         if(data.mistakes) localStorage.setItem('22408_mistakes', JSON.stringify(data.mistakes));
                         if(data.mainData) localStorage.setItem('22408_v23_data', JSON.stringify(data.mainData));
                         if(data.memo) localStorage.setItem('22408_v22_memo', data.memo);
-                        alert("恢复成功！页面将刷新。");
+                        alert("恢复成功！");
                         location.reload();
                     }
-                } catch(err) {
-                    alert("文件格式错误");
-                }
+                } catch(err) { alert("文件格式错误"); }
             };
             reader.readAsText(file);
-            input.value = ''; // reset
+            input.value = '';
         }
 
-        // --- IMAGE HANDLING ---
         function handleGenericImageUpload(event, previewId, fileInputId) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = document.getElementById(previewId);
                 img.src = e.target.result;
                 document.getElementById(previewId + '-container').classList.remove('hidden');
-                
-                // Store metadata
                 img.dataset.base64 = e.target.result.split(',')[1];
                 img.dataset.mimeType = file.type;
             };
@@ -1381,36 +1713,29 @@
             document.getElementById(fileInputId).value = '';
         }
 
-        // --- DUCK & AI ---
+        // --- DUCK CHAT (PRESERVED) ---
         let aiMode = false;
-
         function changeQuote() {
             if (aiMode) return;
             const r = Math.floor(Math.random() * duckQuotes.length);
             const quoteEl = document.getElementById('duck-quote');
             if(quoteEl) quoteEl.innerText = duckQuotes[r];
         }
-
         async function getAIMoodMessage(mood) {
             if (aiMode) return;
             const duckQuote = document.getElementById('duck-quote');
             duckQuote.innerText = "鸭鸭正在思考... 💭";
-            
             const prompts = {
-                tired: "我是一个备考22408的考生，现在感觉很累，只剩28天了。请给我一句温暖的、具体的休息建议和鼓励，像朋友一样。简短一点。",
-                anxious: "我是一个备考22408的考生，现在非常焦虑，觉得复习不完了。请温柔地安抚我，告诉我大家都是这样的，只要稳住就行。简短一点。",
-                confident: "我是一个备考22408的考生，现在感觉状态很好！请狠狠地夸奖我，并提醒我保持这种势头。简短一点。"
+                tired: "我累了，求鼓励。",
+                anxious: "我焦虑，求安慰。",
+                confident: "我状态好，求夸奖。"
             };
-
             try {
                 const response = await callGemini(prompts[mood], "duck");
                 duckQuote.innerText = response;
                 speakDuck(response);
-            } catch (e) {
-                duckQuote.innerText = "鸭鸭掉线了，不过抱抱你！(请检查 Key 设置)";
-            }
+            } catch (e) { duckQuote.innerText = "鸭鸭掉线了"; }
         }
-
         function toggleAIMode() {
             aiMode = !aiMode;
             const quoteContainer = document.getElementById('duck-quote-container');
@@ -1419,537 +1744,67 @@
             const moodBtns = document.getElementById('mood-buttons');
 
             if (aiMode) {
-                quoteContainer.classList.add('hidden');
-                chatContainer.classList.remove('hidden');
-                moodBtns.classList.add('hidden');
+                quoteContainer.classList.add('hidden'); chatContainer.classList.remove('hidden'); moodBtns.classList.add('hidden');
                 toggleBtn.innerHTML = '<i data-lucide="x" class="w-3 h-3"></i> 退出聊天';
                 toggleBtn.classList.replace('from-indigo-500', 'from-slate-500');
                 toggleBtn.classList.replace('to-purple-500', 'to-slate-500');
-                document.getElementById('ai-response-area').innerText = "鸭鸭正在听... (请问我关于22408的问题)";
                 lucide.createIcons();
             } else {
-                quoteContainer.classList.remove('hidden');
-                chatContainer.classList.add('hidden');
-                moodBtns.classList.remove('hidden');
+                quoteContainer.classList.remove('hidden'); chatContainer.classList.add('hidden'); moodBtns.classList.remove('hidden');
                 toggleBtn.innerHTML = '<i data-lucide="sparkles" class="w-3 h-3"></i> 问问鸭鸭';
                 toggleBtn.classList.replace('from-slate-500', 'from-indigo-500');
                 toggleBtn.classList.replace('to-slate-500', 'to-purple-500');
-                changeQuote();
                 lucide.createIcons();
             }
         }
-
-        function handleEnter(e) {
-            if (e.key === 'Enter') askDuck();
-        }
-
-        function triggerQuickAction(text) {
-            const input = document.getElementById('ai-input');
-            input.value = text;
-            input.focus();
-        }
-
+        function handleEnter(e) { if (e.key === 'Enter') askDuck(); }
+        function triggerQuickAction(text) { document.getElementById('ai-input').value = text; document.getElementById('ai-input').focus(); }
         async function askDuck() {
             const input = document.getElementById('ai-input');
             const responseArea = document.getElementById('ai-response-area');
             const query = input.value.trim();
-            
             if (!query) return;
-
-            input.value = '';
-            input.disabled = true;
-            responseArea.innerHTML = '<span class="animate-pulse">鸭鸭思考中... <i data-lucide="loader-2" class="inline w-4 h-4 animate-spin"></i></span>';
-            lucide.createIcons();
-
+            input.value = ''; input.disabled = true;
+            responseArea.innerHTML = '<span class="animate-pulse">鸭鸭思考中...</span>';
             try {
                 const response = await callGemini(query, "duck");
                 responseArea.innerHTML = marked.parse(response);
-                renderMath('ai-response-area');
                 speakDuck(response);
-            } catch (error) {
-                responseArea.innerHTML = '<span class="text-pink-500">鸭鸭掉线了... (请在左下角设置 API Key)</span>';
-            } finally {
-                input.disabled = false;
-                input.focus();
-            }
+            } catch (error) { responseArea.innerHTML = '鸭鸭掉线了'; } 
+            finally { input.disabled = false; input.focus(); }
         }
-
-        // --- TTS ---
+        
         async function speakDuck(text) {
-            const key = getUserKey();
-            if (!key) return; // No TTS without key
-
-            const txt = text || document.getElementById('duck-quote').innerText;
-            if(!txt) return;
-            
-            const duckIconDiv = document.querySelector('div[onclick="changeQuote()"]');
-            if(duckIconDiv) duckIconDiv.classList.add('animate-pulse');
-
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${key}`;
-            const payload = {
-                contents: [{ parts: [{ text: txt }] }],
-                generationConfig: {
-                    responseModalities: ["AUDIO"],
-                    speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } }
-                }
-            };
-            
-            try {
-                const response = await fetch(url, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
-                });
-                
-                if (!response.ok) { return; }
-
-                const data = await response.json();
-                const audioData = data.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-                
-                if(audioData) {
-                    const pcmData = base64ToArrayBuffer(audioData);
-                    const wavData = pcmToWav(pcmData, 24000);
-                    const blob = new Blob([wavData], { type: 'audio/wav' });
-                    const audioUrl = URL.createObjectURL(blob);
-                    const audio = new Audio(audioUrl);
-                    audio.play();
-                }
-            } catch(e) { 
-                console.error(e);
-            } finally {
-                if(duckIconDiv) duckIconDiv.classList.remove('animate-pulse');
+             // TTS Logic (Keep as placeholder or remove if not needed)
+        }
+        
+        // --- TIMER & REPORT ---
+        let tInt, tLeft = 45*60, isRunning = false;
+        function setTimer(m) { resetTimer(); tLeft = m*60; updateT(); }
+        function toggleTimer() {
+            if(isRunning) { clearInterval(tInt); isRunning = false; document.getElementById('timer-status').innerText = "已暂停"; }
+            else {
+                isRunning = true; document.getElementById('timer-status').innerText = "专注中...";
+                tInt = setInterval(() => { tLeft--; updateT(); if(tLeft<=0) { clearInterval(tInt); alert("完成！"); resetTimer(); } }, 1000);
             }
         }
-
-        function base64ToArrayBuffer(base64) {
-            const binaryString = window.atob(base64);
-            const len = binaryString.length;
-            const bytes = new Uint8Array(len);
-            for (let i = 0; i < len; i++) { bytes[i] = binaryString.charCodeAt(i); }
-            return bytes.buffer;
+        function resetTimer() { clearInterval(tInt); isRunning = false; tLeft = 45*60; updateT(); document.getElementById('timer-status').innerText = "点击开始"; }
+        function updateT() {
+            const m = Math.floor(tLeft/60).toString().padStart(2,'0');
+            const s = (tLeft%60).toString().padStart(2,'0');
+            document.getElementById('timer-display').innerText = `${m}:${s}`;
         }
-        function pcmToWav(pcmData, sampleRate = 24000) {
-            const numChannels = 1; const bitsPerSample = 16;
-            const byteRate = sampleRate * numChannels * bitsPerSample / 8;
-            const blockAlign = numChannels * bitsPerSample / 8;
-            const wavData = new ArrayBuffer(44 + pcmData.byteLength);
-            const view = new DataView(wavData);
-            const writeString = (view, offset, string) => { for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i)); };
-            writeString(view, 0, 'RIFF'); view.setUint32(4, 36 + pcmData.byteLength, true); writeString(view, 8, 'WAVE'); writeString(view, 12, 'fmt ');
-            view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, numChannels, true); view.setUint32(24, sampleRate, true);
-            view.setUint32(28, byteRate, true); view.setUint16(32, blockAlign, true); view.setUint16(34, bitsPerSample, true); writeString(view, 36, 'data');
-            view.setUint32(40, pcmData.byteLength, true);
-            new Uint8Array(wavData, 44).set(new Uint8Array(pcmData));
-            return wavData;
+        function startCountdown() {
+            setInterval(() => {
+                const now = new Date().getTime(); const dist = examDate - now; if (dist < 0) return;
+                const d = Math.floor(dist / (1000 * 60 * 60 * 24));
+                const h = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((dist % (1000 * 60)) / 1000);
+                document.getElementById('main-countdown-days').innerHTML = `${d} <span class="text-sm text-slate-400 font-sans font-normal">Days</span>`;
+                document.getElementById('main-countdown-time').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            }, 1000);
         }
-
-        // --- AI VISION ---
-        function handleImageUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = document.getElementById('vision-preview');
-                img.src = e.target.result;
-                document.getElementById('vision-preview-container').classList.remove('hidden');
-                
-                img.dataset.base64 = e.target.result.split(',')[1];
-                img.dataset.mimeType = file.type;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function clearImage() {
-            const img = document.getElementById('vision-preview');
-            img.src = '';
-            delete img.dataset.base64;
-            delete img.dataset.mimeType;
-            document.getElementById('vision-preview-container').classList.add('hidden');
-            document.getElementById('vision-file').value = '';
-            document.getElementById('vision-output').classList.add('hidden');
-        }
-
-        async function analyzeImage() {
-            const img = document.getElementById('vision-preview');
-            const base64 = img.dataset.base64;
-            const mimeType = img.dataset.mimeType;
-            const output = document.getElementById('vision-output');
-            const btn = document.getElementById('vision-btn');
-
-            if (!base64) {
-                alert("请先上传图片！");
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4 inline"></i> AI 正在看题...';
-            output.classList.remove('hidden');
-            output.innerHTML = '<span class="animate-pulse text-indigo-500">正在分析图片内容...</span>';
-            
-            const prompt = `You are a tutor for the Chinese Postgraduate Entrance Exam (22408). 
-            1. Identify the subject of this image (Math, English, Politics, or CS 408).
-            2. If it's text, transcribe it.
-            3. Provide a detailed solution or explanation in Chinese.
-            4. Use LaTeX for math formulas.`;
-
-            try {
-                // Compatible with array signature
-                const response = await callGemini(prompt, "vision", [{ base64: base64, mimeType: mimeType }]);
-                output.innerHTML = marked.parse(response);
-                renderMath('vision-output');
-            } catch (e) {
-                output.innerHTML = "解析失败，请检查 API Key 设置。";
-                console.error(e);
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "开始解析";
-            }
-        }
-
-        // --- AI QUIZ & CONCEPT & SENTENCE & MEMORY ---
-        function renderMath(elementId) {
-            const element = document.getElementById(elementId);
-            if(element) {
-                renderMathInElement(element, {
-                    delimiters: [
-                        {left: '$$', right: '$$', display: true},
-                        {left: '$', right: '$', display: false},
-                        {left: '\\(', right: '\\)', display: false},
-                        {left: '\\[', right: '\\]', display: true}
-                    ],
-                    throwOnError: false
-                });
-            }
-        }
-
-        async function explainConcept() {
-            const input = document.getElementById('concept-input');
-            const btn = document.getElementById('concept-btn');
-            const output = document.getElementById('concept-output');
-            const topic = input.value.trim();
-
-            if (!topic) return;
-
-            btn.disabled = true;
-            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4"></i>';
-            output.classList.remove('hidden');
-            output.innerHTML = '<span class="animate-pulse text-purple-500">生成概念卡片中...</span>';
-            lucide.createIcons();
-
-            const prompt = `You are a tutor for the 22408 Computer Science Master's exam. Explain the concept "${topic}". 
-            Generate a structured summary in Markdown with these exact sections:
-            **核心定义**: 1 sentence.
-            **关键口诀/公式**: Short and memorable. Use standard LaTeX for math (e.g., $$E=mc^2$$).
-            **避坑指南**: What to watch out for in exams.
-            Keep it concise and use Chinese.`;
-
-            try {
-                const response = await callGemini(prompt, "tutor");
-                output.innerHTML = marked.parse(response);
-                renderMath('concept-output');
-            } catch (e) {
-                output.innerHTML = "生成失败，请检查 API Key 设置。";
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "生成卡片";
-            }
-        }
-
-        async function breakSentence() {
-            const input = document.getElementById('sentence-input');
-            const btn = document.getElementById('sentence-btn');
-            const output = document.getElementById('sentence-output');
-            const text = input.value.trim();
-
-            if (!text) return;
-
-            btn.disabled = true;
-            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4"></i> 拆解中...';
-            output.classList.remove('hidden');
-            output.innerHTML = '<span class="animate-pulse text-indigo-500">AI 正在分析句子结构...</span>';
-            
-            const prompt = `Analyze this English sentence for a Chinese student preparing for the Postgraduate Entrance Exam (English II).
-            Sentence: "${text}"
-            
-            Output in Markdown:
-            1. **Translation**: Natural Chinese translation.
-            2. **Structure**: Break down the grammar (Subject, Verb, Object, Clauses).
-            3. **Keywords**: 3-5 key words with meanings.`;
-
-            try {
-                const response = await callGemini(prompt, "tutor");
-                output.innerHTML = marked.parse(response);
-            } catch (e) {
-                output.innerHTML = "分析失败，请检查 API Key 设置。";
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "一键拆解";
-            }
-        }
-
-        async function generateMnemonic() {
-            const input = document.getElementById('memory-input');
-            const btn = document.getElementById('memory-btn');
-            const output = document.getElementById('memory-output');
-            const text = input.value.trim();
-
-            if (!text) return;
-
-            btn.disabled = true;
-            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4"></i> 建造中...';
-            output.classList.remove('hidden');
-            output.innerHTML = '<span class="animate-pulse text-indigo-500">AI 正在构建记忆宫殿...</span>';
-            
-            const prompt = `Create a vivid, memorable mnemonic or 'Memory Palace' story to help remember the following concept or list for the Chinese Postgraduate Entrance Exam (Politics/408).
-            Input: "${text}"
-            
-            Output in Markdown (Chinese):
-            1. **The Mnemonic**: A catchy phrase or funny story.
-            2. **Explanation**: How it maps to the original points.`;
-
-            try {
-                const response = await callGemini(prompt, "tutor");
-                output.innerHTML = marked.parse(response);
-            } catch (e) {
-                output.innerHTML = "生成失败，请检查 API Key 设置。";
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "生成记忆宫殿";
-            }
-        }
-
-        async function generateQuiz() {
-            const subject = document.getElementById('quiz-subject').value;
-            const container = document.getElementById('quiz-output-area');
-            const questionEl = document.getElementById('quiz-question');
-            const answerEl = document.getElementById('quiz-answer');
-            const btn = document.getElementById('quiz-btn');
-
-            btn.disabled = true;
-            btn.innerText = "生成中...";
-            container.classList.remove('hidden');
-            questionEl.innerHTML = '<span class="animate-pulse">正在从题库提取...</span>';
-            answerEl.classList.add('hidden');
-            answerEl.innerHTML = '';
-
-            const prompt = `Generate a specific practice question for the Chinese Graduate Entrance Exam subject: ${subject}. 
-            Format exactly as follows with newlines:
-            
-            **Question**: 
-            [The Question content]
-            
-            **Options** (if applicable):
-            A. ...
-            B. ...
-            C. ...
-            D. ...
-            
-            |||
-            
-            **Answer**: [The correct answer]
-            
-            **Analysis**: 
-            [Short explanation in Chinese. Use LaTeX for math formulas like $x^2$ or $$O(n \log n)$$]
-            
-            Use the separator "|||" strictly to separate question and answer. Add plenty of newlines for readability.`;
-
-            try {
-                const response = await callGemini(prompt, "tutor");
-                const parts = response.split('|||');
-                questionEl.innerHTML = marked.parse(parts[0]);
-                renderMath('quiz-question');
-                
-                if (parts[1]) {
-                    answerEl.innerHTML = marked.parse(parts[1]);
-                    renderMath('quiz-answer'); 
-                } else {
-                    answerEl.innerText = "解析生成失败，请重试。";
-                }
-            } catch (e) {
-                questionEl.innerText = "生成失败，请检查网络或 API Key。";
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "出题";
-            }
-        }
-
-        // --- AI GRADER (V2.0: Updated Logic) ---
-        async function gradeEssay(type) {
-            // type: 'english' or 'politics'
-            const isEng = type === 'english';
-            const imgId = isEng ? 'eng-preview' : 'pol-preview';
-            const btnId = isEng ? 'eng-grade-btn' : 'pol-grade-btn';
-            const resId = isEng ? 'eng-result' : 'pol-result';
-            const qInput = !isEng ? document.getElementById('pol-q-input').value : "";
-
-            const img = document.getElementById(imgId);
-            const btn = document.getElementById(btnId);
-            const out = document.getElementById(resId);
-
-            if(!img.dataset.base64) return alert("请先上传手写图片！");
-
-            btn.disabled = true; btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4 inline"></i> AI 阅卷中...';
-            out.classList.remove('hidden'); out.innerHTML = '<span class="animate-pulse">AI 正在辨认字迹、比对采分点...</span>';
-
-            let prompt = "";
-            if (isEng) {
-                prompt = `Analyze this handwritten English essay image.
-                1. **Handwriting Analysis**: Give a neatness score (0-5) and comment on legibility.
-                2. **Content Grading**: Check grammar, vocabulary, and logic.
-                3. **Strict Score**: Give a score out of 25 based on Exam standards.
-                4. **Advice**: How to improve.`;
-            } else {
-                prompt = `Analyze this handwritten Politics answer image.
-                Context/Question: "${qInput}"
-                1. **Handwriting**: Is it neat enough for the scanner?
-                2. **Xiao Si Check**: Does it contain key points from Xiao Xiurong's 4 sets (Xiao Si)? List the hit keywords.
-                3. **Score**: Estimated score /10.`;
-            }
-
-            try {
-                const res = await callGemini(prompt, "grader", [{ base64: img.dataset.base64, mimeType: img.dataset.mimeType }]);
-                out.innerHTML = marked.parse(res);
-                renderMath(resId); // Ensure math is rendered
-            } catch(e) { out.innerText = "阅卷失败，请检查 API Key 设置。"; }
-            finally { btn.disabled = false; btn.innerText = isEng ? "开始残酷阅卷" : "分析采分点"; }
-        }
-
-        // --- DUAL IMAGE TRANSLATION (NEW) ---
-        async function gradeTranslation() {
-            const srcImg = document.getElementById('trans-source-preview');
-            const tgtImg = document.getElementById('trans-target-preview');
-            const btn = document.getElementById('trans-grade-btn');
-            const out = document.getElementById('trans-result');
-
-            if(!srcImg.dataset.base64 || !tgtImg.dataset.base64) return alert("请上传全部两张图片（原文+译文）");
-
-            btn.disabled = true; btn.innerText = "双流比对中...";
-            out.classList.remove('hidden'); out.innerHTML = '<span class="animate-pulse">AI 正在左右对照原文与你的手写译文...</span>';
-
-            const prompt = `Perform a dual-image analysis for English II Translation.
-            Image 1 is the [Source English Text].
-            Image 2 is the [Student's Handwritten Chinese Translation].
-            
-            Task:
-            1. Transcribe the student's handwriting.
-            2. Compare with the source text.
-            3. Identify **Missing Info** (漏译), **Mistranslations** (误译), and **Chinglish** (翻译腔).
-            4. Provide the standard translation.
-            5. Score out of 15.`;
-
-            const images = [
-                { base64: srcImg.dataset.base64, mimeType: srcImg.dataset.mimeType },
-                { base64: tgtImg.dataset.base64, mimeType: tgtImg.dataset.mimeType }
-            ];
-
-            try {
-                const res = await callGemini(prompt, "grader", images);
-                out.innerHTML = marked.parse(res);
-                renderMath('trans-result'); // Ensure math is rendered
-            } catch(e) { out.innerText = "比对失败，请检查 API Key 设置。"; }
-            finally { btn.disabled = false; btn.innerText = "开始双图对照批改"; }
-        }
-
-        async function generateDailyReport() {
-            const reportBtn = document.getElementById('report-btn');
-            const reportArea = document.getElementById('report-area');
-            
-            const tasks = [
-                { id: 't1', name: '早起背诵', done: document.getElementById('t1').checked },
-                { id: 't2', name: '数学模考', done: document.getElementById('t2').checked },
-                { id: 't3', name: '午休', done: document.getElementById('t3').checked },
-                { id: 't4', name: '408/英语', done: document.getElementById('t4').checked },
-                { id: 't5', name: '晚间复盘', done: document.getElementById('t5').checked },
-                { id: 't6', name: '早睡', done: document.getElementById('t6').checked }
-            ];
-            
-            const doneTasks = tasks.filter(t => t.done).map(t => t.name).join('、');
-            const pendingTasks = tasks.filter(t => !t.done).map(t => t.name).join('、');
-            
-            const prompt = `我今天完成了以下任务：${doneTasks || '无'}。还有这些没做：${pendingTasks || '无'}。请根据我的完成情况，以“备考教练”的身份，给我写一段150字以内的“今日战报”。
-            要求：
-            1. 如果完成度高，狠狠夸我。
-            2. 如果完成度低，温柔地鼓励我，告诉我不怕慢只怕站。
-            3. 给出一条具体的明天复习建议（针对22408考研）。
-            4. 使用Markdown格式，多用emoji。`;
-
-            reportBtn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4"></i> 生成中...';
-            reportArea.classList.remove('hidden');
-            
-            try {
-                const response = await callGemini(prompt, "coach");
-                reportArea.innerHTML = marked.parse(response);
-                reportBtn.innerHTML = '✨ 重新生成战报';
-            } catch (e) {
-                reportArea.innerHTML = "生成失败，请检查 API Key。";
-                reportBtn.innerHTML = '✨ 生成今日战报';
-            }
-        }
-
-        async function callGemini(userQuery, persona, imageData = null, legacyMime = null) {
-            const userKey = getUserKey();
-            if (!userKey) {
-                toggleKeyModal(); // Show modal if key is missing
-                throw new Error("Missing API Key");
-            }
-
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${userKey}`;
-            
-            let systemPrompt = "你是考研备考小窝的智能助手。";
-            if(persona === "duck") {
-                systemPrompt += "你的说话风格要可爱、治愈、幽默（偶尔带点'嘎'）。你的主要任务是鼓励正在备考22408的考生。请保持回复简短精炼（150字以内），多用emoji。";
-            } else if (persona === "tutor") {
-                systemPrompt += "You are a professional Chinese Graduate Entrance Exam tutor. Output strictly in Chinese. IMPORTANT: Use standard LaTeX format for math expressions. Use single $ for inline math (e.g. $a+b$) and double $$ for display math (e.g. $$a+b$$). Do NOT use code blocks for math.";
-            } else if (persona === "coach") {
-                systemPrompt += "你是一位经验丰富的考研教练，说话风格专业、坚定但充满鼓励。";
-            } else if (persona === "vision") {
-                systemPrompt += "You are an expert tutor who can analyze images of study materials (handwritten or printed) and explain them clearly in Chinese.";
-            } else if (persona === "grader") {
-                systemPrompt += "You are a strict grader for the Chinese Postgraduate Entrance Exam. Analyze handwriting, logic, and content. Output in Chinese Markdown. IMPORTANT: Use standard LaTeX format for math expressions. Use single $ for inline math (e.g. $a+b$) and double $$ for display math (e.g. $$a+b$$).";
-            }
-
-            const parts = [{ text: userQuery }];
-            
-            // Flexible Image Handling
-            let images = [];
-            
-            if (Array.isArray(imageData)) {
-                images = imageData;
-            } else if (imageData && typeof imageData === 'object' && imageData.base64) {
-                images = [imageData];
-            } else if (imageData && typeof imageData === 'string') {
-                images = [{ base64: imageData, mimeType: legacyMime }];
-            }
-
-            // Append images to parts
-            images.forEach(img => {
-                if (img.base64 && img.mimeType) {
-                    parts.push({ inlineData: { mimeType: img.mimeType, data: img.base64 } });
-                }
-            });
-
-            const payload = {
-                contents: [{ parts: parts }],
-                systemInstruction: {
-                    parts: [{ text: systemPrompt }]
-                }
-            };
-
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) throw new Error(`API Error: ${response.status}`);
-
-                const data = await response.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "鸭鸭没听清，再说一遍？";
-            } catch (e) {
-                throw e;
-            }
-        }
-
         // --- GREETING ---
         function setGreeting() {
             const h = new Date().getHours();
@@ -1963,127 +1818,57 @@
             if(titleEl) titleEl.innerText = t;
             if(subEl) subEl.innerText = s;
         }
-
-        // --- TIMER ---
-        let tInt, tLeft = 45*60, isRunning = false;
-        function setTimer(m) { resetTimer(); tLeft = m*60; updateT(); }
-        function setCustomTimer() {
-            const val = parseInt(document.getElementById('custom-min').value);
-            if(val > 0) setTimer(val);
-        }
-        function toggleTimer() {
-            if(isRunning) { clearInterval(tInt); isRunning = false; document.getElementById('timer-status').innerText = "已暂停"; }
-            else {
-                isRunning = true; document.getElementById('timer-status').innerText = "专注中...";
-                tInt = setInterval(() => {
-                    tLeft--; updateT();
-                    if(tLeft<=0) { clearInterval(tInt); alert("完成！☕️"); resetTimer(); }
-                }, 1000);
-            }
-        }
-        function resetTimer() { clearInterval(tInt); isRunning = false; tLeft = 45*60; updateT(); document.getElementById('timer-status').innerText = "点击开始"; }
-        function updateT() {
-            const m = Math.floor(tLeft/60).toString().padStart(2,'0');
-            const s = (tLeft%60).toString().padStart(2,'0');
-            document.getElementById('timer-display').innerText = `${m}:${s}`;
-        }
-
-        // --- COUNTDOWN ---
-        function startCountdown() {
-            setInterval(() => {
-                const now = new Date().getTime();
-                const dist = examDate - now;
-                if (dist < 0) return;
-                const d = Math.floor(dist / (1000 * 60 * 60 * 24));
-                const h = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const m = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
-                const s = Math.floor((dist % (1000 * 60)) / 1000);
-                
-                document.getElementById('main-countdown-days').innerHTML = `${d} <span class="text-sm text-slate-400 font-sans font-normal">Days</span>`;
-                document.getElementById('main-countdown-time').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-            }, 1000);
-        }
-
-        // --- DATA & CALC ---
         function calcTotal() {
             if (!document.getElementById('total-score')) return;
-            let t = 0;
-            ['pol','eng','math','cs'].forEach(k => {
-                const el = document.getElementById(`s-${k}`);
-                if (el) t += parseInt(el.value)||0;
-            });
-            document.getElementById('total-score').innerText = t;
-            saveData();
+            let t = 0; ['pol','eng','math','cs'].forEach(k => { const el = document.getElementById(`s-${k}`); if (el) t += parseInt(el.value)||0; });
+            document.getElementById('total-score').innerText = t; saveData();
         }
         function saveProgress() { saveData(); updateProgress(); }
         function updateProgress() {
-            let checked = 0;
-            const ids = ['t1','t2','t3','t4','t5','t6'];
-            ids.forEach(id => { if(document.getElementById(id).checked) checked++; });
+            let checked = 0; ['t1','t2','t3','t4','t5','t6'].forEach(id => { if(document.getElementById(id).checked) checked++; });
             document.getElementById('done-count').innerText = checked;
             const pct = Math.round((checked / 6) * 100);
-            const c = 2 * Math.PI * 28; 
-            const offset = c - (pct / 100) * c;
+            const c = 2 * Math.PI * 28; const offset = c - (pct / 100) * c;
             document.getElementById('progress-ring').style.strokeDashoffset = offset;
             document.getElementById('progress-text').innerText = pct + '%';
         }
-        function toggleWellness(id) {
-            const btn = document.getElementById(id);
-            btn.classList.toggle('done');
-            saveData();
-        }
-        
+        function toggleWellness(id) { document.getElementById(id).classList.toggle('done'); saveData(); }
         function saveData() {
             const data = { scores: {}, tasks: {}, wellness: {} };
-            ['pol','eng','math','cs'].forEach(k => {
-                const el = document.getElementById(`s-${k}`);
-                if (el) data.scores[k] = el.value;
-            });
-            ['t1','t2','t3','t4','t5','t6'].forEach(k => {
-                const el = document.getElementById(k);
-                if (el) data.tasks[k] = el.checked;
-            });
-            ['w-water','w-fruit','w-eye','w-sleep'].forEach(k => {
-                const el = document.getElementById(k);
-                if (el) data.wellness[k] = el.classList.contains('done');
-            });
+            ['pol','eng','math','cs'].forEach(k => { const el = document.getElementById(`s-${k}`); if (el) data.scores[k] = el.value; });
+            ['t1','t2','t3','t4','t5','t6'].forEach(k => { const el = document.getElementById(k); if (el) data.tasks[k] = el.checked; });
+            ['w-water','w-fruit','w-eye','w-sleep'].forEach(k => { const el = document.getElementById(k); if (el) data.wellness[k] = el.classList.contains('done'); });
             localStorage.setItem('22408_v23_data', JSON.stringify(data));
         }
-        
         function loadData() {
             const d = JSON.parse(localStorage.getItem('22408_v23_data') || '{}');
-            // Default Scores
-            if(!d.scores) {
-                if(document.getElementById('s-pol')) document.getElementById('s-pol').value = 65;
-                if(document.getElementById('s-eng')) document.getElementById('s-eng').value = 75;
-                if(document.getElementById('s-math')) document.getElementById('s-math').value = 120;
-                if(document.getElementById('s-cs')) document.getElementById('s-cs').value = 120;
-            } else {
-                ['pol','eng','math','cs'].forEach(k => { if(d.scores[k] && document.getElementById(`s-${k}`)) document.getElementById(`s-${k}`).value = d.scores[k]; });
-            }
+            if(d.scores) ['pol','eng','math','cs'].forEach(k => { if(d.scores[k]) document.getElementById(`s-${k}`).value = d.scores[k]; });
             if(d.tasks) for(let k in d.tasks) { if(document.getElementById(k)) document.getElementById(k).checked = d.tasks[k]; }
             if(d.wellness) for(let k in d.wellness) { if(d.wellness[k] && document.getElementById(k)) document.getElementById(k).classList.add('done'); }
             calcTotal(); updateProgress();
         }
-        
         function resetTasks() {
             if(confirm("开启新的一天？")) {
                 ['t1','t2','t3','t4','t5','t6'].forEach(k => { if(document.getElementById(k)) document.getElementById(k).checked = false; });
                 ['w-water','w-fruit','w-eye','w-sleep'].forEach(k => { if(document.getElementById(k)) document.getElementById(k).classList.remove('done'); });
-                saveProgress();
             }
         }
-
         function toggleDarkMode() {
             if(document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-                document.getElementById('theme-text').innerText = '切换夜间模式';
+                document.documentElement.classList.remove('dark'); localStorage.setItem('theme', 'light'); document.getElementById('theme-text').innerText = '切换夜间模式';
             } else {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-                document.getElementById('theme-text').innerText = '切换日间模式';
+                document.documentElement.classList.add('dark'); localStorage.setItem('theme', 'dark'); document.getElementById('theme-text').innerText = '切换日间模式';
             }
+        }
+        async function generateDailyReport() {
+            const btn = document.getElementById('report-btn');
+            const area = document.getElementById('report-area');
+            const done = ['t1','t2','t3','t4','t5','t6'].filter(id => document.getElementById(id).checked).join(',');
+            btn.innerHTML = '生成中...'; area.classList.remove('hidden');
+            try {
+                const res = await callGemini(`Daily Report. Tasks Done IDs: ${done}`, "coach");
+                area.innerHTML = marked.parse(res); btn.innerText = '刷新战报';
+            } catch(e) { area.innerText = 'Error'; }
         }
     </script>
 </body>
