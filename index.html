@@ -1075,10 +1075,12 @@
         ];
         
         // Available models in order of capability (actual Google AI Studio models)
-        // Priority: Latest 1.5 Flash -> 8B variant -> 2.0 Experimental
+        // Priority: 1.5 Flash Latest -> 2.5 Flash variants -> 8B -> 2.0 Experimental
         const MODELS = [
             'gemini-1.5-flash-latest',        // Highest priority (1.5 Flash Latest - most stable)
-            'gemini-1.5-flash-8b-latest',     // Medium priority (1.5 Flash-8B Latest - lightweight)
+            'gemini-2.5-flash-lite',          // High priority (2.5 Flash Lite - lightweight optimized)
+            'gemini-2.5-flash-live',          // Medium priority (2.5 Flash Live - real-time optimized)
+            'gemini-1.5-flash-8b-latest',     // Lower priority (1.5 Flash-8B Latest - fallback)
             'gemini-2.0-flash-exp'            // Lowest priority (2.0 experimental)
         ];
 
