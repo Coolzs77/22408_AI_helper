@@ -157,19 +157,70 @@
         .ai-content ol { list-style-type: decimal; padding-left: 1.5em; margin-bottom: 1em; }
         .ai-content li { margin-bottom: 0.4em; }
         
-        /* Colorful strong/bold text - cycle through colors */
+        /* Bold text colors - consistent within each heading section */
         .ai-content strong { font-weight: 700; }
-        .ai-content p:nth-child(odd) strong { color: #db2777; } /* Pink */
-        .ai-content p:nth-child(even) strong { color: #2563eb; } /* Blue */
-        .ai-content li:nth-child(3n+1) strong { color: #059669; } /* Green */
-        .ai-content li:nth-child(3n+2) strong { color: #7c3aed; } /* Purple */
-        .ai-content li:nth-child(3n+3) strong { color: #dc2626; } /* Red */
         
-        .dark .ai-content p:nth-child(odd) strong { color: #f472b6; }
-        .dark .ai-content p:nth-child(even) strong { color: #60a5fa; }
-        .dark .ai-content li:nth-child(3n+1) strong { color: #34d399; }
-        .dark .ai-content li:nth-child(3n+2) strong { color: #a78bfa; }
-        .dark .ai-content li:nth-child(3n+3) strong { color: #f87171; }
+        /* H1 sections - Blue for all bold text */
+        .ai-content h1 ~ * strong,
+        .ai-content h1 ~ ul strong,
+        .ai-content h1 ~ ol strong,
+        .ai-content h1 ~ p strong,
+        .ai-content h1 ~ table strong { color: #2563eb !important; }
+        
+        /* H2 sections - Cyan for all bold text */
+        .ai-content h2 ~ * strong,
+        .ai-content h2 ~ ul strong,
+        .ai-content h2 ~ ol strong,
+        .ai-content h2 ~ p strong,
+        .ai-content h2 ~ table strong { color: #0891b2 !important; }
+        
+        /* H3 sections - Green for all bold text */
+        .ai-content h3 ~ * strong,
+        .ai-content h3 ~ ul strong,
+        .ai-content h3 ~ ol strong,
+        .ai-content h3 ~ p strong,
+        .ai-content h3 ~ table strong { color: #059669 !important; }
+        
+        /* H4 sections - Purple for all bold text */
+        .ai-content h4 ~ * strong,
+        .ai-content h4 ~ ul strong,
+        .ai-content h4 ~ ol strong,
+        .ai-content h4 ~ p strong,
+        .ai-content h4 ~ table strong { color: #7c3aed !important; }
+        
+        /* Dark mode */
+        .dark .ai-content h1 ~ * strong,
+        .dark .ai-content h1 ~ ul strong,
+        .dark .ai-content h1 ~ ol strong,
+        .dark .ai-content h1 ~ p strong,
+        .dark .ai-content h1 ~ table strong { color: #60a5fa !important; }
+        
+        .dark .ai-content h2 ~ * strong,
+        .dark .ai-content h2 ~ ul strong,
+        .dark .ai-content h2 ~ ol strong,
+        .dark .ai-content h2 ~ p strong,
+        .dark .ai-content h2 ~ table strong { color: #22d3ee !important; }
+        
+        .dark .ai-content h3 ~ * strong,
+        .dark .ai-content h3 ~ ul strong,
+        .dark .ai-content h3 ~ ol strong,
+        .dark .ai-content h3 ~ p strong,
+        .dark .ai-content h3 ~ table strong { color: #34d399 !important; }
+        
+        .dark .ai-content h4 ~ * strong,
+        .dark .ai-content h4 ~ ul strong,
+        .dark .ai-content h4 ~ ol strong,
+        .dark .ai-content h4 ~ p strong,
+        .dark .ai-content h4 ~ table strong { color: #a78bfa !important; }
+        
+        /* Tables in ai-content */
+        .ai-content table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+        .ai-content table th,
+        .ai-content table td { border: 1px solid #e2e8f0; padding: 0.5em; text-align: left; }
+        .dark .ai-content table th,
+        .dark .ai-content table td { border-color: #475569; }
+        .ai-content table th { background: #f8fafc; font-weight: 700; }
+        .dark .ai-content table th { background: #1e293b; }
         
         .ai-content blockquote { 
             border-left: 4px solid #3b82f6; padding-left: 1em; 
@@ -396,8 +447,8 @@
             </div>
 
             <!-- AI Knowledge Center -->
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                <div class="lg:col-span-3 glass-card p-6 relative group min-h-[350px]">
+            <div class="grid grid-cols-1 gap-6">
+                <div class="glass-card p-6 relative group min-h-[350px]">
                     <h3 class="font-bold text-slate-700 dark:text-slate-200 mb-3 text-sm flex items-center gap-2">
                         <i data-lucide="book-open-check" class="w-4 h-4 text-indigo-500"></i> AI 智囊团
                     </h3>
@@ -649,19 +700,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Progress Ring -->
-                <div class="glass-card p-6 flex flex-col items-center justify-center">
-                    <h4 class="font-bold text-slate-700 dark:text-slate-200 text-xs uppercase mb-4 tracking-widest">Daily Energy</h4>
-                    <div class="relative w-24 h-24">
-                        <svg class="w-full h-full transform -rotate-90">
-                            <circle cx="48" cy="48" r="42" stroke="#f1f5f9" class="dark:stroke-slate-700" stroke-width="8" fill="transparent" />
-                            <circle id="progress-ring" cx="48" cy="48" r="42" stroke="#f472b6" stroke-width="8" fill="transparent" stroke-dasharray="263" stroke-dashoffset="263" class="transition-all duration-1000 rounded-full" stroke-linecap="round"/>
-                        </svg>
-                        <div class="absolute inset-0 flex items-center justify-center text-lg font-black text-slate-600 dark:text-slate-300" id="progress-text">0%</div>
-                    </div>
-                    <p class="text-xs text-slate-400 mt-3">已完成 <span class="text-pink-500 font-bold" id="done-count">0</span>/6 项</p>
                 </div>
             </div>
             
@@ -2151,6 +2189,9 @@
             renderMistakes();
         }
 
+        /**
+         * Render mistake list with proper ai-content styling for colors
+         */
         function renderMistakes() {
             const list = document.getElementById('mistake-list');
             const empty = document.getElementById('notebook-empty');
@@ -2180,7 +2221,7 @@
                             <span class="text-[10px] font-bold px-2 py-1 rounded ${tagClass}">${subjName}</span>
                             <span class="text-[10px] text-slate-400">${m.date}</span>
                         </div>
-                        <div class="text-sm font-medium text-slate-700 dark:text-slate-200 mb-2 mistake-preview-content prose dark:prose-invert max-w-none prose-p:my-0">
+                        <div class="ai-content text-sm mb-2 mistake-preview-content">
                             ${qHtml}
                         </div>
                         <div class="flex justify-between items-center mt-2">
@@ -2195,6 +2236,9 @@
             }
         }
 
+        /**
+         * Open mistake detail modal with proper ai-content styling
+         */
         function openMistakeDetail(id) {
             const m = mistakes.find(x => x.id === id);
             if(!m) return;
@@ -2210,13 +2254,13 @@
             content.innerHTML = `
                 <div class="mb-4">
                     <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Question</span>
-                    <div class="text-base font-medium text-slate-800 dark:text-white mt-1 prose dark:prose-invert max-w-none">
+                    <div class="ai-content text-base mt-1">
                         ${qHtml}
                     </div>
                 </div>
                 <div>
                     <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Note / AI Answer</span>
-                    <div class="text-sm text-slate-600 dark:text-slate-300 mt-1 prose dark:prose-invert max-w-none">
+                    <div class="ai-content text-sm mt-1">
                         ${noteHtml}
                     </div>
                 </div>
@@ -2229,7 +2273,7 @@
 
             if(m.analysis) {
                 analysisDiv.classList.remove('hidden');
-                analysisContent.innerHTML = marked.parse(m.analysis);
+                analysisContent.innerHTML = `<div class="ai-content">${marked.parse(m.analysis)}</div>`;
                 renderMath('md-analysis-content');
             } else {
                 analysisDiv.classList.add('hidden');
@@ -2266,7 +2310,7 @@
                 m.analysis = res;
                 localStorage.setItem('22408_mistakes', JSON.stringify(mistakes));
                 
-                analysisContent.innerHTML = marked.parse(res);
+                analysisContent.innerHTML = `<div class="ai-content">${marked.parse(res)}</div>`;
                 renderMath('md-analysis-content');
                 btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> 分析完成';
             } catch(e) {
