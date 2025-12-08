@@ -129,10 +129,27 @@
         .ai-content { font-size: 0.95rem; line-height: 1.7; color: #334155; }
         .dark .ai-content { color: #e2e8f0; }
         
-        .ai-content h1, .ai-content h2, .ai-content h3 { 
-            margin-top: 1.2em; margin-bottom: 0.6em; font-weight: 800; color: #1e293b; letter-spacing: -0.02em;
+        /* Colorful headings with gradient effects */
+        .ai-content h1 { 
+            margin-top: 1.2em; margin-bottom: 0.6em; font-weight: 800; 
+            color: #1e40af; letter-spacing: -0.02em; font-size: 1.5em;
         }
-        .dark .ai-content h1, .dark .ai-content h2, .dark .ai-content h3 { color: #f1f5f9; }
+        .ai-content h2 { 
+            margin-top: 1.2em; margin-bottom: 0.6em; font-weight: 800; 
+            color: #0891b2; letter-spacing: -0.02em; font-size: 1.3em;
+        }
+        .ai-content h3 { 
+            margin-top: 1.2em; margin-bottom: 0.6em; font-weight: 800; 
+            color: #059669; letter-spacing: -0.02em; font-size: 1.15em;
+        }
+        .ai-content h4 { 
+            margin-top: 1em; margin-bottom: 0.5em; font-weight: 700; 
+            color: #7c3aed; letter-spacing: -0.02em;
+        }
+        .dark .ai-content h1 { color: #60a5fa; }
+        .dark .ai-content h2 { color: #22d3ee; }
+        .dark .ai-content h3 { color: #34d399; }
+        .dark .ai-content h4 { color: #a78bfa; }
         
         .ai-content p { margin-bottom: 1em; }
         
@@ -140,22 +157,35 @@
         .ai-content ol { list-style-type: decimal; padding-left: 1.5em; margin-bottom: 1em; }
         .ai-content li { margin-bottom: 0.4em; }
         
-        .ai-content strong { color: #db2777; font-weight: 700; }
-        .dark .ai-content strong { color: #f472b6; }
+        /* Colorful strong/bold text - cycle through colors */
+        .ai-content strong { font-weight: 700; }
+        .ai-content p:nth-child(odd) strong { color: #db2777; } /* Pink */
+        .ai-content p:nth-child(even) strong { color: #2563eb; } /* Blue */
+        .ai-content li:nth-child(3n+1) strong { color: #059669; } /* Green */
+        .ai-content li:nth-child(3n+2) strong { color: #7c3aed; } /* Purple */
+        .ai-content li:nth-child(3n+3) strong { color: #dc2626; } /* Red */
+        
+        .dark .ai-content p:nth-child(odd) strong { color: #f472b6; }
+        .dark .ai-content p:nth-child(even) strong { color: #60a5fa; }
+        .dark .ai-content li:nth-child(3n+1) strong { color: #34d399; }
+        .dark .ai-content li:nth-child(3n+2) strong { color: #a78bfa; }
+        .dark .ai-content li:nth-child(3n+3) strong { color: #f87171; }
         
         .ai-content blockquote { 
-            border-left: 4px solid #cbd5e1; padding-left: 1em; 
-            color: #64748b; font-style: italic; margin-bottom: 1em; background: #f8fafc; padding: 0.5em 1em; border-radius: 0 8px 8px 0;
+            border-left: 4px solid #3b82f6; padding-left: 1em; 
+            color: #1e40af; font-style: italic; margin-bottom: 1em; 
+            background: #eff6ff; padding: 0.5em 1em; border-radius: 0 8px 8px 0;
         }
         .dark .ai-content blockquote { 
-            border-color: #475569; color: #94a3b8; background: #1e293b; 
+            border-color: #60a5fa; color: #93c5fd; background: #1e3a8a; 
         }
 
         .ai-content code { 
-            background-color: #f1f5f9; color: #ec4899; padding: 0.1em 0.3em; 
+            background-color: #f0fdf4; color: #16a34a; padding: 0.1em 0.3em; 
             border-radius: 0.2em; font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+            border: 1px solid #bbf7d0;
         }
-        .dark .ai-content code { background-color: #334155; color: #fbcfe8; }
+        .dark .ai-content code { background-color: #14532d; color: #86efac; border-color: #166534; }
         
         .katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.5em 0; }
         
@@ -1089,13 +1119,68 @@
             if(persona === "duck") {
                 systemPrompt += " 你的说话风格要可爱、治愈、幽默（偶尔带点'嘎'）。回复简短（150字内）。";
             } else if (persona === "tutor") {
-                systemPrompt += " 你是专业的考研辅导老师。解释清晰，逻辑严密。";
+                systemPrompt += ` 你是专业的考研辅导老师。请提供结构化、有条理的回答：
+                
+**回答要求：**
+1. 使用清晰的标题和分点说明
+2. 对于408计算机科学：
+   - 详细解释算法原理和步骤
+   - 提供时间/空间复杂度分析（使用LaTeX）
+   - 给出易于记忆的代码模板
+   - 指出考试重点和易错点
+3. 对于数学二：
+   - 列出完整的解题步骤
+   - 使用LaTeX标准格式书写公式（行内用 \\( \\)，独立用 \\[ \\]）
+   - 总结关键定理和公式
+   - 提供变式题型思路
+4. 逻辑严密，层次分明，便于理解和记忆`;
             } else if (persona === "grader") {
-                systemPrompt += " 你是考研阅卷老师。你需要根据图片内容进行评分和分析。";
+                systemPrompt += ` 你是资深考研阅卷老师。请按以下结构严格评分：
+                
+**评分标准：**
+1. **题目识别**：准确说明题目要求
+2. **答案分析**：
+   - 逐步检查解题思路是否正确
+   - 指出具体的错误和不足
+   - 评估答案完整性
+3. **评分**：给出具体分数和扣分点
+4. **标准答案**：提供完整规范的标准解答
+5. **改进建议**：说明如何提升答题质量
+
+使用Markdown格式，重点内容用**加粗**标注。`;
             } else if (persona === "eng-tutor") {
-                systemPrompt += " 你是考研英语二（English II）的专家。擅长生成作文模板和长难句分析。";
+                systemPrompt += ` 你是考研英语二（English II）的资深专家。请提供专业指导：
+                
+**英语二专项要求：**
+1. **作文模板**：
+   - 按小作文（应用文）和大作文（图表）分类
+   - 提供万能句式和高分短语
+   - 标注可替换词汇
+   - 给出记忆技巧
+2. **长难句分析**：
+   - 标注句子主干（主谓宾）
+   - 分析从句类型和修饰关系
+   - 提供准确的中文翻译
+   - 列出重点词汇
+3. 使用**加粗**标注关键信息
+4. 格式清晰，便于背诵`;
             } else if (persona === "pol-tutor") {
-                systemPrompt += " 你是考研政治专家，熟悉肖秀荣等主流体系。擅长给出标准背诵答案。";
+                systemPrompt += ` 你是考研政治专家，熟悉肖秀荣、徐涛等主流体系。请提供标准答题模板：
+                
+**政治答题要求：**
+1. **原理阐述**：
+   - 明确指出涉及的马克思主义原理/毛泽东思想/中国特色社会主义理论
+   - 用标准术语表述核心观点
+2. **标准答案（背诵版）**：
+   - 分点作答（序号清晰）
+   - 使用考试评分标准的关键词
+   - 格式规范，便于直接记忆
+3. **得分要点**：
+   - 列出必须答到的关键词
+   - 说明分值分布
+4. **拓展提示**：联系时政热点或其他相关原理
+
+使用**加粗**突出关键术语和得分点。`;
             }
 
             const parts = [{ text: userQuery }];
