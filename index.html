@@ -953,7 +953,7 @@
                 <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
                     <p class="text-xs font-bold text-blue-700 dark:text-blue-300 mb-2">📊 当前状态</p>
                     <p class="text-xs text-blue-600 dark:text-blue-400">当前使用: Key #<span id="current-key-display">1</span> / <span id="total-keys-display">5</span></p>
-                    <p class="text-xs text-blue-600 dark:text-blue-400">当前模型: <span id="current-model-display">gemini-1.5-flash</span></p>
+                    <p class="text-xs text-blue-600 dark:text-blue-400">当前模型: <span id="current-model-display">gemini-2.5-flash-preview-09-2025</span></p>
                     <button onclick="skipToNextKey()" class="mt-2 text-xs bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded transition-colors">⏭️ 跳到下一个Key</button>
                 </div>
                 
@@ -1063,7 +1063,7 @@
 
         // API Key Management with Rotation
         let currentKeyIndex = parseInt(localStorage.getItem('current_key_index') || '0');
-        let currentModel = localStorage.getItem('current_model') || 'gemini-1.5-flash';
+        let currentModel = localStorage.getItem('current_model') || 'gemini-2.5-flash-preview-09-2025';
         
         // Pre-configured API Keys (built-in)
         const BUILTIN_KEYS = [
@@ -1074,14 +1074,13 @@
             'AIzaSyBAP7TbN-nTt1BjZp_jtkh38rqrZophFPE'
         ];
         
-        // Available models - using official model IDs with version snapshots from Google AI Studio
+        // Available models - using official model IDs from Google AI Studio (no 1.5 models)
         const MODELS = [
-            'gemini-1.5-flash',               // Default - original stable model
-            'gemini-2.5-flash-001',           // 2.5 首选 - 高吞吐量标准答案
-            'gemini-2.5-flash-lite-001',      // 2.5 轻量版 - 成本极低，海量日志分析
-            'gemini-2.0-flash-001',           // 2.0 经典版本 - 稳定可靠
-            'gemini-2.0-flash-lite-001',      // 2.0 轻量版
-            'gemini-1.5-flash-8b'             // 1.5 最轻量版 - 最后备用
+            'gemini-2.5-flash-preview-09-2025', // Default - original model
+            'gemini-2.5-flash-001',              // 2.5 首选 - 高吞吐量标准答案
+            'gemini-2.5-flash-lite-001',         // 2.5 轻量版 - 成本极低
+            'gemini-2.0-flash-001',              // 2.0 经典版本 - 稳定可靠
+            'gemini-2.0-flash-lite-001'          // 2.0 轻量版 - 最后备用
         ];
 
         function toggleKeyModal() {
