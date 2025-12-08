@@ -1063,7 +1063,7 @@
 
         // API Key Management with Rotation
         let currentKeyIndex = parseInt(localStorage.getItem('current_key_index') || '0');
-        let currentModel = localStorage.getItem('current_model') || 'gemini-2.5-flash';
+        let currentModel = localStorage.getItem('current_model') || 'gemini-1.5-flash';
         
         // Pre-configured API Keys (built-in)
         const BUILTIN_KEYS = [
@@ -1074,15 +1074,10 @@
             'AIzaSyBAP7TbN-nTt1BjZp_jtkh38rqrZophFPE'
         ];
         
-        // Available models in order of capability (actual Google AI Studio models)
-        // Priority: 2.5 Flash (highest) -> 2.5 variants -> 1.5 Flash -> others
+        // Available models - using exact names from Google AI Studio
         const MODELS = [
-            'gemini-2.5-flash',               // Highest priority (2.5 Flash - best quality)
-            'gemini-2.5-flash-lite',          // High priority (2.5 Flash Lite - lightweight optimized)
-            'gemini-2.5-flash-live',          // Medium-High priority (2.5 Flash Live - real-time optimized)
-            'gemini-1.5-flash-latest',        // Medium priority (1.5 Flash Latest - proven stable)
-            'gemini-1.5-flash-8b-latest',     // Lower priority (1.5 Flash-8B Latest - fallback)
-            'gemini-2.0-flash-exp'            // Lowest priority (2.0 experimental)
+            'gemini-1.5-flash',               // Highest priority - most stable
+            'gemini-1.5-flash-8b'             // Fallback - lightweight
         ];
 
         function toggleKeyModal() {
