@@ -2807,8 +2807,11 @@
             contentClone.style.lineHeight = '1.6';
             contentClone.style.color = '#000';
             
-            // Ensure all content is visible in the clone
+            // Ensure all content is visible in the clone - remove height restrictions
             contentClone.classList.remove('hidden');
+            contentClone.style.maxHeight = 'none';
+            contentClone.style.overflow = 'visible';
+            contentClone.style.height = 'auto';
             
             // Style all conversation entries for PDF
             const conversationEntries = contentClone.querySelectorAll('.conversation-entry');
