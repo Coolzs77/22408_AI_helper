@@ -946,10 +946,17 @@
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
                 如需添加更多Key以提升使用次数，请在下方填入您的 Google Gemini API Key。<br>
                 <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-500 underline font-bold hover:text-indigo-600">点击这里获取免费 Key</a><br>
-                <span class="text-indigo-600 font-semibold">💡 自动策略：多密钥轮换 + 模型降级 (2.0-Flash → 1.5-Pro → 1.5-Flash → 1.5-Flash-8B)</span>
+                <span class="text-indigo-600 font-semibold">💡 自动策略：先用当前模型尝试所有Keys → Keys全部受限后降级模型</span>
             </p>
 
             <div class="space-y-4">
+                <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <p class="text-xs font-bold text-blue-700 dark:text-blue-300 mb-2">📊 当前状态</p>
+                    <p class="text-xs text-blue-600 dark:text-blue-400">当前使用: Key #<span id="current-key-display">1</span> / <span id="total-keys-display">5</span></p>
+                    <p class="text-xs text-blue-600 dark:text-blue-400">当前模型: <span id="current-model-display">gemini-2.5-flash-preview-09-2025</span></p>
+                    <button onclick="skipToNextKey()" class="mt-2 text-xs bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded transition-colors">⏭️ 跳到下一个Key</button>
+                </div>
+                
                 <div>
                     <label class="block text-xs font-bold text-slate-500 mb-1 uppercase tracking-wide">添加额外的 API Keys (可选，每行一个)</label>
                     <textarea id="user-api-key-input" rows="3" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 transition-colors font-mono" placeholder="AIzaSy...&#10;AIzaSy...&#10;(可选，留空则使用内置Key)"></textarea>
@@ -1056,7 +1063,7 @@
 
         // API Key Management with Rotation
         let currentKeyIndex = parseInt(localStorage.getItem('current_key_index') || '0');
-        let currentModel = localStorage.getItem('current_model') || 'gemini-2.5-flash-lite';
+        let currentModel = localStorage.getItem('current_model') || 'gemini-2.5-flash-preview-09-2025';
         
         // Pre-configured API Keys (built-in)
         const BUILTIN_KEYS = [
@@ -1067,14 +1074,13 @@
             'AIzaSyBAP7TbN-nTt1BjZp_jtkh38rqrZophFPE'
         ];
         
-        // Available models in order of capability (high to low)
-        // Priority: 2.5 Flash variants -> 2.0 series -> 1.5 series
+        // Available models - using official model IDs from Google AI Studio (no 1.5 models)
         const MODELS = [
-            'gemini-2.5-flash-lite',          // Highest priority (2.5 Flash Lite - optimized)
-            'gemini-2.5-flash-live',          // High priority (2.5 Flash Live - real-time)
-            'gemini-2.0-flash-exp',           // Medium priority (2.0 series experimental)
-            'gemini-1.5-flash',               // Lower priority (1.5 Flash - standard)
-            'gemini-1.5-flash-8b'             // Lowest priority (1.5 Flash-8B - fallback)
+            'gemini-2.5-flash-preview-09-2025', // Default - original model
+            'gemini-2.5-flash-001',              // 2.5 首选 - 高吞吐量标准答案
+            'gemini-2.5-flash-lite-001',         // 2.5 轻量版 - 成本极低
+            'gemini-2.0-flash-001',              // 2.0 经典版本 - 稳定可靠
+            'gemini-2.0-flash-lite-001'          // 2.0 轻量版 - 最后备用
         ];
 
         function toggleKeyModal() {
@@ -1082,7 +1088,27 @@
             modal.classList.toggle('hidden');
             if(!modal.classList.contains('hidden')) {
                 document.getElementById('user-api-key-input').value = localStorage.getItem('gemini_user_keys') || '';
+                updateKeyModalDisplay();
             }
+        }
+        
+        function updateKeyModalDisplay() {
+            const keys = getUserKeys();
+            document.getElementById('current-key-display').textContent = currentKeyIndex + 1;
+            document.getElementById('total-keys-display').textContent = keys.length;
+            document.getElementById('current-model-display').textContent = getModelDisplayName(currentModel);
+        }
+        
+        function skipToNextKey() {
+            const keys = getUserKeys();
+            if (keys.length <= 1) {
+                alert('只有一个Key，无法跳过');
+                return;
+            }
+            const oldIndex = currentKeyIndex;
+            rotateToNextKey();
+            updateKeyModalDisplay();
+            showToast(`已从 Key #${oldIndex + 1} 跳到 Key #${currentKeyIndex + 1}`, 'success');
         }
 
         function saveUserApiKey() {
@@ -1120,10 +1146,11 @@
         }
 
         function getModelDisplayName(model) {
-            if (model.includes('2.0')) return '2.0-Flash';
-            if (model.includes('1.5-pro')) return '1.5-Pro';
-            if (model.includes('1.5-flash-8b')) return '1.5-Flash-8B';
-            if (model.includes('1.5-flash')) return '1.5-Flash';
+            if (model.includes('2.5-flash-preview')) return '2.5-Flash-Preview';
+            if (model.includes('2.5-flash-lite')) return '2.5-Flash-Lite';
+            if (model.includes('2.5-flash')) return '2.5-Flash';
+            if (model.includes('2.0-flash-lite')) return '2.0-Flash-Lite';
+            if (model.includes('2.0-flash')) return '2.0-Flash';
             return model;
         }
 
@@ -1280,25 +1307,41 @@
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
                     const errorMsg = errorData.error?.message || '';
+                    const errorStatus = errorData.error?.status || '';
                     
-                    // Check for rate limit errors (429 or quota exceeded)
-                    if (response.status === 429 || errorMsg.includes('quota') || errorMsg.includes('RESOURCE_EXHAUSTED')) {
-                        console.warn(`⚠️ Rate limit hit on Key #${currentKeyIndex + 1} with model ${currentModel}`);
+                    // Check for rate limit errors (429, quota exceeded, or resource exhausted)
+                    const isRateLimit = response.status === 429 || 
+                                       errorMsg.toLowerCase().includes('quota') || 
+                                       errorMsg.includes('RESOURCE_EXHAUSTED') ||
+                                       errorStatus === 'RESOURCE_EXHAUSTED' ||
+                                       errorMsg.toLowerCase().includes('rate limit') ||
+                                       errorMsg.toLowerCase().includes('exhausted');
+                    
+                    if (isRateLimit) {
+                        const keys = getUserKeys();
+                        const currentKeyNum = currentKeyIndex + 1;
+                        console.warn(`⚠️ Rate limit hit on Key #${currentKeyNum}/${keys.length} with model ${currentModel}`);
+                        console.log(`Retry count: ${retryCount}, Error: ${response.status} - ${errorMsg}`);
                         
-                        // Strategy 1: Try next API key if available
-                        if (retryCount === 0 && rotateToNextKey()) {
-                            showToast(`Key #${currentKeyIndex} 达到限制，切换到 Key #${currentKeyIndex + 1}...`, 'info');
+                        // Strategy 1: Try ALL keys with current model before downgrading
+                        // retryCount tracks how many keys we've tried with current model
+                        if (retryCount < keys.length - 1) {
+                            rotateToNextKey();
+                            const newKeyNum = currentKeyIndex + 1;
+                            showToast(`Key #${currentKeyNum} 受限，切换到 Key #${newKeyNum}/${keys.length}...`, 'info');
                             return await callGemini(userQuery, persona, imageData, retryCount + 1);
                         }
                         
-                        // Strategy 2: Downgrade to lighter model
-                        if (retryCount <= 1 && downgradeModel()) {
-                            showToast(`切换到更轻量的模型 ${getModelDisplayName(currentModel)}...`, 'info');
-                            return await callGemini(userQuery, persona, imageData, retryCount + 2);
+                        // Strategy 2: All keys exhausted with current model, try lighter model
+                        if (downgradeModel()) {
+                            currentKeyIndex = 0;  // Reset to first key
+                            localStorage.setItem('current_key_index', '0');
+                            showToast(`所有Keys都受限，降级到 ${getModelDisplayName(currentModel)} 并重试...`, 'warning');
+                            return await callGemini(userQuery, persona, imageData, 0);
                         }
                         
                         // All strategies exhausted
-                        throw new Error(`所有 API Keys 都已达到速率限制。请稍后再试，或添加更多 Keys。\n当前已降级到: ${getModelDisplayName(currentModel)}`);
+                        throw new Error(`所有 API Keys (${keys.length}个) 和模型 (${MODELS.length}个) 都已达到速率限制。\n请稍后再试，或添加更多 Keys。`);
                     }
                     
                     throw new Error(`API Error: ${response.status} - ${errorMsg}`);
