@@ -2813,6 +2813,10 @@
             contentClone.style.overflow = 'visible';
             contentClone.style.height = 'auto';
             
+            // CRITICAL: Apply bold colors to the cloned content before PDF generation
+            // This ensures the cloned content has the same color styling as the original
+            applyBoldColors(contentClone);
+            
             // Style all conversation entries for PDF
             const conversationEntries = contentClone.querySelectorAll('.conversation-entry');
             conversationEntries.forEach((entry, index) => {
@@ -2843,22 +2847,44 @@
                 img.style.margin = '10px 0';
             });
             
-            // Ensure colored text is visible in PDF (convert to darker colors for print)
+            // Bold text colors are now set by applyBoldColors, just ensure they're locked in
             const strongElements = contentClone.querySelectorAll('strong');
             strongElements.forEach(strong => {
-                const computedColor = window.getComputedStyle(strong).color;
-                strong.style.color = computedColor; // Lock the current color
+                // Colors are already applied by applyBoldColors above
                 strong.style.fontWeight = 'bold';
             });
             
-            // Style headings for PDF
-            const headings = contentClone.querySelectorAll('h1, h2, h3, h4');
-            headings.forEach(heading => {
-                const computedColor = window.getComputedStyle(heading).color;
-                heading.style.color = computedColor;
-                heading.style.fontWeight = 'bold';
-                heading.style.marginTop = '15px';
-                heading.style.marginBottom = '10px';
+            // Style headings for PDF - lock in their specific colors
+            const h1Elements = contentClone.querySelectorAll('h1');
+            h1Elements.forEach(h1 => {
+                h1.style.color = '#1e40af';
+                h1.style.fontWeight = 'bold';
+                h1.style.marginTop = '15px';
+                h1.style.marginBottom = '10px';
+            });
+            
+            const h2Elements = contentClone.querySelectorAll('h2');
+            h2Elements.forEach(h2 => {
+                h2.style.color = '#0891b2';
+                h2.style.fontWeight = 'bold';
+                h2.style.marginTop = '15px';
+                h2.style.marginBottom = '10px';
+            });
+            
+            const h3Elements = contentClone.querySelectorAll('h3');
+            h3Elements.forEach(h3 => {
+                h3.style.color = '#059669';
+                h3.style.fontWeight = 'bold';
+                h3.style.marginTop = '15px';
+                h3.style.marginBottom = '10px';
+            });
+            
+            const h4Elements = contentClone.querySelectorAll('h4');
+            h4Elements.forEach(h4 => {
+                h4.style.color = '#7c3aed';
+                h4.style.fontWeight = 'bold';
+                h4.style.marginTop = '15px';
+                h4.style.marginBottom = '10px';
             });
             
             pdfWrapper.appendChild(contentClone);
