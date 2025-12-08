@@ -1056,7 +1056,7 @@
 
         // API Key Management with Rotation
         let currentKeyIndex = parseInt(localStorage.getItem('current_key_index') || '0');
-        let currentModel = localStorage.getItem('current_model') || 'gemini-2.5-flash-lite';
+        let currentModel = localStorage.getItem('current_model') || 'gemini-1.5-flash';
         
         // Pre-configured API Keys (built-in)
         const BUILTIN_KEYS = [
@@ -1067,14 +1067,12 @@
             'AIzaSyBAP7TbN-nTt1BjZp_jtkh38rqrZophFPE'
         ];
         
-        // Available models in order of capability (high to low)
-        // Priority: 2.5 Flash variants -> 2.0 series -> 1.5 series
+        // Available models in order of capability (valid Gemini API models only)
+        // Priority: 1.5 Flash (most stable/reliable) -> 1.5 Flash-8B (lightweight) -> 2.0 Experimental
         const MODELS = [
-            'gemini-2.5-flash-lite',          // Highest priority (2.5 Flash Lite - optimized)
-            'gemini-2.5-flash-live',          // High priority (2.5 Flash Live - real-time)
-            'gemini-2.0-flash-exp',           // Medium priority (2.0 series experimental)
-            'gemini-1.5-flash',               // Lower priority (1.5 Flash - standard)
-            'gemini-1.5-flash-8b'             // Lowest priority (1.5 Flash-8B - fallback)
+            'gemini-1.5-flash',               // Highest priority (1.5 Flash - proven stable, free tier)
+            'gemini-1.5-flash-8b',            // Medium priority (1.5 Flash-8B - lightweight fallback)
+            'gemini-2.0-flash-exp'            // Lowest priority (2.0 experimental - may have limits)
         ];
 
         function toggleKeyModal() {
