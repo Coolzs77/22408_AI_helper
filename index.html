@@ -157,61 +157,288 @@
         .ai-content ol { list-style-type: decimal; padding-left: 1.5em; margin-bottom: 1em; }
         .ai-content li { margin-bottom: 0.4em; }
         
-        /* Bold text colors - consistent within each heading section */
+        /* Bold text colors - each lowest-level heading gets a unique color */
         .ai-content strong { font-weight: 700; }
         
-        /* H1 sections - Blue for all bold text */
-        .ai-content h1 ~ * strong,
-        .ai-content h1 ~ ul strong,
-        .ai-content h1 ~ ol strong,
-        .ai-content h1 ~ p strong,
-        .ai-content h1 ~ table strong { color: #2563eb !important; }
+        /* Cycle through 8 distinct colors for different heading sections */
+        /* Color palette: Blue, Cyan, Green, Purple, Pink, Orange, Amber, Red */
         
-        /* H2 sections - Cyan for all bold text */
-        .ai-content h2 ~ * strong,
-        .ai-content h2 ~ ul strong,
-        .ai-content h2 ~ ol strong,
-        .ai-content h2 ~ p strong,
-        .ai-content h2 ~ table strong { color: #0891b2 !important; }
+        /* H4 takes precedence as the lowest level heading */
+        .ai-content h4:nth-of-type(8n+1) ~ * strong,
+        .ai-content h4:nth-of-type(8n+1) ~ ul strong,
+        .ai-content h4:nth-of-type(8n+1) ~ ol strong,
+        .ai-content h4:nth-of-type(8n+1) ~ p strong,
+        .ai-content h4:nth-of-type(8n+1) ~ table strong { color: #2563eb !important; } /* Blue */
         
-        /* H3 sections - Green for all bold text */
-        .ai-content h3 ~ * strong,
-        .ai-content h3 ~ ul strong,
-        .ai-content h3 ~ ol strong,
-        .ai-content h3 ~ p strong,
-        .ai-content h3 ~ table strong { color: #059669 !important; }
+        .ai-content h4:nth-of-type(8n+2) ~ * strong,
+        .ai-content h4:nth-of-type(8n+2) ~ ul strong,
+        .ai-content h4:nth-of-type(8n+2) ~ ol strong,
+        .ai-content h4:nth-of-type(8n+2) ~ p strong,
+        .ai-content h4:nth-of-type(8n+2) ~ table strong { color: #0891b2 !important; } /* Cyan */
         
-        /* H4 sections - Purple for all bold text */
-        .ai-content h4 ~ * strong,
-        .ai-content h4 ~ ul strong,
-        .ai-content h4 ~ ol strong,
-        .ai-content h4 ~ p strong,
-        .ai-content h4 ~ table strong { color: #7c3aed !important; }
+        .ai-content h4:nth-of-type(8n+3) ~ * strong,
+        .ai-content h4:nth-of-type(8n+3) ~ ul strong,
+        .ai-content h4:nth-of-type(8n+3) ~ ol strong,
+        .ai-content h4:nth-of-type(8n+3) ~ p strong,
+        .ai-content h4:nth-of-type(8n+3) ~ table strong { color: #059669 !important; } /* Green */
         
-        /* Dark mode */
-        .dark .ai-content h1 ~ * strong,
-        .dark .ai-content h1 ~ ul strong,
-        .dark .ai-content h1 ~ ol strong,
-        .dark .ai-content h1 ~ p strong,
-        .dark .ai-content h1 ~ table strong { color: #60a5fa !important; }
+        .ai-content h4:nth-of-type(8n+4) ~ * strong,
+        .ai-content h4:nth-of-type(8n+4) ~ ul strong,
+        .ai-content h4:nth-of-type(8n+4) ~ ol strong,
+        .ai-content h4:nth-of-type(8n+4) ~ p strong,
+        .ai-content h4:nth-of-type(8n+4) ~ table strong { color: #7c3aed !important; } /* Purple */
         
-        .dark .ai-content h2 ~ * strong,
-        .dark .ai-content h2 ~ ul strong,
-        .dark .ai-content h2 ~ ol strong,
-        .dark .ai-content h2 ~ p strong,
-        .dark .ai-content h2 ~ table strong { color: #22d3ee !important; }
+        .ai-content h4:nth-of-type(8n+5) ~ * strong,
+        .ai-content h4:nth-of-type(8n+5) ~ ul strong,
+        .ai-content h4:nth-of-type(8n+5) ~ ol strong,
+        .ai-content h4:nth-of-type(8n+5) ~ p strong,
+        .ai-content h4:nth-of-type(8n+5) ~ table strong { color: #db2777 !important; } /* Pink */
         
-        .dark .ai-content h3 ~ * strong,
-        .dark .ai-content h3 ~ ul strong,
-        .dark .ai-content h3 ~ ol strong,
-        .dark .ai-content h3 ~ p strong,
-        .dark .ai-content h3 ~ table strong { color: #34d399 !important; }
+        .ai-content h4:nth-of-type(8n+6) ~ * strong,
+        .ai-content h4:nth-of-type(8n+6) ~ ul strong,
+        .ai-content h4:nth-of-type(8n+6) ~ ol strong,
+        .ai-content h4:nth-of-type(8n+6) ~ p strong,
+        .ai-content h4:nth-of-type(8n+6) ~ table strong { color: #ea580c !important; } /* Orange */
         
-        .dark .ai-content h4 ~ * strong,
-        .dark .ai-content h4 ~ ul strong,
-        .dark .ai-content h4 ~ ol strong,
-        .dark .ai-content h4 ~ p strong,
-        .dark .ai-content h4 ~ table strong { color: #a78bfa !important; }
+        .ai-content h4:nth-of-type(8n+7) ~ * strong,
+        .ai-content h4:nth-of-type(8n+7) ~ ul strong,
+        .ai-content h4:nth-of-type(8n+7) ~ ol strong,
+        .ai-content h4:nth-of-type(8n+7) ~ p strong,
+        .ai-content h4:nth-of-type(8n+7) ~ table strong { color: #d97706 !important; } /* Amber */
+        
+        .ai-content h4:nth-of-type(8n+8) ~ * strong,
+        .ai-content h4:nth-of-type(8n+8) ~ ul strong,
+        .ai-content h4:nth-of-type(8n+8) ~ ol strong,
+        .ai-content h4:nth-of-type(8n+8) ~ p strong,
+        .ai-content h4:nth-of-type(8n+8) ~ table strong { color: #dc2626 !important; } /* Red */
+        
+        /* H3 gets colors when no H4 present */
+        .ai-content h3:nth-of-type(8n+1):not(:has(~ h4)) ~ * strong,
+        .ai-content h3:nth-of-type(8n+1) ~ ul strong,
+        .ai-content h3:nth-of-type(8n+1) ~ ol strong,
+        .ai-content h3:nth-of-type(8n+1) ~ p strong,
+        .ai-content h3:nth-of-type(8n+1) ~ table strong { color: #2563eb !important; }
+        
+        .ai-content h3:nth-of-type(8n+2) ~ * strong,
+        .ai-content h3:nth-of-type(8n+2) ~ ul strong,
+        .ai-content h3:nth-of-type(8n+2) ~ ol strong,
+        .ai-content h3:nth-of-type(8n+2) ~ p strong,
+        .ai-content h3:nth-of-type(8n+2) ~ table strong { color: #0891b2 !important; }
+        
+        .ai-content h3:nth-of-type(8n+3) ~ * strong,
+        .ai-content h3:nth-of-type(8n+3) ~ ul strong,
+        .ai-content h3:nth-of-type(8n+3) ~ ol strong,
+        .ai-content h3:nth-of-type(8n+3) ~ p strong,
+        .ai-content h3:nth-of-type(8n+3) ~ table strong { color: #059669 !important; }
+        
+        .ai-content h3:nth-of-type(8n+4) ~ * strong,
+        .ai-content h3:nth-of-type(8n+4) ~ ul strong,
+        .ai-content h3:nth-of-type(8n+4) ~ ol strong,
+        .ai-content h3:nth-of-type(8n+4) ~ p strong,
+        .ai-content h3:nth-of-type(8n+4) ~ table strong { color: #7c3aed !important; }
+        
+        .ai-content h3:nth-of-type(8n+5) ~ * strong,
+        .ai-content h3:nth-of-type(8n+5) ~ ul strong,
+        .ai-content h3:nth-of-type(8n+5) ~ ol strong,
+        .ai-content h3:nth-of-type(8n+5) ~ p strong,
+        .ai-content h3:nth-of-type(8n+5) ~ table strong { color: #db2777 !important; }
+        
+        .ai-content h3:nth-of-type(8n+6) ~ * strong,
+        .ai-content h3:nth-of-type(8n+6) ~ ul strong,
+        .ai-content h3:nth-of-type(8n+6) ~ ol strong,
+        .ai-content h3:nth-of-type(8n+6) ~ p strong,
+        .ai-content h3:nth-of-type(8n+6) ~ table strong { color: #ea580c !important; }
+        
+        .ai-content h3:nth-of-type(8n+7) ~ * strong,
+        .ai-content h3:nth-of-type(8n+7) ~ ul strong,
+        .ai-content h3:nth-of-type(8n+7) ~ ol strong,
+        .ai-content h3:nth-of-type(8n+7) ~ p strong,
+        .ai-content h3:nth-of-type(8n+7) ~ table strong { color: #d97706 !important; }
+        
+        .ai-content h3:nth-of-type(8n+8) ~ * strong,
+        .ai-content h3:nth-of-type(8n+8) ~ ul strong,
+        .ai-content h3:nth-of-type(8n+8) ~ ol strong,
+        .ai-content h3:nth-of-type(8n+8) ~ p strong,
+        .ai-content h3:nth-of-type(8n+8) ~ table strong { color: #dc2626 !important; }
+        
+        /* H2 gets colors when no H3/H4 present */
+        .ai-content h2:nth-of-type(8n+1) ~ * strong,
+        .ai-content h2:nth-of-type(8n+1) ~ ul strong,
+        .ai-content h2:nth-of-type(8n+1) ~ ol strong,
+        .ai-content h2:nth-of-type(8n+1) ~ p strong,
+        .ai-content h2:nth-of-type(8n+1) ~ table strong { color: #2563eb !important; }
+        
+        .ai-content h2:nth-of-type(8n+2) ~ * strong,
+        .ai-content h2:nth-of-type(8n+2) ~ ul strong,
+        .ai-content h2:nth-of-type(8n+2) ~ ol strong,
+        .ai-content h2:nth-of-type(8n+2) ~ p strong,
+        .ai-content h2:nth-of-type(8n+2) ~ table strong { color: #0891b2 !important; }
+        
+        .ai-content h2:nth-of-type(8n+3) ~ * strong,
+        .ai-content h2:nth-of-type(8n+3) ~ ul strong,
+        .ai-content h2:nth-of-type(8n+3) ~ ol strong,
+        .ai-content h2:nth-of-type(8n+3) ~ p strong,
+        .ai-content h2:nth-of-type(8n+3) ~ table strong { color: #059669 !important; }
+        
+        .ai-content h2:nth-of-type(8n+4) ~ * strong,
+        .ai-content h2:nth-of-type(8n+4) ~ ul strong,
+        .ai-content h2:nth-of-type(8n+4) ~ ol strong,
+        .ai-content h2:nth-of-type(8n+4) ~ p strong,
+        .ai-content h2:nth-of-type(8n+4) ~ table strong { color: #7c3aed !important; }
+        
+        .ai-content h2:nth-of-type(8n+5) ~ * strong,
+        .ai-content h2:nth-of-type(8n+5) ~ ul strong,
+        .ai-content h2:nth-of-type(8n+5) ~ ol strong,
+        .ai-content h2:nth-of-type(8n+5) ~ p strong,
+        .ai-content h2:nth-of-type(8n+5) ~ table strong { color: #db2777 !important; }
+        
+        .ai-content h2:nth-of-type(8n+6) ~ * strong,
+        .ai-content h2:nth-of-type(8n+6) ~ ul strong,
+        .ai-content h2:nth-of-type(8n+6) ~ ol strong,
+        .ai-content h2:nth-of-type(8n+6) ~ p strong,
+        .ai-content h2:nth-of-type(8n+6) ~ table strong { color: #ea580c !important; }
+        
+        .ai-content h2:nth-of-type(8n+7) ~ * strong,
+        .ai-content h2:nth-of-type(8n+7) ~ ul strong,
+        .ai-content h2:nth-of-type(8n+7) ~ ol strong,
+        .ai-content h2:nth-of-type(8n+7) ~ p strong,
+        .ai-content h2:nth-of-type(8n+7) ~ table strong { color: #d97706 !important; }
+        
+        .ai-content h2:nth-of-type(8n+8) ~ * strong,
+        .ai-content h2:nth-of-type(8n+8) ~ ul strong,
+        .ai-content h2:nth-of-type(8n+8) ~ ol strong,
+        .ai-content h2:nth-of-type(8n+8) ~ p strong,
+        .ai-content h2:nth-of-type(8n+8) ~ table strong { color: #dc2626 !important; }
+        
+        /* Dark mode variants with lighter shades */
+        .dark .ai-content h4:nth-of-type(8n+1) ~ * strong,
+        .dark .ai-content h4:nth-of-type(8n+1) ~ ul strong,
+        .dark .ai-content h4:nth-of-type(8n+1) ~ ol strong,
+        .dark .ai-content h4:nth-of-type(8n+1) ~ p strong,
+        .dark .ai-content h4:nth-of-type(8n+1) ~ table strong { color: #60a5fa !important; }
+        
+        .dark .ai-content h4:nth-of-type(8n+2) ~ * strong,
+        .dark .ai-content h4:nth-of-type(8n+2) ~ ul strong,
+        .dark .ai-content h4:nth-of-type(8n+2) ~ ol strong,
+        .dark .ai-content h4:nth-of-type(8n+2) ~ p strong,
+        .dark .ai-content h4:nth-of-type(8n+2) ~ table strong { color: #22d3ee !important; }
+        
+        .dark .ai-content h4:nth-of-type(8n+3) ~ * strong,
+        .dark .ai-content h4:nth-of-type(8n+3) ~ ul strong,
+        .dark .ai-content h4:nth-of-type(8n+3) ~ ol strong,
+        .dark .ai-content h4:nth-of-type(8n+3) ~ p strong,
+        .dark .ai-content h4:nth-of-type(8n+3) ~ table strong { color: #34d399 !important; }
+        
+        .dark .ai-content h4:nth-of-type(8n+4) ~ * strong,
+        .dark .ai-content h4:nth-of-type(8n+4) ~ ul strong,
+        .dark .ai-content h4:nth-of-type(8n+4) ~ ol strong,
+        .dark .ai-content h4:nth-of-type(8n+4) ~ p strong,
+        .dark .ai-content h4:nth-of-type(8n+4) ~ table strong { color: #a78bfa !important; }
+        
+        .dark .ai-content h4:nth-of-type(8n+5) ~ * strong,
+        .dark .ai-content h4:nth-of-type(8n+5) ~ ul strong,
+        .dark .ai-content h4:nth-of-type(8n+5) ~ ol strong,
+        .dark .ai-content h4:nth-of-type(8n+5) ~ p strong,
+        .dark .ai-content h4:nth-of-type(8n+5) ~ table strong { color: #f472b6 !important; }
+        
+        .dark .ai-content h4:nth-of-type(8n+6) ~ * strong,
+        .dark .ai-content h4:nth-of-type(8n+6) ~ ul strong,
+        .dark .ai-content h4:nth-of-type(8n+6) ~ ol strong,
+        .dark .ai-content h4:nth-of-type(8n+6) ~ p strong,
+        .dark .ai-content h4:nth-of-type(8n+6) ~ table strong { color: #fb923c !important; }
+        
+        .dark .ai-content h4:nth-of-type(8n+7) ~ * strong,
+        .dark .ai-content h4:nth-of-type(8n+7) ~ ul strong,
+        .dark .ai-content h4:nth-of-type(8n+7) ~ ol strong,
+        .dark .ai-content h4:nth-of-type(8n+7) ~ p strong,
+        .dark .ai-content h4:nth-of-type(8n+7) ~ table strong { color: #fbbf24 !important; }
+        
+        .dark .ai-content h4:nth-of-type(8n+8) ~ * strong,
+        .dark .ai-content h4:nth-of-type(8n+8) ~ ul strong,
+        .dark .ai-content h4:nth-of-type(8n+8) ~ ol strong,
+        .dark .ai-content h4:nth-of-type(8n+8) ~ p strong,
+        .dark .ai-content h4:nth-of-type(8n+8) ~ table strong { color: #f87171 !important; }
+        
+        /* Similar patterns for H3 and H2 in dark mode */
+        .dark .ai-content h3:nth-of-type(8n+1) ~ * strong,
+        .dark .ai-content h3:nth-of-type(8n+1) ~ ul strong,
+        .dark .ai-content h3:nth-of-type(8n+1) ~ p strong,
+        .dark .ai-content h3:nth-of-type(8n+1) ~ table strong { color: #60a5fa !important; }
+        
+        .dark .ai-content h3:nth-of-type(8n+2) ~ * strong,
+        .dark .ai-content h3:nth-of-type(8n+2) ~ ul strong,
+        .dark .ai-content h3:nth-of-type(8n+2) ~ p strong,
+        .dark .ai-content h3:nth-of-type(8n+2) ~ table strong { color: #22d3ee !important; }
+        
+        .dark .ai-content h3:nth-of-type(8n+3) ~ * strong,
+        .dark .ai-content h3:nth-of-type(8n+3) ~ ul strong,
+        .dark .ai-content h3:nth-of-type(8n+3) ~ p strong,
+        .dark .ai-content h3:nth-of-type(8n+3) ~ table strong { color: #34d399 !important; }
+        
+        .dark .ai-content h3:nth-of-type(8n+4) ~ * strong,
+        .dark .ai-content h3:nth-of-type(8n+4) ~ ul strong,
+        .dark .ai-content h3:nth-of-type(8n+4) ~ p strong,
+        .dark .ai-content h3:nth-of-type(8n+4) ~ table strong { color: #a78bfa !important; }
+        
+        .dark .ai-content h3:nth-of-type(8n+5) ~ * strong,
+        .dark .ai-content h3:nth-of-type(8n+5) ~ ul strong,
+        .dark .ai-content h3:nth-of-type(8n+5) ~ p strong,
+        .dark .ai-content h3:nth-of-type(8n+5) ~ table strong { color: #f472b6 !important; }
+        
+        .dark .ai-content h3:nth-of-type(8n+6) ~ * strong,
+        .dark .ai-content h3:nth-of-type(8n+6) ~ ul strong,
+        .dark .ai-content h3:nth-of-type(8n+6) ~ p strong,
+        .dark .ai-content h3:nth-of-type(8n+6) ~ table strong { color: #fb923c !important; }
+        
+        .dark .ai-content h3:nth-of-type(8n+7) ~ * strong,
+        .dark .ai-content h3:nth-of-type(8n+7) ~ ul strong,
+        .dark .ai-content h3:nth-of-type(8n+7) ~ p strong,
+        .dark .ai-content h3:nth-of-type(8n+7) ~ table strong { color: #fbbf24 !important; }
+        
+        .dark .ai-content h3:nth-of-type(8n+8) ~ * strong,
+        .dark .ai-content h3:nth-of-type(8n+8) ~ ul strong,
+        .dark .ai-content h3:nth-of-type(8n+8) ~ p strong,
+        .dark .ai-content h3:nth-of-type(8n+8) ~ table strong { color: #f87171 !important; }
+        
+        .dark .ai-content h2:nth-of-type(8n+1) ~ * strong,
+        .dark .ai-content h2:nth-of-type(8n+1) ~ ul strong,
+        .dark .ai-content h2:nth-of-type(8n+1) ~ p strong,
+        .dark .ai-content h2:nth-of-type(8n+1) ~ table strong { color: #60a5fa !important; }
+        
+        .dark .ai-content h2:nth-of-type(8n+2) ~ * strong,
+        .dark .ai-content h2:nth-of-type(8n+2) ~ ul strong,
+        .dark .ai-content h2:nth-of-type(8n+2) ~ p strong,
+        .dark .ai-content h2:nth-of-type(8n+2) ~ table strong { color: #22d3ee !important; }
+        
+        .dark .ai-content h2:nth-of-type(8n+3) ~ * strong,
+        .dark .ai-content h2:nth-of-type(8n+3) ~ ul strong,
+        .dark .ai-content h2:nth-of-type(8n+3) ~ p strong,
+        .dark .ai-content h2:nth-of-type(8n+3) ~ table strong { color: #34d399 !important; }
+        
+        .dark .ai-content h2:nth-of-type(8n+4) ~ * strong,
+        .dark .ai-content h2:nth-of-type(8n+4) ~ ul strong,
+        .dark .ai-content h2:nth-of-type(8n+4) ~ p strong,
+        .dark .ai-content h2:nth-of-type(8n+4) ~ table strong { color: #a78bfa !important; }
+        
+        .dark .ai-content h2:nth-of-type(8n+5) ~ * strong,
+        .dark .ai-content h2:nth-of-type(8n+5) ~ ul strong,
+        .dark .ai-content h2:nth-of-type(8n+5) ~ p strong,
+        .dark .ai-content h2:nth-of-type(8n+5) ~ table strong { color: #f472b6 !important; }
+        
+        .dark .ai-content h2:nth-of-type(8n+6) ~ * strong,
+        .dark .ai-content h2:nth-of-type(8n+6) ~ ul strong,
+        .dark .ai-content h2:nth-of-type(8n+6) ~ p strong,
+        .dark .ai-content h2:nth-of-type(8n+6) ~ table strong { color: #fb923c !important; }
+        
+        .dark .ai-content h2:nth-of-type(8n+7) ~ * strong,
+        .dark .ai-content h2:nth-of-type(8n+7) ~ ul strong,
+        .dark .ai-content h2:nth-of-type(8n+7) ~ p strong,
+        .dark .ai-content h2:nth-of-type(8n+7) ~ table strong { color: #fbbf24 !important; }
+        
+        .dark .ai-content h2:nth-of-type(8n+8) ~ * strong,
+        .dark .ai-content h2:nth-of-type(8n+8) ~ ul strong,
+        .dark .ai-content h2:nth-of-type(8n+8) ~ p strong,
+        .dark .ai-content h2:nth-of-type(8n+8) ~ table strong { color: #f87171 !important; }
         
         /* Tables in ai-content */
         .ai-content table { border-collapse: collapse; width: 100%; margin: 1em 0; }
@@ -2807,8 +3034,11 @@
             contentClone.style.lineHeight = '1.6';
             contentClone.style.color = '#000';
             
-            // Ensure all content is visible in the clone
+            // Ensure all content is visible in the clone - remove height restrictions
             contentClone.classList.remove('hidden');
+            contentClone.style.maxHeight = 'none';
+            contentClone.style.overflow = 'visible';
+            contentClone.style.height = 'auto';
             
             // Style all conversation entries for PDF
             const conversationEntries = contentClone.querySelectorAll('.conversation-entry');
