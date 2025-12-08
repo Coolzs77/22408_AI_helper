@@ -129,27 +129,27 @@
         .ai-content { font-size: 0.95rem; line-height: 1.7; color: #334155; }
         .dark .ai-content { color: #e2e8f0; }
         
-        /* Colorful headings with gradient effects */
+        /* Colorful headings with gradient effects - FIXED: Higher specificity to prevent override */
         .ai-content h1 { 
             margin-top: 1.2em; margin-bottom: 0.6em; font-weight: 800; 
-            color: #1e40af; letter-spacing: -0.02em; font-size: 1.5em;
+            color: #1e40af !important; letter-spacing: -0.02em; font-size: 1.5em;
         }
         .ai-content h2 { 
             margin-top: 1.2em; margin-bottom: 0.6em; font-weight: 800; 
-            color: #0891b2; letter-spacing: -0.02em; font-size: 1.3em;
+            color: #0891b2 !important; letter-spacing: -0.02em; font-size: 1.3em;
         }
         .ai-content h3 { 
             margin-top: 1.2em; margin-bottom: 0.6em; font-weight: 800; 
-            color: #059669; letter-spacing: -0.02em; font-size: 1.15em;
+            color: #059669 !important; letter-spacing: -0.02em; font-size: 1.15em;
         }
         .ai-content h4 { 
             margin-top: 1em; margin-bottom: 0.5em; font-weight: 700; 
-            color: #7c3aed; letter-spacing: -0.02em;
+            color: #7c3aed !important; letter-spacing: -0.02em;
         }
-        .dark .ai-content h1 { color: #60a5fa; }
-        .dark .ai-content h2 { color: #22d3ee; }
-        .dark .ai-content h3 { color: #34d399; }
-        .dark .ai-content h4 { color: #a78bfa; }
+        .dark .ai-content h1 { color: #60a5fa !important; }
+        .dark .ai-content h2 { color: #22d3ee !important; }
+        .dark .ai-content h3 { color: #34d399 !important; }
+        .dark .ai-content h4 { color: #a78bfa !important; }
         
         .ai-content p { margin-bottom: 1em; }
         
@@ -157,288 +157,8 @@
         .ai-content ol { list-style-type: decimal; padding-left: 1.5em; margin-bottom: 1em; }
         .ai-content li { margin-bottom: 0.4em; }
         
-        /* Bold text colors - each lowest-level heading gets a unique color */
+        /* Bold text colors - Applied via JavaScript for accurate per-section coloring */
         .ai-content strong { font-weight: 700; }
-        
-        /* Cycle through 8 distinct colors for different heading sections */
-        /* Color palette: Blue, Cyan, Green, Purple, Pink, Orange, Amber, Red */
-        
-        /* H4 takes precedence as the lowest level heading */
-        .ai-content h4:nth-of-type(8n+1) ~ * strong,
-        .ai-content h4:nth-of-type(8n+1) ~ ul strong,
-        .ai-content h4:nth-of-type(8n+1) ~ ol strong,
-        .ai-content h4:nth-of-type(8n+1) ~ p strong,
-        .ai-content h4:nth-of-type(8n+1) ~ table strong { color: #2563eb !important; } /* Blue */
-        
-        .ai-content h4:nth-of-type(8n+2) ~ * strong,
-        .ai-content h4:nth-of-type(8n+2) ~ ul strong,
-        .ai-content h4:nth-of-type(8n+2) ~ ol strong,
-        .ai-content h4:nth-of-type(8n+2) ~ p strong,
-        .ai-content h4:nth-of-type(8n+2) ~ table strong { color: #0891b2 !important; } /* Cyan */
-        
-        .ai-content h4:nth-of-type(8n+3) ~ * strong,
-        .ai-content h4:nth-of-type(8n+3) ~ ul strong,
-        .ai-content h4:nth-of-type(8n+3) ~ ol strong,
-        .ai-content h4:nth-of-type(8n+3) ~ p strong,
-        .ai-content h4:nth-of-type(8n+3) ~ table strong { color: #059669 !important; } /* Green */
-        
-        .ai-content h4:nth-of-type(8n+4) ~ * strong,
-        .ai-content h4:nth-of-type(8n+4) ~ ul strong,
-        .ai-content h4:nth-of-type(8n+4) ~ ol strong,
-        .ai-content h4:nth-of-type(8n+4) ~ p strong,
-        .ai-content h4:nth-of-type(8n+4) ~ table strong { color: #7c3aed !important; } /* Purple */
-        
-        .ai-content h4:nth-of-type(8n+5) ~ * strong,
-        .ai-content h4:nth-of-type(8n+5) ~ ul strong,
-        .ai-content h4:nth-of-type(8n+5) ~ ol strong,
-        .ai-content h4:nth-of-type(8n+5) ~ p strong,
-        .ai-content h4:nth-of-type(8n+5) ~ table strong { color: #db2777 !important; } /* Pink */
-        
-        .ai-content h4:nth-of-type(8n+6) ~ * strong,
-        .ai-content h4:nth-of-type(8n+6) ~ ul strong,
-        .ai-content h4:nth-of-type(8n+6) ~ ol strong,
-        .ai-content h4:nth-of-type(8n+6) ~ p strong,
-        .ai-content h4:nth-of-type(8n+6) ~ table strong { color: #ea580c !important; } /* Orange */
-        
-        .ai-content h4:nth-of-type(8n+7) ~ * strong,
-        .ai-content h4:nth-of-type(8n+7) ~ ul strong,
-        .ai-content h4:nth-of-type(8n+7) ~ ol strong,
-        .ai-content h4:nth-of-type(8n+7) ~ p strong,
-        .ai-content h4:nth-of-type(8n+7) ~ table strong { color: #d97706 !important; } /* Amber */
-        
-        .ai-content h4:nth-of-type(8n+8) ~ * strong,
-        .ai-content h4:nth-of-type(8n+8) ~ ul strong,
-        .ai-content h4:nth-of-type(8n+8) ~ ol strong,
-        .ai-content h4:nth-of-type(8n+8) ~ p strong,
-        .ai-content h4:nth-of-type(8n+8) ~ table strong { color: #dc2626 !important; } /* Red */
-        
-        /* H3 gets colors when no H4 present */
-        .ai-content h3:nth-of-type(8n+1):not(:has(~ h4)) ~ * strong,
-        .ai-content h3:nth-of-type(8n+1) ~ ul strong,
-        .ai-content h3:nth-of-type(8n+1) ~ ol strong,
-        .ai-content h3:nth-of-type(8n+1) ~ p strong,
-        .ai-content h3:nth-of-type(8n+1) ~ table strong { color: #2563eb !important; }
-        
-        .ai-content h3:nth-of-type(8n+2) ~ * strong,
-        .ai-content h3:nth-of-type(8n+2) ~ ul strong,
-        .ai-content h3:nth-of-type(8n+2) ~ ol strong,
-        .ai-content h3:nth-of-type(8n+2) ~ p strong,
-        .ai-content h3:nth-of-type(8n+2) ~ table strong { color: #0891b2 !important; }
-        
-        .ai-content h3:nth-of-type(8n+3) ~ * strong,
-        .ai-content h3:nth-of-type(8n+3) ~ ul strong,
-        .ai-content h3:nth-of-type(8n+3) ~ ol strong,
-        .ai-content h3:nth-of-type(8n+3) ~ p strong,
-        .ai-content h3:nth-of-type(8n+3) ~ table strong { color: #059669 !important; }
-        
-        .ai-content h3:nth-of-type(8n+4) ~ * strong,
-        .ai-content h3:nth-of-type(8n+4) ~ ul strong,
-        .ai-content h3:nth-of-type(8n+4) ~ ol strong,
-        .ai-content h3:nth-of-type(8n+4) ~ p strong,
-        .ai-content h3:nth-of-type(8n+4) ~ table strong { color: #7c3aed !important; }
-        
-        .ai-content h3:nth-of-type(8n+5) ~ * strong,
-        .ai-content h3:nth-of-type(8n+5) ~ ul strong,
-        .ai-content h3:nth-of-type(8n+5) ~ ol strong,
-        .ai-content h3:nth-of-type(8n+5) ~ p strong,
-        .ai-content h3:nth-of-type(8n+5) ~ table strong { color: #db2777 !important; }
-        
-        .ai-content h3:nth-of-type(8n+6) ~ * strong,
-        .ai-content h3:nth-of-type(8n+6) ~ ul strong,
-        .ai-content h3:nth-of-type(8n+6) ~ ol strong,
-        .ai-content h3:nth-of-type(8n+6) ~ p strong,
-        .ai-content h3:nth-of-type(8n+6) ~ table strong { color: #ea580c !important; }
-        
-        .ai-content h3:nth-of-type(8n+7) ~ * strong,
-        .ai-content h3:nth-of-type(8n+7) ~ ul strong,
-        .ai-content h3:nth-of-type(8n+7) ~ ol strong,
-        .ai-content h3:nth-of-type(8n+7) ~ p strong,
-        .ai-content h3:nth-of-type(8n+7) ~ table strong { color: #d97706 !important; }
-        
-        .ai-content h3:nth-of-type(8n+8) ~ * strong,
-        .ai-content h3:nth-of-type(8n+8) ~ ul strong,
-        .ai-content h3:nth-of-type(8n+8) ~ ol strong,
-        .ai-content h3:nth-of-type(8n+8) ~ p strong,
-        .ai-content h3:nth-of-type(8n+8) ~ table strong { color: #dc2626 !important; }
-        
-        /* H2 gets colors when no H3/H4 present */
-        .ai-content h2:nth-of-type(8n+1) ~ * strong,
-        .ai-content h2:nth-of-type(8n+1) ~ ul strong,
-        .ai-content h2:nth-of-type(8n+1) ~ ol strong,
-        .ai-content h2:nth-of-type(8n+1) ~ p strong,
-        .ai-content h2:nth-of-type(8n+1) ~ table strong { color: #2563eb !important; }
-        
-        .ai-content h2:nth-of-type(8n+2) ~ * strong,
-        .ai-content h2:nth-of-type(8n+2) ~ ul strong,
-        .ai-content h2:nth-of-type(8n+2) ~ ol strong,
-        .ai-content h2:nth-of-type(8n+2) ~ p strong,
-        .ai-content h2:nth-of-type(8n+2) ~ table strong { color: #0891b2 !important; }
-        
-        .ai-content h2:nth-of-type(8n+3) ~ * strong,
-        .ai-content h2:nth-of-type(8n+3) ~ ul strong,
-        .ai-content h2:nth-of-type(8n+3) ~ ol strong,
-        .ai-content h2:nth-of-type(8n+3) ~ p strong,
-        .ai-content h2:nth-of-type(8n+3) ~ table strong { color: #059669 !important; }
-        
-        .ai-content h2:nth-of-type(8n+4) ~ * strong,
-        .ai-content h2:nth-of-type(8n+4) ~ ul strong,
-        .ai-content h2:nth-of-type(8n+4) ~ ol strong,
-        .ai-content h2:nth-of-type(8n+4) ~ p strong,
-        .ai-content h2:nth-of-type(8n+4) ~ table strong { color: #7c3aed !important; }
-        
-        .ai-content h2:nth-of-type(8n+5) ~ * strong,
-        .ai-content h2:nth-of-type(8n+5) ~ ul strong,
-        .ai-content h2:nth-of-type(8n+5) ~ ol strong,
-        .ai-content h2:nth-of-type(8n+5) ~ p strong,
-        .ai-content h2:nth-of-type(8n+5) ~ table strong { color: #db2777 !important; }
-        
-        .ai-content h2:nth-of-type(8n+6) ~ * strong,
-        .ai-content h2:nth-of-type(8n+6) ~ ul strong,
-        .ai-content h2:nth-of-type(8n+6) ~ ol strong,
-        .ai-content h2:nth-of-type(8n+6) ~ p strong,
-        .ai-content h2:nth-of-type(8n+6) ~ table strong { color: #ea580c !important; }
-        
-        .ai-content h2:nth-of-type(8n+7) ~ * strong,
-        .ai-content h2:nth-of-type(8n+7) ~ ul strong,
-        .ai-content h2:nth-of-type(8n+7) ~ ol strong,
-        .ai-content h2:nth-of-type(8n+7) ~ p strong,
-        .ai-content h2:nth-of-type(8n+7) ~ table strong { color: #d97706 !important; }
-        
-        .ai-content h2:nth-of-type(8n+8) ~ * strong,
-        .ai-content h2:nth-of-type(8n+8) ~ ul strong,
-        .ai-content h2:nth-of-type(8n+8) ~ ol strong,
-        .ai-content h2:nth-of-type(8n+8) ~ p strong,
-        .ai-content h2:nth-of-type(8n+8) ~ table strong { color: #dc2626 !important; }
-        
-        /* Dark mode variants with lighter shades */
-        .dark .ai-content h4:nth-of-type(8n+1) ~ * strong,
-        .dark .ai-content h4:nth-of-type(8n+1) ~ ul strong,
-        .dark .ai-content h4:nth-of-type(8n+1) ~ ol strong,
-        .dark .ai-content h4:nth-of-type(8n+1) ~ p strong,
-        .dark .ai-content h4:nth-of-type(8n+1) ~ table strong { color: #60a5fa !important; }
-        
-        .dark .ai-content h4:nth-of-type(8n+2) ~ * strong,
-        .dark .ai-content h4:nth-of-type(8n+2) ~ ul strong,
-        .dark .ai-content h4:nth-of-type(8n+2) ~ ol strong,
-        .dark .ai-content h4:nth-of-type(8n+2) ~ p strong,
-        .dark .ai-content h4:nth-of-type(8n+2) ~ table strong { color: #22d3ee !important; }
-        
-        .dark .ai-content h4:nth-of-type(8n+3) ~ * strong,
-        .dark .ai-content h4:nth-of-type(8n+3) ~ ul strong,
-        .dark .ai-content h4:nth-of-type(8n+3) ~ ol strong,
-        .dark .ai-content h4:nth-of-type(8n+3) ~ p strong,
-        .dark .ai-content h4:nth-of-type(8n+3) ~ table strong { color: #34d399 !important; }
-        
-        .dark .ai-content h4:nth-of-type(8n+4) ~ * strong,
-        .dark .ai-content h4:nth-of-type(8n+4) ~ ul strong,
-        .dark .ai-content h4:nth-of-type(8n+4) ~ ol strong,
-        .dark .ai-content h4:nth-of-type(8n+4) ~ p strong,
-        .dark .ai-content h4:nth-of-type(8n+4) ~ table strong { color: #a78bfa !important; }
-        
-        .dark .ai-content h4:nth-of-type(8n+5) ~ * strong,
-        .dark .ai-content h4:nth-of-type(8n+5) ~ ul strong,
-        .dark .ai-content h4:nth-of-type(8n+5) ~ ol strong,
-        .dark .ai-content h4:nth-of-type(8n+5) ~ p strong,
-        .dark .ai-content h4:nth-of-type(8n+5) ~ table strong { color: #f472b6 !important; }
-        
-        .dark .ai-content h4:nth-of-type(8n+6) ~ * strong,
-        .dark .ai-content h4:nth-of-type(8n+6) ~ ul strong,
-        .dark .ai-content h4:nth-of-type(8n+6) ~ ol strong,
-        .dark .ai-content h4:nth-of-type(8n+6) ~ p strong,
-        .dark .ai-content h4:nth-of-type(8n+6) ~ table strong { color: #fb923c !important; }
-        
-        .dark .ai-content h4:nth-of-type(8n+7) ~ * strong,
-        .dark .ai-content h4:nth-of-type(8n+7) ~ ul strong,
-        .dark .ai-content h4:nth-of-type(8n+7) ~ ol strong,
-        .dark .ai-content h4:nth-of-type(8n+7) ~ p strong,
-        .dark .ai-content h4:nth-of-type(8n+7) ~ table strong { color: #fbbf24 !important; }
-        
-        .dark .ai-content h4:nth-of-type(8n+8) ~ * strong,
-        .dark .ai-content h4:nth-of-type(8n+8) ~ ul strong,
-        .dark .ai-content h4:nth-of-type(8n+8) ~ ol strong,
-        .dark .ai-content h4:nth-of-type(8n+8) ~ p strong,
-        .dark .ai-content h4:nth-of-type(8n+8) ~ table strong { color: #f87171 !important; }
-        
-        /* Similar patterns for H3 and H2 in dark mode */
-        .dark .ai-content h3:nth-of-type(8n+1) ~ * strong,
-        .dark .ai-content h3:nth-of-type(8n+1) ~ ul strong,
-        .dark .ai-content h3:nth-of-type(8n+1) ~ p strong,
-        .dark .ai-content h3:nth-of-type(8n+1) ~ table strong { color: #60a5fa !important; }
-        
-        .dark .ai-content h3:nth-of-type(8n+2) ~ * strong,
-        .dark .ai-content h3:nth-of-type(8n+2) ~ ul strong,
-        .dark .ai-content h3:nth-of-type(8n+2) ~ p strong,
-        .dark .ai-content h3:nth-of-type(8n+2) ~ table strong { color: #22d3ee !important; }
-        
-        .dark .ai-content h3:nth-of-type(8n+3) ~ * strong,
-        .dark .ai-content h3:nth-of-type(8n+3) ~ ul strong,
-        .dark .ai-content h3:nth-of-type(8n+3) ~ p strong,
-        .dark .ai-content h3:nth-of-type(8n+3) ~ table strong { color: #34d399 !important; }
-        
-        .dark .ai-content h3:nth-of-type(8n+4) ~ * strong,
-        .dark .ai-content h3:nth-of-type(8n+4) ~ ul strong,
-        .dark .ai-content h3:nth-of-type(8n+4) ~ p strong,
-        .dark .ai-content h3:nth-of-type(8n+4) ~ table strong { color: #a78bfa !important; }
-        
-        .dark .ai-content h3:nth-of-type(8n+5) ~ * strong,
-        .dark .ai-content h3:nth-of-type(8n+5) ~ ul strong,
-        .dark .ai-content h3:nth-of-type(8n+5) ~ p strong,
-        .dark .ai-content h3:nth-of-type(8n+5) ~ table strong { color: #f472b6 !important; }
-        
-        .dark .ai-content h3:nth-of-type(8n+6) ~ * strong,
-        .dark .ai-content h3:nth-of-type(8n+6) ~ ul strong,
-        .dark .ai-content h3:nth-of-type(8n+6) ~ p strong,
-        .dark .ai-content h3:nth-of-type(8n+6) ~ table strong { color: #fb923c !important; }
-        
-        .dark .ai-content h3:nth-of-type(8n+7) ~ * strong,
-        .dark .ai-content h3:nth-of-type(8n+7) ~ ul strong,
-        .dark .ai-content h3:nth-of-type(8n+7) ~ p strong,
-        .dark .ai-content h3:nth-of-type(8n+7) ~ table strong { color: #fbbf24 !important; }
-        
-        .dark .ai-content h3:nth-of-type(8n+8) ~ * strong,
-        .dark .ai-content h3:nth-of-type(8n+8) ~ ul strong,
-        .dark .ai-content h3:nth-of-type(8n+8) ~ p strong,
-        .dark .ai-content h3:nth-of-type(8n+8) ~ table strong { color: #f87171 !important; }
-        
-        .dark .ai-content h2:nth-of-type(8n+1) ~ * strong,
-        .dark .ai-content h2:nth-of-type(8n+1) ~ ul strong,
-        .dark .ai-content h2:nth-of-type(8n+1) ~ p strong,
-        .dark .ai-content h2:nth-of-type(8n+1) ~ table strong { color: #60a5fa !important; }
-        
-        .dark .ai-content h2:nth-of-type(8n+2) ~ * strong,
-        .dark .ai-content h2:nth-of-type(8n+2) ~ ul strong,
-        .dark .ai-content h2:nth-of-type(8n+2) ~ p strong,
-        .dark .ai-content h2:nth-of-type(8n+2) ~ table strong { color: #22d3ee !important; }
-        
-        .dark .ai-content h2:nth-of-type(8n+3) ~ * strong,
-        .dark .ai-content h2:nth-of-type(8n+3) ~ ul strong,
-        .dark .ai-content h2:nth-of-type(8n+3) ~ p strong,
-        .dark .ai-content h2:nth-of-type(8n+3) ~ table strong { color: #34d399 !important; }
-        
-        .dark .ai-content h2:nth-of-type(8n+4) ~ * strong,
-        .dark .ai-content h2:nth-of-type(8n+4) ~ ul strong,
-        .dark .ai-content h2:nth-of-type(8n+4) ~ p strong,
-        .dark .ai-content h2:nth-of-type(8n+4) ~ table strong { color: #a78bfa !important; }
-        
-        .dark .ai-content h2:nth-of-type(8n+5) ~ * strong,
-        .dark .ai-content h2:nth-of-type(8n+5) ~ ul strong,
-        .dark .ai-content h2:nth-of-type(8n+5) ~ p strong,
-        .dark .ai-content h2:nth-of-type(8n+5) ~ table strong { color: #f472b6 !important; }
-        
-        .dark .ai-content h2:nth-of-type(8n+6) ~ * strong,
-        .dark .ai-content h2:nth-of-type(8n+6) ~ ul strong,
-        .dark .ai-content h2:nth-of-type(8n+6) ~ p strong,
-        .dark .ai-content h2:nth-of-type(8n+6) ~ table strong { color: #fb923c !important; }
-        
-        .dark .ai-content h2:nth-of-type(8n+7) ~ * strong,
-        .dark .ai-content h2:nth-of-type(8n+7) ~ ul strong,
-        .dark .ai-content h2:nth-of-type(8n+7) ~ p strong,
-        .dark .ai-content h2:nth-of-type(8n+7) ~ table strong { color: #fbbf24 !important; }
-        
-        .dark .ai-content h2:nth-of-type(8n+8) ~ * strong,
-        .dark .ai-content h2:nth-of-type(8n+8) ~ ul strong,
-        .dark .ai-content h2:nth-of-type(8n+8) ~ p strong,
-        .dark .ai-content h2:nth-of-type(8n+8) ~ table strong { color: #f87171 !important; }
         
         /* Tables in ai-content */
         .ai-content table { border-collapse: collapse; width: 100%; margin: 1em 0; }
@@ -1525,6 +1245,48 @@
         /**
          * Helper function to add a conversation entry (question + answer)
          */
+        /**
+         * Apply cycling colors to bold text based on lowest-level headings
+         */
+        function applyBoldColors(container) {
+            const colors = [
+                '#2563eb', // Blue
+                '#0891b2', // Cyan
+                '#059669', // Green
+                '#7c3aed', // Purple
+                '#db2777', // Pink
+                '#ea580c', // Orange
+                '#d97706', // Amber
+                '#dc2626'  // Red
+            ];
+            
+            const aiContentDivs = container.querySelectorAll('.ai-content');
+            aiContentDivs.forEach(contentDiv => {
+                const allElements = Array.from(contentDiv.children);
+                let currentColorIndex = 0;
+                let lastHeading = null;
+                
+                allElements.forEach(el => {
+                    const tagName = el.tagName.toLowerCase();
+                    
+                    // Track lowest-level heading
+                    if (tagName === 'h4' || tagName === 'h3' || tagName === 'h2') {
+                        lastHeading = el;
+                        // Assign next color when we encounter a new heading
+                        currentColorIndex = (currentColorIndex + 1) % colors.length;
+                    }
+                    
+                    // Apply color to bold elements in this section
+                    if (lastHeading) {
+                        const strongElements = el.querySelectorAll('strong');
+                        strongElements.forEach(strong => {
+                            strong.style.color = colors[currentColorIndex];
+                        });
+                    }
+                });
+            });
+        }
+
         function addConversationEntry(outputId, question, answer, isLoading = false) {
             const output = document.getElementById(outputId);
             const entry = document.createElement('div');
@@ -1562,6 +1324,8 @@
                         </div>
                     </div>
                 `;
+                // Apply bold colors after adding content
+                setTimeout(() => applyBoldColors(entry), 0);
             }
             
             output.appendChild(entry);
@@ -2459,7 +2223,10 @@
                     list.appendChild(div);
                 });
                 lucide.createIcons();
-                setTimeout(() => renderMath('mistake-list'), 0);
+                setTimeout(() => {
+                    renderMath('mistake-list');
+                    applyBoldColors(list); // Apply bold text colors
+                }, 0);
             }
         }
 
@@ -2496,12 +2263,18 @@
                 </button>
             `;
             
-            setTimeout(() => renderMath('md-content'), 0);
+            setTimeout(() => {
+                renderMath('md-content');
+                applyBoldColors(content); // Apply bold text colors to question and note
+            }, 0);
 
             if(m.analysis) {
                 analysisDiv.classList.remove('hidden');
                 analysisContent.innerHTML = `<div class="ai-content">${marked.parse(m.analysis)}</div>`;
-                renderMath('md-analysis-content');
+                setTimeout(() => {
+                    renderMath('md-analysis-content');
+                    applyBoldColors(analysisContent); // Apply bold text colors to analysis
+                }, 0);
             } else {
                 analysisDiv.classList.add('hidden');
                 analysisContent.innerHTML = '';
@@ -3090,7 +2863,9 @@
             
             pdfWrapper.appendChild(contentClone);
 
-            // Configure PDF options
+            // Configure PDF options - Single page, wider format (1.8x A4 width)
+            const a4Width = 210; // mm
+            const customWidth = a4Width * 1.8; // 378mm
             const opt = {
                 margin: 10,
                 filename: filename,
@@ -3102,9 +2877,11 @@
                 },
                 jsPDF: { 
                     unit: 'mm', 
-                    format: 'a4', 
-                    orientation: 'portrait' 
-                }
+                    format: [customWidth, 2000], // Very tall page to fit all content without pagination
+                    orientation: 'portrait',
+                    compress: true
+                },
+                pagebreak: { mode: 'avoid-all' } // Avoid page breaks
             };
 
             try {
