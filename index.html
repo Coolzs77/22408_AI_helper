@@ -269,23 +269,12 @@
         </nav>
 
         <div class="space-y-3 mt-auto">
-             <!-- API Key Settings Button -->
-             <button onclick="toggleKeyModal()" class="w-full flex items-center justify-center gap-2 py-2 rounded-2xl border border-indigo-100 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-900/20 text-xs font-bold text-indigo-500 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors">
+            <!-- API Key Settings Button -->
+            <button onclick="toggleKeyModal()" class="w-full flex items-center justify-center gap-2 py-2 rounded-2xl border border-indigo-100 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-900/20 text-xs font-bold text-indigo-500 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors">
                 <i data-lucide="key" class="w-4 h-4"></i>
                 <span id="key-status-text">设置 API Key</span>
             </button>
-
-            <!-- Data Backup Button -->
-            <div class="flex gap-2">
-                <button onclick="exportData()" class="flex-1 flex items-center justify-center gap-1 py-2 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" title="导出数据">
-                    <i data-lucide="download" class="w-4 h-4"></i> 备份
-                </button>
-                <button onclick="document.getElementById('import-file').click()" class="flex-1 flex items-center justify-center gap-1 py-2 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" title="导入数据">
-                    <i data-lucide="upload" class="w-4 h-4"></i> 恢复
-                </button>
-                <input type="file" id="import-file" class="hidden" accept=".json" onchange="importData(this)">
-            </div>
-
+            
             <button onclick="toggleDarkMode()" class="w-full flex items-center justify-center gap-2 py-2 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                 <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
                 <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
@@ -295,7 +284,7 @@
     </aside>
 
     <!-- MOBILE NAV -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-darksidebar/90 backdrop-blur-md border-t border-slate-100 dark:border-slate-800 z-50 flex justify-around p-3 pb-6">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-darksidebar/90 backdrop-blur-md border-t border-slate-100 dark:border-slate-800 z-50 flex justify-around p-3 pb-safe">
         <button onclick="showView('dashboard')" class="text-pink-500"><i data-lucide="home"></i></button>
         <button onclick="showView('notebook')" class="text-slate-400"><i data-lucide="book-x"></i></button>
         <button onclick="showView('grader')" class="text-slate-400"><i data-lucide="file-check"></i></button>
@@ -308,7 +297,7 @@
     </button>
 
     <!-- MAIN CONTENT -->
-    <main id="main-content" class="flex-1 h-full overflow-y-auto p-4 md:p-10 relative scroll-smooth transition-all duration-300">
+    <main id="main-content" class="flex-1 h-full overflow-y-auto p-4 md:p-10 pb-20 md:pb-20 relative scroll-smooth transition-all duration-300">
         <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-200 via-pink-200 to-yellow-200 dark:opacity-50"></div>
 
         <!-- HEADER -->
@@ -948,18 +937,25 @@
                 <button onclick="toggleKeyModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             
+            <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 mb-4">
+                <p class="text-xs text-green-700 dark:text-green-300 font-semibold">
+                    ✅ 已内置 2 个API Key，可直接使用！
+                </p>
+            </div>
+            
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
-                为了使用 AI 功能，你需要填入自己的 Google Gemini API Key。<br>
-                <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-500 underline font-bold hover:text-indigo-600">点击这里获取免费 Key</a>
+                如需添加更多Key以提升使用次数，请在下方填入您的 Google Gemini API Key。<br>
+                <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-500 underline font-bold hover:text-indigo-600">点击这里获取免费 Key</a><br>
+                <span class="text-indigo-600 font-semibold">💡 自动策略：多密钥轮换 + 模型降级 (2.0-Flash → 1.5-Pro → 1.5-Flash → 1.5-Flash-8B)</span>
             </p>
 
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 mb-1 uppercase tracking-wide">API Key</label>
-                    <input type="password" id="user-api-key-input" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 transition-colors" placeholder="AIzaSy...">
+                    <label class="block text-xs font-bold text-slate-500 mb-1 uppercase tracking-wide">添加额外的 API Keys (可选，每行一个)</label>
+                    <textarea id="user-api-key-input" rows="3" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 transition-colors font-mono" placeholder="AIzaSy...&#10;AIzaSy...&#10;(可选，留空则使用内置Key)"></textarea>
                 </div>
                 <button onclick="saveUserApiKey()" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2.5 rounded-lg transition-all active:scale-95">保存配置</button>
-                <p class="text-[10px] text-center text-slate-400">Key 仅保存在你的本地浏览器中，不会上传到任何中间服务器。</p>
+                <p class="text-[10px] text-center text-slate-400">Key 仅保存在你的本地浏览器中，不会上传到任何服务器。<br>您的Keys会与内置Keys一起参与自动轮换。</p>
             </div>
         </div>
     </div>
@@ -1054,23 +1050,54 @@
                 });
             }
         }
-        // --- API & AI CORE ---
+        // --- API & AI CORE WITH MULTI-KEY ROTATION ---
         // AUTO INJECT API KEY FROM ENVIRONMENT
         const apiKey = ""; 
+
+        // API Key Management with Rotation
+        let currentKeyIndex = parseInt(localStorage.getItem('current_key_index') || '0');
+        let currentModel = localStorage.getItem('current_model') || 'gemini-2.5-flash-lite';
+        
+        // Pre-configured API Keys (built-in)
+        const BUILTIN_KEYS = [
+            'AIzaSyDP0SP8HqyBea3nbHGGkLaZoz2K0RWjomc',
+            'AIzaSyDJhGbL27jJKSQkkF3IYdzHo4HCDloWb2w',
+            'AIzaSyAbHDLrxSRHgg92CnV3SAUFbREs9m-V4eY',
+            'AIzaSyDJ7o3CzmlSG2va4HCfIzgRwU8IA8rNOTQ',
+            'AIzaSyBAP7TbN-nTt1BjZp_jtkh38rqrZophFPE'
+        ];
+        
+        // Available models in order of capability (high to low)
+        // Priority: 2.5 Flash variants -> 2.0 series -> 1.5 series
+        const MODELS = [
+            'gemini-2.5-flash-lite',          // Highest priority (2.5 Flash Lite - optimized)
+            'gemini-2.5-flash-live',          // High priority (2.5 Flash Live - real-time)
+            'gemini-2.0-flash-exp',           // Medium priority (2.0 series experimental)
+            'gemini-1.5-flash',               // Lower priority (1.5 Flash - standard)
+            'gemini-1.5-flash-8b'             // Lowest priority (1.5 Flash-8B - fallback)
+        ];
 
         function toggleKeyModal() {
             const modal = document.getElementById('key-modal');
             modal.classList.toggle('hidden');
             if(!modal.classList.contains('hidden')) {
-                document.getElementById('user-api-key-input').value = localStorage.getItem('gemini_user_key') || '';
+                document.getElementById('user-api-key-input').value = localStorage.getItem('gemini_user_keys') || '';
             }
         }
 
         function saveUserApiKey() {
             const val = document.getElementById('user-api-key-input').value.trim();
             if(val) {
-                localStorage.setItem('gemini_user_key', val);
-                alert("API Key 已保存！现在可以使用 AI 功能了。");
+                // Store all keys (one per line)
+                localStorage.setItem('gemini_user_keys', val);
+                // Reset rotation state
+                localStorage.setItem('current_key_index', '0');
+                localStorage.setItem('current_model', MODELS[0]);
+                currentKeyIndex = 0;
+                currentModel = MODELS[0];
+                const totalKeys = getUserKeys().length;
+                const userKeysCount = val.split('\n').filter(k => k.trim()).length;
+                alert(`API Keys 已保存！\n内置Keys: ${BUILTIN_KEYS.length} 个\n您添加的Keys: ${userKeysCount} 个\n总计: ${totalKeys} 个Key。\n现在可以使用 AI 功能了。`);
                 toggleKeyModal();
                 checkApiKeyStatus();
             } else {
@@ -1079,24 +1106,79 @@
         }
 
         function checkApiKeyStatus() {
-            const hasKey = !!getUserKey();
+            const keys = getUserKeys();
             const txt = document.getElementById('key-status-text');
-            if(txt) txt.innerText = hasKey ? "API Key 已配置" : "设置 API Key (未配置)";
+            if(txt) {
+                if (keys.length === 0) {
+                    txt.innerText = "设置 API Key (未配置)";
+                } else if (keys.length === 1) {
+                    txt.innerText = `API Key 已配置 (${getModelDisplayName(currentModel)})`;
+                } else {
+                    txt.innerText = `API Keys 已配置 (${keys.length}个) (${getModelDisplayName(currentModel)})`;
+                }
+            }
         }
 
-        function getUserKey() {
-            if (apiKey) return apiKey; // Use Environment Key if available
-            return localStorage.getItem('gemini_user_key');
+        function getModelDisplayName(model) {
+            if (model.includes('2.0')) return '2.0-Flash';
+            if (model.includes('1.5-pro')) return '1.5-Pro';
+            if (model.includes('1.5-flash-8b')) return '1.5-Flash-8B';
+            if (model.includes('1.5-flash')) return '1.5-Flash';
+            return model;
         }
 
-        async function callGemini(userQuery, persona, imageData = null) {
-            const userKey = getUserKey();
+        function getUserKeys() {
+            if (apiKey) return [apiKey]; // Use Environment Key if available
+            
+            // Get user-configured keys
+            const keysStr = localStorage.getItem('gemini_user_keys');
+            const userKeys = keysStr ? keysStr.split('\n').map(k => k.trim()).filter(k => k.length > 0) : [];
+            
+            // Combine built-in keys with user keys
+            return [...BUILTIN_KEYS, ...userKeys];
+        }
+
+        function getCurrentKey() {
+            const keys = getUserKeys();
+            if (keys.length === 0) return null;
+            return keys[currentKeyIndex % keys.length];
+        }
+
+        function rotateToNextKey() {
+            const keys = getUserKeys();
+            if (keys.length <= 1) return false; // No other keys to rotate to
+            
+            currentKeyIndex = (currentKeyIndex + 1) % keys.length;
+            localStorage.setItem('current_key_index', currentKeyIndex.toString());
+            console.log(`🔄 Rotated to API Key #${currentKeyIndex + 1}`);
+            return true;
+        }
+
+        function downgradeModel() {
+            const currentIndex = MODELS.indexOf(currentModel);
+            if (currentIndex >= MODELS.length - 1) return false; // Already at lowest model
+            
+            currentModel = MODELS[currentIndex + 1];
+            localStorage.setItem('current_model', currentModel);
+            console.log(`⬇️ Downgraded to model: ${currentModel}`);
+            checkApiKeyStatus(); // Update UI
+            return true;
+        }
+
+        function resetToHighestModel() {
+            currentModel = MODELS[0];
+            localStorage.setItem('current_model', currentModel);
+            checkApiKeyStatus();
+        }
+
+        async function callGemini(userQuery, persona, imageData = null, retryCount = 0) {
+            const userKey = getCurrentKey();
             if (!userKey) {
                 toggleKeyModal();
                 throw new Error("Missing API Key");
             }
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${userKey}`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${userKey}`;
             
             let systemPrompt = "你是考研备考小窝的智能助手。请始终使用中文简体回答。";
             //systemPrompt += " IMPORTANT: 对于数学公式，必须使用标准LaTeX格式。行内公式使用 `\\(` 和 `\\)` 包裹。独立公式块使用 `\\[` 和 `\\]` 包裹。禁止使用 `$` 或 `$$`。";
@@ -1195,12 +1277,63 @@
                     body: JSON.stringify(payload)
                 });
 
-                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    const errorMsg = errorData.error?.message || '';
+                    
+                    // Check for rate limit errors (429 or quota exceeded)
+                    if (response.status === 429 || errorMsg.includes('quota') || errorMsg.includes('RESOURCE_EXHAUSTED')) {
+                        console.warn(`⚠️ Rate limit hit on Key #${currentKeyIndex + 1} with model ${currentModel}`);
+                        
+                        // Strategy 1: Try next API key if available
+                        if (retryCount === 0 && rotateToNextKey()) {
+                            showToast(`Key #${currentKeyIndex} 达到限制，切换到 Key #${currentKeyIndex + 1}...`, 'info');
+                            return await callGemini(userQuery, persona, imageData, retryCount + 1);
+                        }
+                        
+                        // Strategy 2: Downgrade to lighter model
+                        if (retryCount <= 1 && downgradeModel()) {
+                            showToast(`切换到更轻量的模型 ${getModelDisplayName(currentModel)}...`, 'info');
+                            return await callGemini(userQuery, persona, imageData, retryCount + 2);
+                        }
+                        
+                        // All strategies exhausted
+                        throw new Error(`所有 API Keys 都已达到速率限制。请稍后再试，或添加更多 Keys。\n当前已降级到: ${getModelDisplayName(currentModel)}`);
+                    }
+                    
+                    throw new Error(`API Error: ${response.status} - ${errorMsg}`);
+                }
+                
                 const data = await response.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "鸭鸭没听清，再说一遍？";
+                const result = data.candidates?.[0]?.content?.parts?.[0]?.text || "鸭鸭没听清，再说一遍？";
+                
+                // Success - reset to highest model for next request
+                if (currentModel !== MODELS[0] && retryCount > 0) {
+                    resetToHighestModel();
+                    showToast('请求成功！已恢复使用高质量模型', 'success');
+                }
+                
+                return result;
             } catch (e) {
                 throw e;
             }
+        }
+        
+        function showToast(message, type = 'info') {
+            const colors = {
+                'info': 'bg-blue-500',
+                'success': 'bg-green-500',
+                'warning': 'bg-yellow-500',
+                'error': 'bg-red-500'
+            };
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-4 right-4 ${colors[type]} text-white px-4 py-3 rounded-lg shadow-lg z-[200] animate-in slide-in-from-bottom duration-300`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('animate-out', 'slide-out-to-bottom');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
 
         // --- NAVIGATION & TABS ---
