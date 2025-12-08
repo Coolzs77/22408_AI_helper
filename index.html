@@ -445,13 +445,12 @@
                             </select>
                             <button onclick="generateQuiz()" id="quiz-btn" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold">出题</button>
                         </div>
-                        <div id="quiz-output-area" class="hidden space-y-4">
-                            <div id="quiz-question" class="ai-content bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300"></div>
-                            <button onclick="document.getElementById('quiz-answer').classList.remove('hidden')" class="text-xs text-indigo-500 hover:underline">偷看答案与解析</button>
-                            <div id="quiz-answer" class="hidden ai-content bg-green-50/50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-xl p-5 text-sm"></div>
-                            <div class="flex items-center justify-between mt-2">
-                                <button onclick="saveResultToNotebook('quiz', 'quiz-question', 'quiz-answer')" class="text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                                <button onclick="exportQuizToPDF()" class="text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="quiz-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        <div id="quiz-output" class="hidden bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                        <div class="flex items-center justify-between mt-2 gap-2">
+                            <button onclick="clearConversation('quiz-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="quiz-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                            <div class="flex gap-2 ml-auto">
+                                <button onclick="saveResultToNotebook('quiz', 'quiz-subject', 'quiz-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500" id="quiz-save-btn"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                                <button onclick="exportToPDF('quiz-output', 'AI智囊团', '每日一练')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="quiz-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
                             </div>
                         </div>
                     </div>
@@ -463,10 +462,13 @@
                         </div>
                         <textarea id="eng-write-small-input" class="w-full h-24 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:outline-none focus:border-green-400 resize-none" placeholder="输入小作文关键词/主题（例如：通知、邀请信、建议信、感谢信、道歉信...）"></textarea>
                         <button onclick="generateEngComposition('small')" id="eng-write-small-btn" class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">生成小作文模板 & 技巧</button>
-                        <div id="eng-write-small-output" class="hidden ai-content bg-green-50/50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
-                        <div class="flex items-center justify-between mt-2">
-                            <button onclick="saveResultToNotebook('eng-write-small', 'eng-write-small-input', 'eng-write-small-output')" id="eng-write-small-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-green-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                            <button onclick="exportToPDF('eng-write-small-output', 'AI智囊团', '英语小作文')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="eng-write-small-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        <div id="eng-write-small-output" class="hidden bg-green-50/50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                        <div class="flex items-center justify-between mt-2 gap-2">
+                            <button onclick="clearConversation('eng-write-small-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="eng-write-small-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                            <div class="flex gap-2 ml-auto">
+                                <button onclick="saveResultToNotebook('eng-write-small', 'eng-write-small-input', 'eng-write-small-output')" id="eng-write-small-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-green-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                                <button onclick="exportToPDF('eng-write-small-output', 'AI智囊团', '英语小作文')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="eng-write-small-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                            </div>
                         </div>
                     </div>
 
@@ -477,10 +479,13 @@
                         </div>
                         <textarea id="eng-write-big-input" class="w-full h-24 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:outline-none focus:border-blue-400 resize-none" placeholder="输入大作文关键词/主题（例如：柱状图、饼图、折线图、手机依赖、环保、教育...）"></textarea>
                         <button onclick="generateEngComposition('big')" id="eng-write-big-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">生成大作文模板 & 技巧</button>
-                        <div id="eng-write-big-output" class="hidden ai-content bg-blue-50/50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
-                        <div class="flex items-center justify-between mt-2">
-                            <button onclick="saveResultToNotebook('eng-write-big', 'eng-write-big-input', 'eng-write-big-output')" id="eng-write-big-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-blue-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                            <button onclick="exportToPDF('eng-write-big-output', 'AI智囊团', '英语大作文')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="eng-write-big-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        <div id="eng-write-big-output" class="hidden bg-blue-50/50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                        <div class="flex items-center justify-between mt-2 gap-2">
+                            <button onclick="clearConversation('eng-write-big-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="eng-write-big-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                            <div class="flex gap-2 ml-auto">
+                                <button onclick="saveResultToNotebook('eng-write-big', 'eng-write-big-input', 'eng-write-big-output')" id="eng-write-big-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-blue-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                                <button onclick="exportToPDF('eng-write-big-output', 'AI智囊团', '英语大作文')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="eng-write-big-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                            </div>
                         </div>
                     </div>
 
@@ -497,10 +502,13 @@
                             <button onclick="clearGenericImage('sentence-preview', 'sentence-file')" class="absolute top-1 left-1 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"><i data-lucide="x" class="w-3 h-3"></i></button>
                         </div>
                         <button onclick="breakSentence()" id="sentence-btn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">一键拆解</button>
-                        <div id="sentence-output" class="hidden ai-content bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
-                        <div class="flex items-center justify-between mt-2">
-                            <button onclick="saveResultToNotebook('sentence', 'sentence-input', 'sentence-output')" id="sentence-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                            <button onclick="exportToPDF('sentence-output', 'AI智囊团', '长难句拆解')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="sentence-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        <div id="sentence-output" class="hidden bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                        <div class="flex items-center justify-between mt-2 gap-2">
+                            <button onclick="clearConversation('sentence-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="sentence-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                            <div class="flex gap-2 ml-auto">
+                                <button onclick="saveResultToNotebook('sentence', 'sentence-input', 'sentence-output')" id="sentence-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                                <button onclick="exportToPDF('sentence-output', 'AI智囊团', '长难句拆解')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="sentence-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                            </div>
                         </div>
                     </div>
 
@@ -509,10 +517,13 @@
                         <p class="text-xs text-slate-400">输入难背的知识点列表，AI 生成记忆口诀。</p>
                         <textarea id="memory-input" class="w-full h-24 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:outline-none focus:border-indigo-400 resize-none" placeholder="例如：互斥、请求与保持、不剥夺、循环等待"></textarea>
                         <button onclick="generateMnemonic()" id="memory-btn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">生成记忆宫殿</button>
-                        <div id="memory-output" class="hidden ai-content bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
-                        <div class="flex items-center justify-between mt-2">
-                            <button onclick="saveResultToNotebook('memory', 'memory-input', 'memory-output')" id="memory-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                            <button onclick="exportToPDF('memory-output', 'AI智囊团', '记忆宫殿')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="memory-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        <div id="memory-output" class="hidden bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                        <div class="flex items-center justify-between mt-2 gap-2">
+                            <button onclick="clearConversation('memory-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="memory-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                            <div class="flex gap-2 ml-auto">
+                                <button onclick="saveResultToNotebook('memory', 'memory-input', 'memory-output')" id="memory-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                                <button onclick="exportToPDF('memory-output', 'AI智囊团', '记忆宫殿')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="memory-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                            </div>
                         </div>
                     </div>
 
@@ -522,10 +533,13 @@
                             <input type="text" id="concept-input" class="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-purple-400" placeholder="例如: KMP, 虚拟内存...">
                             <button onclick="explainConcept()" id="concept-btn" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-bold">生成</button>
                         </div>
-                        <div id="concept-output" class="hidden ai-content bg-purple-50/50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-xl p-5 text-sm"></div>
-                        <div class="flex items-center justify-between mt-2">
-                            <button onclick="saveResultToNotebook('concept', 'concept-input', 'concept-output')" id="concept-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-purple-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                            <button onclick="exportToPDF('concept-output', 'AI智囊团', '概念卡片')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="concept-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        <div id="concept-output" class="hidden bg-purple-50/50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                        <div class="flex items-center justify-between mt-2 gap-2">
+                            <button onclick="clearConversation('concept-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="concept-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                            <div class="flex gap-2 ml-auto">
+                                <button onclick="saveResultToNotebook('concept', 'concept-input', 'concept-output')" id="concept-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-purple-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                                <button onclick="exportToPDF('concept-output', 'AI智囊团', '概念卡片')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="concept-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                            </div>
                         </div>
                     </div>
 
@@ -570,10 +584,13 @@
                         <p class="text-xs text-slate-400">输入算法名称，AI 生成408手写适用的标准代码模板。</p>
                         <textarea id="code-input" class="w-full h-16 bg-slate-900 text-slate-300 border border-slate-700 rounded-lg p-3 text-xs font-mono focus:outline-none focus:border-blue-500 resize-none" placeholder="例如：QuickSort (快速排序), Dijkstra算法..."></textarea>
                         <button onclick="explainCode()" id="code-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">生成代码模板</button>
-                        <div id="code-output" class="hidden ai-content bg-slate-900 border border-slate-700 rounded-xl p-5 text-sm text-slate-300 shadow-sm prose prose-invert max-w-none"></div>
-                        <div class="flex items-center justify-between mt-2">
-                            <button onclick="saveResultToNotebook('code', 'code-input', 'code-output')" id="code-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-blue-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                            <button onclick="exportToPDF('code-output', 'AI智囊团', '代码模板')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="code-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        <div id="code-output" class="hidden bg-slate-900 border border-slate-700 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                        <div class="flex items-center justify-between mt-2 gap-2">
+                            <button onclick="clearConversation('code-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="code-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                            <div class="flex gap-2 ml-auto">
+                                <button onclick="saveResultToNotebook('code', 'code-input', 'code-output')" id="code-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-blue-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                                <button onclick="exportToPDF('code-output', 'AI智囊团', '代码模板')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="code-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                            </div>
                         </div>
                     </div>
 
@@ -731,10 +748,13 @@
 
                     <button onclick="gradeCS()" id="cs-grade-btn" class="w-full bg-purple-500 hover:bg-purple-600 text-white py-3 rounded-xl font-bold transition-all shadow-md active:scale-95">开始 408 批改</button>
                     
-                    <div id="cs-grade-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm ai-content prose dark:prose-invert max-w-none"></div>
-                    <div class="flex items-center justify-between mt-2">
-                        <button onclick="saveResultToNotebook('grader-cs', 'cs-grader-preview', 'cs-grade-result')" id="cs-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-purple-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                        <button onclick="exportToPDF('cs-grade-result', 'AI阅卷室', '408大题批改')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="cs-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                    <div id="cs-grade-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                    <div class="flex items-center justify-between mt-2 gap-2">
+                        <button onclick="clearConversation('cs-grade-result')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="cs-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                        <div class="flex gap-2 ml-auto">
+                            <button onclick="saveResultToNotebook('grader-cs', 'cs-grader-preview', 'cs-grade-result')" id="cs-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-purple-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                            <button onclick="exportToPDF('cs-grade-result', 'AI阅卷室', '408大题批改')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="cs-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        </div>
                     </div>
                 </div>
 
@@ -760,10 +780,13 @@
 
                     <button onclick="gradeEssay('english')" id="eng-grade-btn" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-xl font-bold transition-all shadow-md active:scale-95">开始残酷阅卷</button>
                     
-                    <div id="eng-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm ai-content prose dark:prose-invert max-w-none"></div>
-                    <div class="flex items-center justify-between mt-2">
-                        <button onclick="saveResultToNotebook('grader-eng', 'eng-preview', 'eng-result')" id="eng-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                        <button onclick="exportToPDF('eng-result', 'AI阅卷室', '英语作文批改')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="eng-grader-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                    <div id="eng-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                    <div class="flex items-center justify-between mt-2 gap-2">
+                        <button onclick="clearConversation('eng-result')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="eng-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                        <div class="flex gap-2 ml-auto">
+                            <button onclick="saveResultToNotebook('grader-eng', 'eng-preview', 'eng-result')" id="eng-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                            <button onclick="exportToPDF('eng-result', 'AI阅卷室', '英语作文批改')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="eng-grader-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        </div>
                     </div>
                 </div>
 
@@ -809,10 +832,13 @@
                     </div>
 
                     <button onclick="gradeTranslation()" id="trans-grade-btn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white py-3 rounded-xl font-bold transition-all shadow-md active:scale-95">开始双图对照批改</button>
-                    <div id="trans-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm ai-content prose dark:prose-invert max-w-none"></div>
-                    <div class="flex items-center justify-between mt-2">
-                        <button onclick="saveResultToNotebook('grader-trans', 'trans-source-preview', 'trans-result')" id="trans-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                        <button onclick="exportToPDF('trans-result', 'AI阅卷室', '翻译批改')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="trans-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                    <div id="trans-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                    <div class="flex items-center justify-between mt-2 gap-2">
+                        <button onclick="clearConversation('trans-result')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="trans-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                        <div class="flex gap-2 ml-auto">
+                            <button onclick="saveResultToNotebook('grader-trans', 'trans-source-preview', 'trans-result')" id="trans-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                            <button onclick="exportToPDF('trans-result', 'AI阅卷室', '翻译批改')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="trans-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        </div>
                     </div>
                 </div>
 
@@ -839,10 +865,13 @@
                     </div>
 
                     <button onclick="solvePolitics()" id="pol-grade-btn" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold transition-all shadow-md active:scale-95">生成标准答题模板</button>
-                    <div id="pol-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm ai-content prose dark:prose-invert max-w-none"></div>
-                    <div class="flex items-center justify-between mt-2">
-                        <button onclick="saveResultToNotebook('grader-pol', 'pol-q-input', 'pol-result')" id="pol-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-orange-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                        <button onclick="exportToPDF('pol-result', 'AI阅卷室', '政治大题')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="pol-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                    <div id="pol-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                    <div class="flex items-center justify-between mt-2 gap-2">
+                        <button onclick="clearConversation('pol-result')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="pol-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                        <div class="flex gap-2 ml-auto">
+                            <button onclick="saveResultToNotebook('grader-pol', 'pol-q-input', 'pol-result')" id="pol-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-orange-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                            <button onclick="exportToPDF('pol-result', 'AI阅卷室', '政治大题')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="pol-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1451,15 +1480,23 @@
         // --- OTHER EXISTING FEATURES ---
         async function generateQuiz() {
             const subject = document.getElementById('quiz-subject').value;
-            const container = document.getElementById('quiz-output-area');
-            const questionEl = document.getElementById('quiz-question');
-            const answerEl = document.getElementById('quiz-answer');
+            const output = document.getElementById('quiz-output');
             const btn = document.getElementById('quiz-btn');
+            const saveBtn = document.getElementById('quiz-save-btn');
+            const exportBtn = document.getElementById('quiz-export-btn');
+            const clearBtn = document.getElementById('quiz-clear-btn');
 
             btn.disabled = true;
-            questionEl.innerHTML = '生成中...';
-            container.classList.remove('hidden');
-            answerEl.classList.add('hidden');
+            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4 inline"></i> 出题中...';
+            output.classList.remove('hidden');
+
+            // Add loading entry
+            const entry = addConversationEntry('quiz-output', `科目：${subject}`, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             const prompt = `Generate a ${subject} multiple choice question for exam.
             Format:
@@ -1472,14 +1509,54 @@
             try {
                 const res = await callGemini(prompt, "tutor");
                 const parts = res.split('|||');
-                questionEl.innerHTML = marked.parse(parts[0]);
-                renderMath('quiz-question');
-                if(parts[1]) {
-                    answerEl.innerHTML = marked.parse(parts[1]);
-                    renderMath('quiz-answer');
-                }
-            } catch(e) { questionEl.innerText = "生成失败"; }
-            finally { btn.disabled = false; }
+                
+                // Remove loading and add complete entry with question and collapsible answer
+                entry.remove();
+                const questionHtml = marked.parse(parts[0]);
+                const answerHtml = parts[1] ? marked.parse(parts[1]) : '';
+                
+                const completeEntry = document.createElement('div');
+                completeEntry.className = 'conversation-entry space-y-2 pb-4 border-b border-slate-200 dark:border-slate-700 last:border-b-0 last:pb-0';
+                completeEntry.innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center text-xs">📝</div>
+                        <div class="flex-1 bg-white dark:bg-slate-800 rounded-lg rounded-tl-none px-3 py-2 text-sm">
+                            <strong class="text-indigo-600 dark:text-indigo-400">科目：</strong>${subject}
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-indigo-100 dark:bg-indigo-900/40 rounded-full flex items-center justify-center text-xs">❓</div>
+                        <div class="flex-1 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm">
+                            <div class="font-bold text-indigo-600 dark:text-indigo-400 mb-2">题目：</div>
+                            <div class="ai-content prose dark:prose-invert max-w-none">${questionHtml}</div>
+                        </div>
+                    </div>
+                    ${answerHtml ? `
+                    <details class="ml-8">
+                        <summary class="cursor-pointer text-xs text-indigo-500 hover:underline">👀 查看答案与解析</summary>
+                        <div class="mt-2 bg-green-50 dark:bg-green-900/20 rounded-lg px-3 py-2 text-sm ai-content prose dark:prose-invert max-w-none">
+                            ${answerHtml}
+                        </div>
+                    </details>` : ''}
+                `;
+                output.appendChild(completeEntry);
+                output.scrollTop = output.scrollHeight;
+                renderMath('quiz-output');
+            } catch(e) { 
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            生成失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
+            }
+            finally { 
+                btn.disabled = false; 
+                btn.innerHTML = '出题';
+                lucide.createIcons();
+            }
         }
 
         async function generateMnemonic() {
