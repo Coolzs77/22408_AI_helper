@@ -213,7 +213,7 @@
 <body class="flex h-screen overflow-hidden selection:bg-pink-100 bg-[#fdfbf7] dark:bg-darkbg text-slate-600 dark:text-slate-300">
 
     <!-- SIDEBAR -->
-    <aside class="w-64 bg-sidebar dark:bg-darksidebar border-r border-slate-100 dark:border-slate-800 hidden md:flex flex-col p-6 z-50 transition-colors duration-300">
+    <aside id="sidebar" class="w-64 bg-sidebar dark:bg-darksidebar border-r border-slate-100 dark:border-slate-800 hidden md:flex flex-col p-6 z-50 transition-all duration-300">
         <div class="flex items-center gap-3 mb-10 px-2">
             <div class="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/50 rounded-full flex items-center justify-center text-xl shadow-sm">🦆</div>
             <div>
@@ -274,8 +274,13 @@
         <button onclick="toggleKeyModal()" class="text-indigo-500"><i data-lucide="key"></i></button>
     </nav>
 
+    <!-- SIDEBAR TOGGLE BUTTON -->
+    <button id="sidebar-toggle" onclick="toggleSidebar()" style="left: calc(16rem + 1rem);" class="hidden md:flex fixed top-4 z-50 w-10 h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-md">
+        <i data-lucide="panel-left-close" class="w-5 h-5" id="sidebar-icon"></i>
+    </button>
+
     <!-- MAIN CONTENT -->
-    <main class="flex-1 h-full overflow-y-auto p-4 md:p-10 relative scroll-smooth">
+    <main id="main-content" class="flex-1 h-full overflow-y-auto p-4 md:p-10 relative scroll-smooth transition-all duration-300">
         <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-200 via-pink-200 to-yellow-200 dark:opacity-50"></div>
 
         <!-- HEADER -->
@@ -320,8 +325,13 @@
                                 </p>
                             </div>
                             <div id="ai-chat-container" class="hidden relative z-10 flex flex-col gap-3">
-                                <div id="ai-response-area" class="text-slate-700 dark:text-slate-200 text-sm md:text-base leading-relaxed ai-content max-w-none">
-                                    <p>我是你的鸭鸭助手，可以陪你聊天、出题、或者解释名词哦！🦆</p>
+                                <div id="ai-response-area" class="text-slate-700 dark:text-slate-200 text-sm md:text-base leading-relaxed max-h-[500px] overflow-y-auto pr-2 space-y-4">
+                                    <div class="flex gap-2 items-start">
+                                        <div class="flex-shrink-0 w-8 h-8 bg-yellow-100 dark:bg-yellow-900/40 rounded-full flex items-center justify-center text-xl">🦆</div>
+                                        <div class="flex-1 bg-slate-100 dark:bg-slate-700/50 rounded-2xl rounded-tl-none px-4 py-2 text-sm ai-content">
+                                            <p>我是你的鸭鸭助手，可以陪你聊天、出题、或者解释名词哦！🦆</p>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar" id="quick-actions">
                                     <button onclick="triggerQuickAction('解释名词：')" class="whitespace-nowrap px-2 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-xs text-slate-500 hover:text-indigo-500 hover:border-indigo-200 transition-colors">
@@ -414,10 +424,13 @@
                             
                             <button onclick="analyzeImage()" id="vision-btn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">开始解析</button>
                         </div>
-                        <div id="vision-output" class="hidden ai-content bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
-                        <div class="flex items-center justify-between mt-2">
-                            <button onclick="saveResultToNotebook('vision', 'vision-text', 'vision-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500" id="vision-save-btn"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                            <button onclick="exportToPDF('vision-output', 'AI智囊团', '拍照搜题')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="vision-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        <div id="vision-output" class="hidden bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                        <div class="flex items-center justify-between mt-2 gap-2">
+                            <button onclick="clearConversation('vision-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="vision-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                            <div class="flex gap-2 ml-auto">
+                                <button onclick="saveResultToNotebook('vision', 'vision-text', 'vision-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500" id="vision-save-btn"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                                <button onclick="exportToPDF('vision-output', 'AI智囊团', '拍照搜题')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="vision-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                            </div>
                         </div>
                     </div>
 
@@ -432,13 +445,12 @@
                             </select>
                             <button onclick="generateQuiz()" id="quiz-btn" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold">出题</button>
                         </div>
-                        <div id="quiz-output-area" class="hidden space-y-4">
-                            <div id="quiz-question" class="ai-content bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300"></div>
-                            <button onclick="document.getElementById('quiz-answer').classList.remove('hidden')" class="text-xs text-indigo-500 hover:underline">偷看答案与解析</button>
-                            <div id="quiz-answer" class="hidden ai-content bg-green-50/50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-xl p-5 text-sm"></div>
-                            <div class="flex items-center justify-between mt-2">
-                                <button onclick="saveResultToNotebook('quiz', 'quiz-question', 'quiz-answer')" class="text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                                <button onclick="exportQuizToPDF()" class="text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="quiz-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        <div id="quiz-output" class="hidden bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                        <div class="flex items-center justify-between mt-2 gap-2">
+                            <button onclick="clearConversation('quiz-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="quiz-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                            <div class="flex gap-2 ml-auto">
+                                <button onclick="saveResultToNotebook('quiz', 'quiz-subject', 'quiz-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500" id="quiz-save-btn"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                                <button onclick="exportToPDF('quiz-output', 'AI智囊团', '每日一练')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="quiz-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
                             </div>
                         </div>
                     </div>
@@ -450,10 +462,13 @@
                         </div>
                         <textarea id="eng-write-small-input" class="w-full h-24 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:outline-none focus:border-green-400 resize-none" placeholder="输入小作文关键词/主题（例如：通知、邀请信、建议信、感谢信、道歉信...）"></textarea>
                         <button onclick="generateEngComposition('small')" id="eng-write-small-btn" class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">生成小作文模板 & 技巧</button>
-                        <div id="eng-write-small-output" class="hidden ai-content bg-green-50/50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
-                        <div class="flex items-center justify-between mt-2">
-                            <button onclick="saveResultToNotebook('eng-write-small', 'eng-write-small-input', 'eng-write-small-output')" id="eng-write-small-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-green-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                            <button onclick="exportToPDF('eng-write-small-output', 'AI智囊团', '英语小作文')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="eng-write-small-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        <div id="eng-write-small-output" class="hidden bg-green-50/50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                        <div class="flex items-center justify-between mt-2 gap-2">
+                            <button onclick="clearConversation('eng-write-small-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="eng-write-small-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                            <div class="flex gap-2 ml-auto">
+                                <button onclick="saveResultToNotebook('eng-write-small', 'eng-write-small-input', 'eng-write-small-output')" id="eng-write-small-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-green-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                                <button onclick="exportToPDF('eng-write-small-output', 'AI智囊团', '英语小作文')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="eng-write-small-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                            </div>
                         </div>
                     </div>
 
@@ -464,10 +479,13 @@
                         </div>
                         <textarea id="eng-write-big-input" class="w-full h-24 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:outline-none focus:border-blue-400 resize-none" placeholder="输入大作文关键词/主题（例如：柱状图、饼图、折线图、手机依赖、环保、教育...）"></textarea>
                         <button onclick="generateEngComposition('big')" id="eng-write-big-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">生成大作文模板 & 技巧</button>
-                        <div id="eng-write-big-output" class="hidden ai-content bg-blue-50/50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
-                        <div class="flex items-center justify-between mt-2">
-                            <button onclick="saveResultToNotebook('eng-write-big', 'eng-write-big-input', 'eng-write-big-output')" id="eng-write-big-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-blue-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                            <button onclick="exportToPDF('eng-write-big-output', 'AI智囊团', '英语大作文')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="eng-write-big-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        <div id="eng-write-big-output" class="hidden bg-blue-50/50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                        <div class="flex items-center justify-between mt-2 gap-2">
+                            <button onclick="clearConversation('eng-write-big-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="eng-write-big-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                            <div class="flex gap-2 ml-auto">
+                                <button onclick="saveResultToNotebook('eng-write-big', 'eng-write-big-input', 'eng-write-big-output')" id="eng-write-big-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-blue-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                                <button onclick="exportToPDF('eng-write-big-output', 'AI智囊团', '英语大作文')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="eng-write-big-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                            </div>
                         </div>
                     </div>
 
@@ -484,10 +502,13 @@
                             <button onclick="clearGenericImage('sentence-preview', 'sentence-file')" class="absolute top-1 left-1 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"><i data-lucide="x" class="w-3 h-3"></i></button>
                         </div>
                         <button onclick="breakSentence()" id="sentence-btn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">一键拆解</button>
-                        <div id="sentence-output" class="hidden ai-content bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
-                        <div class="flex items-center justify-between mt-2">
-                            <button onclick="saveResultToNotebook('sentence', 'sentence-input', 'sentence-output')" id="sentence-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                            <button onclick="exportToPDF('sentence-output', 'AI智囊团', '长难句拆解')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="sentence-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        <div id="sentence-output" class="hidden bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                        <div class="flex items-center justify-between mt-2 gap-2">
+                            <button onclick="clearConversation('sentence-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="sentence-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                            <div class="flex gap-2 ml-auto">
+                                <button onclick="saveResultToNotebook('sentence', 'sentence-input', 'sentence-output')" id="sentence-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                                <button onclick="exportToPDF('sentence-output', 'AI智囊团', '长难句拆解')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="sentence-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                            </div>
                         </div>
                     </div>
 
@@ -496,10 +517,13 @@
                         <p class="text-xs text-slate-400">输入难背的知识点列表，AI 生成记忆口诀。</p>
                         <textarea id="memory-input" class="w-full h-24 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:outline-none focus:border-indigo-400 resize-none" placeholder="例如：互斥、请求与保持、不剥夺、循环等待"></textarea>
                         <button onclick="generateMnemonic()" id="memory-btn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">生成记忆宫殿</button>
-                        <div id="memory-output" class="hidden ai-content bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
-                        <div class="flex items-center justify-between mt-2">
-                            <button onclick="saveResultToNotebook('memory', 'memory-input', 'memory-output')" id="memory-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                            <button onclick="exportToPDF('memory-output', 'AI智囊团', '记忆宫殿')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="memory-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        <div id="memory-output" class="hidden bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                        <div class="flex items-center justify-between mt-2 gap-2">
+                            <button onclick="clearConversation('memory-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="memory-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                            <div class="flex gap-2 ml-auto">
+                                <button onclick="saveResultToNotebook('memory', 'memory-input', 'memory-output')" id="memory-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                                <button onclick="exportToPDF('memory-output', 'AI智囊团', '记忆宫殿')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="memory-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                            </div>
                         </div>
                     </div>
 
@@ -509,10 +533,13 @@
                             <input type="text" id="concept-input" class="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-purple-400" placeholder="例如: KMP, 虚拟内存...">
                             <button onclick="explainConcept()" id="concept-btn" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-bold">生成</button>
                         </div>
-                        <div id="concept-output" class="hidden ai-content bg-purple-50/50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-xl p-5 text-sm"></div>
-                        <div class="flex items-center justify-between mt-2">
-                            <button onclick="saveResultToNotebook('concept', 'concept-input', 'concept-output')" id="concept-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-purple-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                            <button onclick="exportToPDF('concept-output', 'AI智囊团', '概念卡片')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="concept-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        <div id="concept-output" class="hidden bg-purple-50/50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                        <div class="flex items-center justify-between mt-2 gap-2">
+                            <button onclick="clearConversation('concept-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="concept-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                            <div class="flex gap-2 ml-auto">
+                                <button onclick="saveResultToNotebook('concept', 'concept-input', 'concept-output')" id="concept-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-purple-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                                <button onclick="exportToPDF('concept-output', 'AI智囊团', '概念卡片')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="concept-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                            </div>
                         </div>
                     </div>
 
@@ -557,10 +584,13 @@
                         <p class="text-xs text-slate-400">输入算法名称，AI 生成408手写适用的标准代码模板。</p>
                         <textarea id="code-input" class="w-full h-16 bg-slate-900 text-slate-300 border border-slate-700 rounded-lg p-3 text-xs font-mono focus:outline-none focus:border-blue-500 resize-none" placeholder="例如：QuickSort (快速排序), Dijkstra算法..."></textarea>
                         <button onclick="explainCode()" id="code-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">生成代码模板</button>
-                        <div id="code-output" class="hidden ai-content bg-slate-900 border border-slate-700 rounded-xl p-5 text-sm text-slate-300 shadow-sm prose prose-invert max-w-none"></div>
-                        <div class="flex items-center justify-between mt-2">
-                            <button onclick="saveResultToNotebook('code', 'code-input', 'code-output')" id="code-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-blue-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                            <button onclick="exportToPDF('code-output', 'AI智囊团', '代码模板')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="code-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        <div id="code-output" class="hidden bg-slate-900 border border-slate-700 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                        <div class="flex items-center justify-between mt-2 gap-2">
+                            <button onclick="clearConversation('code-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="code-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                            <div class="flex gap-2 ml-auto">
+                                <button onclick="saveResultToNotebook('code', 'code-input', 'code-output')" id="code-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-blue-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                                <button onclick="exportToPDF('code-output', 'AI智囊团', '代码模板')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="code-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                            </div>
                         </div>
                     </div>
 
@@ -718,10 +748,13 @@
 
                     <button onclick="gradeCS()" id="cs-grade-btn" class="w-full bg-purple-500 hover:bg-purple-600 text-white py-3 rounded-xl font-bold transition-all shadow-md active:scale-95">开始 408 批改</button>
                     
-                    <div id="cs-grade-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm ai-content prose dark:prose-invert max-w-none"></div>
-                    <div class="flex items-center justify-between mt-2">
-                        <button onclick="saveResultToNotebook('grader-cs', 'cs-grader-preview', 'cs-grade-result')" id="cs-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-purple-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                        <button onclick="exportToPDF('cs-grade-result', 'AI阅卷室', '408大题批改')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="cs-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                    <div id="cs-grade-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                    <div class="flex items-center justify-between mt-2 gap-2">
+                        <button onclick="clearConversation('cs-grade-result')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="cs-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                        <div class="flex gap-2 ml-auto">
+                            <button onclick="saveResultToNotebook('grader-cs', 'cs-grader-preview', 'cs-grade-result')" id="cs-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-purple-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                            <button onclick="exportToPDF('cs-grade-result', 'AI阅卷室', '408大题批改')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="cs-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        </div>
                     </div>
                 </div>
 
@@ -747,10 +780,13 @@
 
                     <button onclick="gradeEssay('english')" id="eng-grade-btn" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-xl font-bold transition-all shadow-md active:scale-95">开始残酷阅卷</button>
                     
-                    <div id="eng-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm ai-content prose dark:prose-invert max-w-none"></div>
-                    <div class="flex items-center justify-between mt-2">
-                        <button onclick="saveResultToNotebook('grader-eng', 'eng-preview', 'eng-result')" id="eng-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                        <button onclick="exportToPDF('eng-result', 'AI阅卷室', '英语作文批改')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="eng-grader-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                    <div id="eng-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                    <div class="flex items-center justify-between mt-2 gap-2">
+                        <button onclick="clearConversation('eng-result')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="eng-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                        <div class="flex gap-2 ml-auto">
+                            <button onclick="saveResultToNotebook('grader-eng', 'eng-preview', 'eng-result')" id="eng-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                            <button onclick="exportToPDF('eng-result', 'AI阅卷室', '英语作文批改')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="eng-grader-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        </div>
                     </div>
                 </div>
 
@@ -796,10 +832,13 @@
                     </div>
 
                     <button onclick="gradeTranslation()" id="trans-grade-btn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white py-3 rounded-xl font-bold transition-all shadow-md active:scale-95">开始双图对照批改</button>
-                    <div id="trans-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm ai-content prose dark:prose-invert max-w-none"></div>
-                    <div class="flex items-center justify-between mt-2">
-                        <button onclick="saveResultToNotebook('grader-trans', 'trans-source-preview', 'trans-result')" id="trans-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                        <button onclick="exportToPDF('trans-result', 'AI阅卷室', '翻译批改')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="trans-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                    <div id="trans-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                    <div class="flex items-center justify-between mt-2 gap-2">
+                        <button onclick="clearConversation('trans-result')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="trans-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                        <div class="flex gap-2 ml-auto">
+                            <button onclick="saveResultToNotebook('grader-trans', 'trans-source-preview', 'trans-result')" id="trans-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                            <button onclick="exportToPDF('trans-result', 'AI阅卷室', '翻译批改')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="trans-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        </div>
                     </div>
                 </div>
 
@@ -826,10 +865,13 @@
                     </div>
 
                     <button onclick="solvePolitics()" id="pol-grade-btn" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold transition-all shadow-md active:scale-95">生成标准答题模板</button>
-                    <div id="pol-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm ai-content prose dark:prose-invert max-w-none"></div>
-                    <div class="flex items-center justify-between mt-2">
-                        <button onclick="saveResultToNotebook('grader-pol', 'pol-q-input', 'pol-result')" id="pol-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-orange-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                        <button onclick="exportToPDF('pol-result', 'AI阅卷室', '政治大题')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="pol-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                    <div id="pol-result" class="hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                    <div class="flex items-center justify-between mt-2 gap-2">
+                        <button onclick="clearConversation('pol-result')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="pol-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                        <div class="flex gap-2 ml-auto">
+                            <button onclick="saveResultToNotebook('grader-pol', 'pol-q-input', 'pol-result')" id="pol-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-orange-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                            <button onclick="exportToPDF('pol-result', 'AI阅卷室', '政治大题')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="pol-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1130,23 +1172,100 @@
 
         // --- FEATURE LOGIC ---
 
-        // 1. Vision (Photo + Text)
+        /**
+         * Helper function to add a conversation entry (question + answer)
+         */
+        function addConversationEntry(outputId, question, answer, isLoading = false) {
+            const output = document.getElementById(outputId);
+            const entry = document.createElement('div');
+            entry.className = 'conversation-entry space-y-2 pb-4 border-b border-slate-200 dark:border-slate-700 last:border-b-0 last:pb-0';
+            
+            if (isLoading) {
+                entry.innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center text-xs">👤</div>
+                        <div class="flex-1 bg-white dark:bg-slate-800 rounded-lg rounded-tl-none px-3 py-2 text-sm">
+                            <strong class="text-indigo-600 dark:text-indigo-400">问题：</strong>
+                            <div>${question.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-2 loading-response">
+                        <div class="flex-shrink-0 w-6 h-6 bg-indigo-100 dark:bg-indigo-900/40 rounded-full flex items-center justify-center text-xs">🤖</div>
+                        <div class="flex-1 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm">
+                            <span class="animate-pulse text-indigo-500">AI 正在思考...</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                entry.innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center text-xs">👤</div>
+                        <div class="flex-1 bg-white dark:bg-slate-800 rounded-lg rounded-tl-none px-3 py-2 text-sm">
+                            <strong class="text-indigo-600 dark:text-indigo-400">问题：</strong>
+                            <div>${question.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-indigo-100 dark:bg-indigo-900/40 rounded-full flex items-center justify-center text-xs">🤖</div>
+                        <div class="flex-1 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm ai-content prose dark:prose-invert max-w-none">
+                            ${answer}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            output.appendChild(entry);
+            output.scrollTop = output.scrollHeight;
+            return entry;
+        }
+
+        /**
+         * Helper function to clear conversation history
+         */
+        function clearConversation(outputId) {
+            if (!confirm('确定要清空对话历史吗？')) return;
+            const output = document.getElementById(outputId);
+            output.innerHTML = '';
+            output.classList.add('hidden');
+            
+            // Hide associated buttons
+            const clearBtn = document.getElementById(outputId.replace('-output', '-clear-btn'));
+            const saveBtn = document.getElementById(outputId.replace('-output', '-save-btn'));
+            const exportBtn = document.getElementById(outputId.replace('-output', '-export-btn'));
+            if (clearBtn) clearBtn.classList.add('hidden');
+            if (saveBtn) saveBtn.classList.add('hidden');
+            if (exportBtn) exportBtn.classList.add('hidden');
+        }
+
+        // 1. Vision (Photo + Text) - Multi-turn conversation support
         async function analyzeImage() {
             const text = document.getElementById('vision-text').value.trim();
             const img = document.getElementById('vision-preview');
             const output = document.getElementById('vision-output');
             const btn = document.getElementById('vision-btn');
             const saveBtn = document.getElementById('vision-save-btn');
+            const exportBtn = document.getElementById('vision-export-btn');
+            const clearBtn = document.getElementById('vision-clear-btn');
 
             if (!text && !img.dataset.base64) return alert("请输入问题描述或上传图片！");
+
+            // Create question text
+            let questionText = text || '(查看上传的图片)';
+            if (img.dataset.base64) {
+                questionText += ' [含图片]';
+            }
 
             btn.disabled = true;
             btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4 inline"></i> AI 思考中...';
             output.classList.remove('hidden');
-            output.innerHTML = '<span class="animate-pulse text-indigo-500">正在解析...</span>';
-            saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById('vision-export-btn');
-            if (exportBtn) exportBtn.classList.add('hidden');
+            
+            // Add loading entry
+            const entry = addConversationEntry('vision-output', questionText, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             const prompt = `User Question: "${text}". 
             (There may be an image associated with this question).
@@ -1157,16 +1276,27 @@
 
             try {
                 const res = await callGemini(prompt, "tutor", img.dataset.base64 ? { base64: img.dataset.base64, mimeType: img.dataset.mimeType } : null);
-                output.innerHTML = marked.parse(res);
+                
+                // Remove loading entry and add complete entry
+                entry.remove();
+                addConversationEntry('vision-output', questionText, marked.parse(res), false);
                 renderMath('vision-output');
-                saveBtn.classList.remove('hidden');
-                const exportBtn = document.getElementById('vision-export-btn');
-                if (exportBtn) exportBtn.classList.remove('hidden');
+                
+                // Clear input
+                document.getElementById('vision-text').value = '';
             } catch (e) {
-                output.innerHTML = "解析失败，请检查 API Key。";
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            解析失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
             } finally {
                 btn.disabled = false;
-                btn.innerText = "开始解析";
+                btn.innerHTML = '开始解析';
+                lucide.createIcons();
             }
         }
 
@@ -1177,21 +1307,29 @@
             const outputId = type === 'small' ? 'eng-write-small-output' : 'eng-write-big-output';
             const saveBtnId = type === 'small' ? 'eng-write-small-save-btn' : 'eng-write-big-save-btn';
             const exportBtnId = type === 'small' ? 'eng-write-small-export-btn' : 'eng-write-big-export-btn';
+            const clearBtnId = type === 'small' ? 'eng-write-small-clear-btn' : 'eng-write-big-clear-btn';
             
-            const input = document.getElementById(inputId).value.trim();
+            const inputEl = document.getElementById(inputId);
+            const input = inputEl.value.trim();
             const btn = document.getElementById(btnId);
-            const output = document.getElementById(outputId);
             const saveBtn = document.getElementById(saveBtnId);
+            const exportBtn = document.getElementById(exportBtnId);
+            const clearBtn = document.getElementById(clearBtnId);
 
             if(!input) return alert("请输入关键词或主题");
 
             const buttonText = type === 'small' ? "生成小作文模板 & 技巧" : "生成大作文模板 & 技巧";
             btn.disabled = true; btn.innerText = "正在生成模版...";
-            const loadingColor = type === 'small' ? 'text-green-500' : 'text-blue-500';
-            output.classList.remove('hidden'); output.innerHTML = `<span class="animate-pulse ${loadingColor}">正在构建高分模板...</span>`;
-            saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById(exportBtnId);
-            if (exportBtn) exportBtn.classList.add('hidden');
+            const output = document.getElementById(outputId);
+            output.classList.remove('hidden');
+            
+            // Add loading entry
+            const entry = addConversationEntry(outputId, `主题：${input}`, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             const typeStr = type === 'small' ? "Small Composition (Letter/Notice)" : "Big Composition (Chart/Graph)";
             const prompt = `Generate a template for English II (考研英语二) ${typeStr}.
@@ -1205,27 +1343,52 @@
 
             try {
                 const res = await callGemini(prompt, "eng-tutor");
-                output.innerHTML = marked.parse(res);
-                saveBtn.classList.remove('hidden');
-                if (exportBtn) exportBtn.classList.remove('hidden');
-            } catch(e) { output.innerHTML = "生成失败"; }
-            finally { btn.disabled = false; btn.innerText = buttonText; }
+                
+                // Remove loading and add complete entry
+                entry.remove();
+                addConversationEntry(outputId, `主题：${input}`, marked.parse(res), false);
+                
+                // Clear input for next question
+                inputEl.value = '';
+            } catch(e) { 
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            生成失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
+            }
+            finally { 
+                btn.disabled = false; 
+                btn.innerText = buttonText;
+                lucide.createIcons();
+            }
         }
 
-        // 3. Code Templates (Modified)
+        // 3. Code Templates - Multi-turn
         async function explainCode() {
-            const input = document.getElementById('code-input').value.trim();
+            const inputEl = document.getElementById('code-input');
+            const input = inputEl.value.trim();
             const btn = document.getElementById('code-btn');
             const output = document.getElementById('code-output');
             const saveBtn = document.getElementById('code-save-btn');
+            const exportBtn = document.getElementById('code-export-btn');
+            const clearBtn = document.getElementById('code-clear-btn');
 
             if(!input) return;
 
             btn.disabled = true; btn.innerText = "正在生成...";
-            output.classList.remove('hidden'); output.innerHTML = '<span class="animate-pulse text-blue-400">正在手写代码...</span>';
-            saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById('code-export-btn');
-            if (exportBtn) exportBtn.classList.add('hidden');
+            output.classList.remove('hidden');
+            
+            // Add loading entry
+            const entry = addConversationEntry('code-output', `算法：${input}`, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             const prompt = `Generate a standard C++ code template for the algorithm/data structure: "${input}".
             Target: 408 Computer Science Exam (Handwriting style).
@@ -1237,30 +1400,57 @@
 
             try {
                 const res = await callGemini(prompt, "tutor");
-                output.innerHTML = marked.parse(res);
+                
+                // Remove loading and add complete entry
+                entry.remove();
+                addConversationEntry('code-output', `算法：${input}`, marked.parse(res), false);
                 renderMath('code-output');
-                saveBtn.classList.remove('hidden');
-                const exportBtn = document.getElementById('code-export-btn');
-                if (exportBtn) exportBtn.classList.remove('hidden');
-            } catch(e) { output.innerHTML = "生成失败"; }
-            finally { btn.disabled = false; btn.innerText = "生成代码模板"; }
+                
+                // Clear input
+                inputEl.value = '';
+            } catch(e) { 
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            生成失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
+            }
+            finally { 
+                btn.disabled = false; 
+                btn.innerText = "生成代码模板";
+                lucide.createIcons();
+            }
         }
 
-        // 4. Sentence Breakdown (Image Supported)
+        // 4. Sentence Breakdown - Multi-turn
         async function breakSentence() {
-            const text = document.getElementById('sentence-input').value.trim();
+            const inputEl = document.getElementById('sentence-input');
+            const text = inputEl.value.trim();
             const img = document.getElementById('sentence-preview');
             const btn = document.getElementById('sentence-btn');
             const output = document.getElementById('sentence-output');
             const saveBtn = document.getElementById('sentence-save-btn');
+            const exportBtn = document.getElementById('sentence-export-btn');
+            const clearBtn = document.getElementById('sentence-clear-btn');
 
             if(!text && !img.dataset.base64) return alert("请输入句子或上传图片");
 
+            let questionText = text || '(查看上传的句子图片)';
+            if (img.dataset.base64) questionText += ' [含图片]';
+
             btn.disabled = true; btn.innerText = "解析中...";
-            output.classList.remove('hidden'); output.innerHTML = '<span class="animate-pulse text-indigo-500">正在拆解长难句...</span>';
-            saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById('sentence-export-btn');
-            if (exportBtn) exportBtn.classList.add('hidden');
+            output.classList.remove('hidden');
+            
+            // Add loading entry
+            const entry = addConversationEntry('sentence-output', questionText, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             const prompt = `Analyze this English sentence (for English II exam).
             Text: "${text}"
@@ -1273,29 +1463,56 @@
 
             try {
                 const res = await callGemini(prompt, "eng-tutor", img.dataset.base64 ? {base64: img.dataset.base64, mimeType: img.dataset.mimeType} : null);
-                output.innerHTML = marked.parse(res);
-                saveBtn.classList.remove('hidden');
-                const exportBtn = document.getElementById('sentence-export-btn');
-                if (exportBtn) exportBtn.classList.remove('hidden');
-            } catch(e) { output.innerHTML = "解析失败"; }
-            finally { btn.disabled = false; btn.innerText = "一键拆解"; }
+                
+                // Remove loading and add complete entry
+                entry.remove();
+                addConversationEntry('sentence-output', questionText, marked.parse(res), false);
+                
+                // Clear input
+                inputEl.value = '';
+            } catch(e) { 
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            解析失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
+            }
+            finally { 
+                btn.disabled = false; 
+                btn.innerText = "一键拆解";
+                lucide.createIcons();
+            }
         }
 
         // 5. Politics Standard Template (Modified)
         async function solvePolitics() {
-            const text = document.getElementById('pol-q-input').value.trim();
+            const inputEl = document.getElementById('pol-q-input');
+            const text = inputEl.value.trim();
             const img = document.getElementById('pol-preview');
             const btn = document.getElementById('pol-grade-btn');
             const output = document.getElementById('pol-result');
             const saveBtn = document.getElementById('pol-save-btn');
+            const exportBtn = document.getElementById('pol-export-btn');
+            const clearBtn = document.getElementById('pol-clear-btn');
 
             if(!text && !img.dataset.base64) return alert("请输入关键词或上传图片");
 
+            let questionText = text || '(查看上传的题目图片)';
+            if (img.dataset.base64) questionText += ' [含图片]';
+
             btn.disabled = true; btn.innerText = "生成中...";
-            output.classList.remove('hidden'); output.innerHTML = '<span class="animate-pulse text-orange-500">正在检索标准答案...</span>';
-            saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById('pol-export-btn');
-            if (exportBtn) exportBtn.classList.add('hidden');
+            output.classList.remove('hidden');
+            
+            // Add loading entry
+            const entry = addConversationEntry('pol-result', questionText, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             const prompt = `Based on the input (Politics Question/Keywords), provide a STANDARD ANSWER TEMPLATE suitable for memorization.
             Input: "${text}".
@@ -1307,28 +1524,53 @@
 
             try {
                 const res = await callGemini(prompt, "pol-tutor", img.dataset.base64 ? {base64: img.dataset.base64, mimeType: img.dataset.mimeType} : null);
-                output.innerHTML = marked.parse(res);
-                saveBtn.classList.remove('hidden');
-                const exportBtn = document.getElementById('pol-export-btn');
-                if (exportBtn) exportBtn.classList.remove('hidden');
-            } catch(e) { output.innerHTML = "生成失败"; }
-            finally { btn.disabled = false; btn.innerText = "生成标准答题模板"; }
+                
+                // Remove loading and add complete entry
+                entry.remove();
+                addConversationEntry('pol-result', questionText, marked.parse(res), false);
+                
+                // Clear input
+                inputEl.value = '';
+            } catch(e) { 
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            生成失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
+            }
+            finally { 
+                btn.disabled = false; 
+                btn.innerText = "生成标准答题模板";
+                lucide.createIcons();
+            }
         }
 
-        // 6. CS 408 Grader (NEW)
+        // 6. CS 408 Grader - Multi-turn
         async function gradeCS() {
             const img = document.getElementById('cs-grader-preview');
             const btn = document.getElementById('cs-grade-btn');
             const output = document.getElementById('cs-grade-result');
             const saveBtn = document.getElementById('cs-save-btn');
+            const exportBtn = document.getElementById('cs-export-btn');
+            const clearBtn = document.getElementById('cs-clear-btn');
 
             if(!img.dataset.base64) return alert("请上传图片");
 
+            const questionText = '(查看上传的408题目) [含图片]';
+
             btn.disabled = true; btn.innerText = "阅卷中...";
-            output.classList.remove('hidden'); output.innerHTML = '<span class="animate-pulse text-purple-500">AI 正在批改...</span>';
-            saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById('cs-export-btn');
-            if (exportBtn) exportBtn.classList.add('hidden');
+            output.classList.remove('hidden');
+            
+            // Add loading entry
+            const entry = addConversationEntry('cs-grade-result', questionText, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             const prompt = `You are a grader for the 408 Computer Science exam. 
             Analyze the image (Question + Handwritten Answer).
@@ -1338,27 +1580,48 @@
 
             try {
                 const res = await callGemini(prompt, "grader", {base64: img.dataset.base64, mimeType: img.dataset.mimeType});
-                output.innerHTML = marked.parse(res);
+                
+                // Remove loading and add complete entry
+                entry.remove();
+                addConversationEntry('cs-grade-result', questionText, marked.parse(res), false);
                 renderMath('cs-grade-result');
-                saveBtn.classList.remove('hidden');
-                const exportBtn = document.getElementById('cs-export-btn');
-                if (exportBtn) exportBtn.classList.remove('hidden');
-            } catch(e) { output.innerHTML = "批改失败"; }
-            finally { btn.disabled = false; btn.innerText = "开始 408 批改"; }
+            } catch(e) { 
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            批改失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
+            }
+            finally { 
+                btn.disabled = false; 
+                btn.innerText = "开始 408 批改";
+                lucide.createIcons();
+            }
         }
 
         // --- OTHER EXISTING FEATURES ---
         async function generateQuiz() {
             const subject = document.getElementById('quiz-subject').value;
-            const container = document.getElementById('quiz-output-area');
-            const questionEl = document.getElementById('quiz-question');
-            const answerEl = document.getElementById('quiz-answer');
+            const output = document.getElementById('quiz-output');
             const btn = document.getElementById('quiz-btn');
+            const saveBtn = document.getElementById('quiz-save-btn');
+            const exportBtn = document.getElementById('quiz-export-btn');
+            const clearBtn = document.getElementById('quiz-clear-btn');
 
             btn.disabled = true;
-            questionEl.innerHTML = '生成中...';
-            container.classList.remove('hidden');
-            answerEl.classList.add('hidden');
+            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4 inline"></i> 出题中...';
+            output.classList.remove('hidden');
+
+            // Add loading entry
+            const entry = addConversationEntry('quiz-output', `科目：${subject}`, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             const prompt = `Generate a ${subject} multiple choice question for exam.
             Format:
@@ -1371,59 +1634,147 @@
             try {
                 const res = await callGemini(prompt, "tutor");
                 const parts = res.split('|||');
-                questionEl.innerHTML = marked.parse(parts[0]);
-                renderMath('quiz-question');
-                if(parts[1]) {
-                    answerEl.innerHTML = marked.parse(parts[1]);
-                    renderMath('quiz-answer');
-                }
-            } catch(e) { questionEl.innerText = "生成失败"; }
-            finally { btn.disabled = false; }
+                
+                // Remove loading and add complete entry with question and collapsible answer
+                entry.remove();
+                const questionHtml = marked.parse(parts[0]);
+                const answerHtml = parts[1] ? marked.parse(parts[1]) : '';
+                
+                const completeEntry = document.createElement('div');
+                completeEntry.className = 'conversation-entry space-y-2 pb-4 border-b border-slate-200 dark:border-slate-700 last:border-b-0 last:pb-0';
+                completeEntry.innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center text-xs">📝</div>
+                        <div class="flex-1 bg-white dark:bg-slate-800 rounded-lg rounded-tl-none px-3 py-2 text-sm">
+                            <strong class="text-indigo-600 dark:text-indigo-400">科目：</strong>${subject}
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-indigo-100 dark:bg-indigo-900/40 rounded-full flex items-center justify-center text-xs">❓</div>
+                        <div class="flex-1 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm">
+                            <div class="font-bold text-indigo-600 dark:text-indigo-400 mb-2">题目：</div>
+                            <div class="ai-content prose dark:prose-invert max-w-none">${questionHtml}</div>
+                        </div>
+                    </div>
+                    ${answerHtml ? `
+                    <details class="ml-8">
+                        <summary class="cursor-pointer text-xs text-indigo-500 hover:underline">👀 查看答案与解析</summary>
+                        <div class="mt-2 bg-green-50 dark:bg-green-900/20 rounded-lg px-3 py-2 text-sm ai-content prose dark:prose-invert max-w-none">
+                            ${answerHtml}
+                        </div>
+                    </details>` : ''}
+                `;
+                output.appendChild(completeEntry);
+                output.scrollTop = output.scrollHeight;
+                renderMath('quiz-output');
+            } catch(e) { 
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            生成失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
+            }
+            finally { 
+                btn.disabled = false; 
+                btn.innerHTML = '出题';
+                lucide.createIcons();
+            }
         }
 
         async function generateMnemonic() {
-            const input = document.getElementById('memory-input').value;
+            const inputEl = document.getElementById('memory-input');
+            const input = inputEl.value.trim();
             const output = document.getElementById('memory-output');
             const btn = document.getElementById('memory-btn');
             const saveBtn = document.getElementById('memory-save-btn');
+            const exportBtn = document.getElementById('memory-export-btn');
+            const clearBtn = document.getElementById('memory-clear-btn');
             
             if(!input) return;
             btn.disabled = true;
-            output.classList.remove('hidden'); output.innerHTML = '生成中...';
-            saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById('memory-export-btn');
-            if (exportBtn) exportBtn.classList.add('hidden');
+            output.classList.remove('hidden');
+            
+            // Add loading entry
+            const entry = addConversationEntry('memory-output', `知识点：${input}`, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             try {
                 const res = await callGemini(`Create a mnemonic for: ${input}`, "tutor");
-                output.innerHTML = marked.parse(res);
-                saveBtn.classList.remove('hidden');
-                if (exportBtn) exportBtn.classList.remove('hidden');
-            } catch(e) { output.innerHTML = "失败"; }
-            finally { btn.disabled = false; }
+                
+                // Remove loading and add complete entry
+                entry.remove();
+                addConversationEntry('memory-output', `知识点：${input}`, marked.parse(res), false);
+                
+                // Clear input
+                inputEl.value = '';
+            } catch(e) { 
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            生成失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
+            }
+            finally { 
+                btn.disabled = false;
+                lucide.createIcons();
+            }
         }
 
         async function explainConcept() {
-            const input = document.getElementById('concept-input').value;
+            const inputEl = document.getElementById('concept-input');
+            const input = inputEl.value.trim();
             const output = document.getElementById('concept-output');
             const btn = document.getElementById('concept-btn');
             const saveBtn = document.getElementById('concept-save-btn');
+            const exportBtn = document.getElementById('concept-export-btn');
+            const clearBtn = document.getElementById('concept-clear-btn');
             
             if(!input) return;
             btn.disabled = true;
-            output.classList.remove('hidden'); output.innerHTML = '生成中...';
-            saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById('concept-export-btn');
-            if (exportBtn) exportBtn.classList.add('hidden');
+            output.classList.remove('hidden');
+            
+            // Add loading entry
+            const entry = addConversationEntry('concept-output', `概念：${input}`, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             try {
                 const res = await callGemini(`Explain concept: ${input} for exam.`, "tutor");
-                output.innerHTML = marked.parse(res);
+                
+                // Remove loading and add complete entry
+                entry.remove();
+                addConversationEntry('concept-output', `概念：${input}`, marked.parse(res), false);
                 renderMath('concept-output');
-                saveBtn.classList.remove('hidden');
-                if (exportBtn) exportBtn.classList.remove('hidden');
-            } catch(e) { output.innerHTML = "失败"; }
-            finally { btn.disabled = false; }
+                
+                // Clear input
+                inputEl.value = '';
+            } catch(e) { 
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            生成失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
+            }
+            finally { 
+                btn.disabled = false;
+                lucide.createIcons();
+            }
         }
 
         async function processDoc() {
@@ -1496,22 +1847,44 @@
             const btn = document.getElementById('eng-grade-btn');
             const out = document.getElementById('eng-result');
             const saveBtn = document.getElementById('eng-save-btn');
+            const exportBtn = document.getElementById('eng-grader-export-btn');
+            const clearBtn = document.getElementById('eng-clear-btn');
 
             if(!img.dataset.base64) return alert("请上传图片");
             
+            const questionText = '(查看上传的英语作文) [含图片]';
+
             btn.disabled = true;
-            out.classList.remove('hidden'); out.innerHTML = "阅卷中...";
-            saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById('eng-grader-export-btn');
-            if (exportBtn) exportBtn.classList.add('hidden');
+            out.classList.remove('hidden');
+            
+            // Add loading entry
+            const entry = addConversationEntry('eng-result', questionText, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             try {
                 const res = await callGemini("Grade this English Essay. Give score /25.", "grader", {base64: img.dataset.base64, mimeType: img.dataset.mimeType});
-                out.innerHTML = marked.parse(res);
-                saveBtn.classList.remove('hidden');
-                if (exportBtn) exportBtn.classList.remove('hidden');
-            } catch(e) { out.innerHTML = "Error"; }
-            finally { btn.disabled = false; }
+                
+                // Remove loading and add complete entry
+                entry.remove();
+                addConversationEntry('eng-result', questionText, marked.parse(res), false);
+            } catch(e) { 
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            批改失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
+            }
+            finally { 
+                btn.disabled = false;
+                lucide.createIcons();
+            }
         }
 
         async function gradeTranslation() {
@@ -1520,14 +1893,23 @@
             const btn = document.getElementById('trans-grade-btn');
             const out = document.getElementById('trans-result');
             const saveBtn = document.getElementById('trans-save-btn');
+            const exportBtn = document.getElementById('trans-export-btn');
+            const clearBtn = document.getElementById('trans-clear-btn');
 
             if(!src.dataset.base64 || !tgt.dataset.base64) return alert("请上传两张图");
 
+            const questionText = '(查看上传的翻译双图) [原文+译文]';
+
             btn.disabled = true;
-            out.classList.remove('hidden'); out.innerHTML = "比对中...";
-            saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById('trans-export-btn');
-            if (exportBtn) exportBtn.classList.add('hidden');
+            out.classList.remove('hidden');
+            
+            // Add loading entry
+            const entry = addConversationEntry('trans-result', questionText, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             const imgs = [
                 {base64: src.dataset.base64, mimeType: src.dataset.mimeType},
@@ -1536,11 +1918,24 @@
 
             try {
                 const res = await callGemini("Compare Source and Translation. Grade it.", "grader", imgs);
-                out.innerHTML = marked.parse(res);
-                saveBtn.classList.remove('hidden');
-                if (exportBtn) exportBtn.classList.remove('hidden');
-            } catch(e) { out.innerHTML = "Error"; }
-            finally { btn.disabled = false; }
+                
+                // Remove loading and add complete entry
+                entry.remove();
+                addConversationEntry('trans-result', questionText, marked.parse(res), false);
+            } catch(e) { 
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            批改失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
+            }
+            finally { 
+                btn.disabled = false;
+                lucide.createIcons();
+            }
         }
 
         // --- NOTEBOOK SAVE SYSTEM ---
@@ -1570,9 +1965,20 @@
             }
             if(!question) question = "AI 生成题目";
 
-            // Extract Answer
+            // Extract Answer - Preserve markdown/HTML structure
             const outputEl = document.getElementById(outputElId);
-            if(outputEl) answer = outputEl.innerText; // Plain text for preview
+            if(outputEl) {
+                // Try to get the markdown-friendly text content
+                const clonedEl = outputEl.cloneNode(true);
+                
+                // Convert HTML back to markdown-like format for better preservation
+                answer = convertHtmlToMarkdown(clonedEl);
+                
+                // Fallback to innerHTML if conversion fails
+                if (!answer || answer.trim() === '') {
+                    answer = outputEl.innerText;
+                }
+            }
 
             // Determine Subject
             if(sourceId.includes('eng') || sourceId.includes('sentence') || sourceId.includes('trans')) subject = 'eng';
@@ -1584,6 +1990,50 @@
             document.getElementById('m-question').value = question;
             document.getElementById('m-note').value = answer;
             document.getElementById('mistake-modal').classList.remove('hidden');
+        }
+
+        /**
+         * Convert HTML content back to markdown-like format for better preservation
+         */
+        function convertHtmlToMarkdown(element) {
+            let markdown = '';
+            
+            const processNode = (node) => {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    return node.textContent;
+                }
+                
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    const tagName = node.tagName.toLowerCase();
+                    const children = Array.from(node.childNodes).map(processNode).join('');
+                    
+                    switch(tagName) {
+                        case 'h1': return `# ${children}\n\n`;
+                        case 'h2': return `## ${children}\n\n`;
+                        case 'h3': return `### ${children}\n\n`;
+                        case 'h4': return `#### ${children}\n\n`;
+                        case 'p': return `${children}\n\n`;
+                        case 'strong': case 'b': return `**${children}**`;
+                        case 'em': case 'i': return `*${children}*`;
+                        case 'code': return `\`${children}\``;
+                        case 'pre': return `\`\`\`\n${children}\n\`\`\`\n\n`;
+                        case 'ul': return `${children}\n`;
+                        case 'ol': return `${children}\n`;
+                        case 'li': return `- ${children}\n`;
+                        case 'blockquote': return `> ${children}\n\n`;
+                        case 'br': return '\n';
+                        case 'hr': return '---\n\n';
+                        case 'a': return `[${children}](${node.href || '#'})`;
+                        case 'img': return `![${node.alt || '图片'}](${node.src || ''})`;
+                        default: return children;
+                    }
+                }
+                
+                return '';
+            };
+            
+            markdown = processNode(element);
+            return markdown.trim();
         }
 
         function saveMistake() {
@@ -1824,6 +2274,30 @@
                 speakDuck(response);
             } catch (e) { duckQuote.innerText = "鸭鸭掉线了"; }
         }
+        let sidebarCollapsed = false;
+        function toggleSidebar() {
+            sidebarCollapsed = !sidebarCollapsed;
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const sidebarIcon = document.getElementById('sidebar-icon');
+            const toggleBtn = document.getElementById('sidebar-toggle');
+            
+            if (sidebarCollapsed) {
+                sidebar.style.width = '0';
+                sidebar.style.padding = '0';
+                sidebar.style.overflow = 'hidden';
+                toggleBtn.style.left = '1rem';
+                sidebarIcon.setAttribute('data-lucide', 'panel-left-open');
+            } else {
+                sidebar.style.width = '16rem';
+                sidebar.style.padding = '1.5rem';
+                sidebar.style.overflow = 'visible';
+                toggleBtn.style.left = 'calc(16rem + 1rem)';
+                sidebarIcon.setAttribute('data-lucide', 'panel-left-close');
+            }
+            lucide.createIcons();
+        }
+
         function toggleAIMode() {
             aiMode = !aiMode;
             const quoteContainer = document.getElementById('duck-quote-container');
@@ -1843,6 +2317,16 @@
                 toggleBtn.classList.replace('from-slate-500', 'from-indigo-500');
                 toggleBtn.classList.replace('to-slate-500', 'to-purple-500');
                 lucide.createIcons();
+                // Clear conversation when exiting chat mode
+                const responseArea = document.getElementById('ai-response-area');
+                responseArea.innerHTML = `
+                    <div class="flex gap-2 items-start">
+                        <div class="flex-shrink-0 w-8 h-8 bg-yellow-100 dark:bg-yellow-900/40 rounded-full flex items-center justify-center text-xl">🦆</div>
+                        <div class="flex-1 bg-slate-100 dark:bg-slate-700/50 rounded-2xl rounded-tl-none px-4 py-2 text-sm ai-content">
+                            <p>我是你的鸭鸭助手，可以陪你聊天、出题、或者解释名词哦！🦆</p>
+                        </div>
+                    </div>
+                `;
             }
         }
         function handleEnter(e) { if (e.key === 'Enter') askDuck(); }
@@ -1852,13 +2336,62 @@
             const responseArea = document.getElementById('ai-response-area');
             const query = input.value.trim();
             if (!query) return;
-            input.value = ''; input.disabled = true;
-            responseArea.innerHTML = '<span class="animate-pulse">鸭鸭思考中...</span>';
+            
+            // Add user message to chat
+            const userMsg = document.createElement('div');
+            userMsg.className = 'flex gap-2 items-start justify-end';
+            userMsg.innerHTML = `
+                <div class="max-w-[80%] bg-indigo-500 text-white rounded-2xl rounded-tr-none px-4 py-2 text-sm">
+                    ${query.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+                </div>
+                <div class="flex-shrink-0 w-8 h-8 bg-indigo-100 dark:bg-indigo-900/40 rounded-full flex items-center justify-center text-sm">👤</div>
+            `;
+            responseArea.appendChild(userMsg);
+            
+            // Add loading message
+            const loadingMsg = document.createElement('div');
+            loadingMsg.className = 'flex gap-2 items-start';
+            loadingMsg.id = 'loading-msg';
+            loadingMsg.innerHTML = `
+                <div class="flex-shrink-0 w-8 h-8 bg-yellow-100 dark:bg-yellow-900/40 rounded-full flex items-center justify-center text-xl">🦆</div>
+                <div class="flex-1 bg-slate-100 dark:bg-slate-700/50 rounded-2xl rounded-tl-none px-4 py-2 text-sm">
+                    <span class="animate-pulse">鸭鸭思考中...</span>
+                </div>
+            `;
+            responseArea.appendChild(loadingMsg);
+            
+            // Scroll to bottom
+            responseArea.scrollTop = responseArea.scrollHeight;
+            
+            input.value = ''; 
+            input.disabled = true;
+            
             try {
                 const response = await callGemini(query, "duck");
-                responseArea.innerHTML = marked.parse(response);
+                
+                // Remove loading message
+                const loading = document.getElementById('loading-msg');
+                if (loading) loading.remove();
+                
+                // Add AI response
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'flex gap-2 items-start';
+                aiMsg.innerHTML = `
+                    <div class="flex-shrink-0 w-8 h-8 bg-yellow-100 dark:bg-yellow-900/40 rounded-full flex items-center justify-center text-xl">🦆</div>
+                    <div class="flex-1 bg-slate-100 dark:bg-slate-700/50 rounded-2xl rounded-tl-none px-4 py-2 text-sm ai-content">
+                        ${marked.parse(response)}
+                    </div>
+                `;
+                responseArea.appendChild(aiMsg);
+                responseArea.scrollTop = responseArea.scrollHeight;
+                renderMath('ai-response-area');
                 speakDuck(response);
-            } catch (error) { responseArea.innerHTML = '鸭鸭掉线了'; } 
+            } catch (error) { 
+                const loading = document.getElementById('loading-msg');
+                if (loading) {
+                    loading.querySelector('div:last-child').innerHTML = '<span class="text-red-500">鸭鸭掉线了</span>';
+                }
+            } 
             finally { input.disabled = false; input.focus(); }
         }
         
