@@ -213,7 +213,7 @@
 <body class="flex h-screen overflow-hidden selection:bg-pink-100 bg-[#fdfbf7] dark:bg-darkbg text-slate-600 dark:text-slate-300">
 
     <!-- SIDEBAR -->
-    <aside class="w-64 bg-sidebar dark:bg-darksidebar border-r border-slate-100 dark:border-slate-800 hidden md:flex flex-col p-6 z-50 transition-colors duration-300">
+    <aside id="sidebar" class="w-64 bg-sidebar dark:bg-darksidebar border-r border-slate-100 dark:border-slate-800 hidden md:flex flex-col p-6 z-50 transition-all duration-300">
         <div class="flex items-center gap-3 mb-10 px-2">
             <div class="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/50 rounded-full flex items-center justify-center text-xl shadow-sm">🦆</div>
             <div>
@@ -274,8 +274,13 @@
         <button onclick="toggleKeyModal()" class="text-indigo-500"><i data-lucide="key"></i></button>
     </nav>
 
+    <!-- SIDEBAR TOGGLE BUTTON -->
+    <button id="sidebar-toggle" onclick="toggleSidebar()" style="left: calc(16rem + 1rem);" class="hidden md:flex fixed top-4 z-50 w-10 h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-md">
+        <i data-lucide="panel-left-close" class="w-5 h-5" id="sidebar-icon"></i>
+    </button>
+
     <!-- MAIN CONTENT -->
-    <main class="flex-1 h-full overflow-y-auto p-4 md:p-10 relative scroll-smooth">
+    <main id="main-content" class="flex-1 h-full overflow-y-auto p-4 md:p-10 relative scroll-smooth transition-all duration-300">
         <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-200 via-pink-200 to-yellow-200 dark:opacity-50"></div>
 
         <!-- HEADER -->
@@ -320,8 +325,13 @@
                                 </p>
                             </div>
                             <div id="ai-chat-container" class="hidden relative z-10 flex flex-col gap-3">
-                                <div id="ai-response-area" class="text-slate-700 dark:text-slate-200 text-sm md:text-base leading-relaxed ai-content max-w-none">
-                                    <p>我是你的鸭鸭助手，可以陪你聊天、出题、或者解释名词哦！🦆</p>
+                                <div id="ai-response-area" class="text-slate-700 dark:text-slate-200 text-sm md:text-base leading-relaxed max-h-[500px] overflow-y-auto pr-2 space-y-4">
+                                    <div class="flex gap-2 items-start">
+                                        <div class="flex-shrink-0 w-8 h-8 bg-yellow-100 dark:bg-yellow-900/40 rounded-full flex items-center justify-center text-xl">🦆</div>
+                                        <div class="flex-1 bg-slate-100 dark:bg-slate-700/50 rounded-2xl rounded-tl-none px-4 py-2 text-sm ai-content">
+                                            <p>我是你的鸭鸭助手，可以陪你聊天、出题、或者解释名词哦！🦆</p>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar" id="quick-actions">
                                     <button onclick="triggerQuickAction('解释名词：')" class="whitespace-nowrap px-2 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-xs text-slate-500 hover:text-indigo-500 hover:border-indigo-200 transition-colors">
@@ -1570,9 +1580,20 @@
             }
             if(!question) question = "AI 生成题目";
 
-            // Extract Answer
+            // Extract Answer - Preserve markdown/HTML structure
             const outputEl = document.getElementById(outputElId);
-            if(outputEl) answer = outputEl.innerText; // Plain text for preview
+            if(outputEl) {
+                // Try to get the markdown-friendly text content
+                const clonedEl = outputEl.cloneNode(true);
+                
+                // Convert HTML back to markdown-like format for better preservation
+                answer = convertHtmlToMarkdown(clonedEl);
+                
+                // Fallback to innerHTML if conversion fails
+                if (!answer || answer.trim() === '') {
+                    answer = outputEl.innerText;
+                }
+            }
 
             // Determine Subject
             if(sourceId.includes('eng') || sourceId.includes('sentence') || sourceId.includes('trans')) subject = 'eng';
@@ -1584,6 +1605,50 @@
             document.getElementById('m-question').value = question;
             document.getElementById('m-note').value = answer;
             document.getElementById('mistake-modal').classList.remove('hidden');
+        }
+
+        /**
+         * Convert HTML content back to markdown-like format for better preservation
+         */
+        function convertHtmlToMarkdown(element) {
+            let markdown = '';
+            
+            const processNode = (node) => {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    return node.textContent;
+                }
+                
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    const tagName = node.tagName.toLowerCase();
+                    const children = Array.from(node.childNodes).map(processNode).join('');
+                    
+                    switch(tagName) {
+                        case 'h1': return `# ${children}\n\n`;
+                        case 'h2': return `## ${children}\n\n`;
+                        case 'h3': return `### ${children}\n\n`;
+                        case 'h4': return `#### ${children}\n\n`;
+                        case 'p': return `${children}\n\n`;
+                        case 'strong': case 'b': return `**${children}**`;
+                        case 'em': case 'i': return `*${children}*`;
+                        case 'code': return `\`${children}\``;
+                        case 'pre': return `\`\`\`\n${children}\n\`\`\`\n\n`;
+                        case 'ul': return `${children}\n`;
+                        case 'ol': return `${children}\n`;
+                        case 'li': return `- ${children}\n`;
+                        case 'blockquote': return `> ${children}\n\n`;
+                        case 'br': return '\n';
+                        case 'hr': return '---\n\n';
+                        case 'a': return `[${children}](${node.href || '#'})`;
+                        case 'img': return `![${node.alt || '图片'}](${node.src || ''})`;
+                        default: return children;
+                    }
+                }
+                
+                return '';
+            };
+            
+            markdown = processNode(element);
+            return markdown.trim();
         }
 
         function saveMistake() {
@@ -1824,6 +1889,30 @@
                 speakDuck(response);
             } catch (e) { duckQuote.innerText = "鸭鸭掉线了"; }
         }
+        let sidebarCollapsed = false;
+        function toggleSidebar() {
+            sidebarCollapsed = !sidebarCollapsed;
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const sidebarIcon = document.getElementById('sidebar-icon');
+            const toggleBtn = document.getElementById('sidebar-toggle');
+            
+            if (sidebarCollapsed) {
+                sidebar.style.width = '0';
+                sidebar.style.padding = '0';
+                sidebar.style.overflow = 'hidden';
+                toggleBtn.style.left = '1rem';
+                sidebarIcon.setAttribute('data-lucide', 'panel-left-open');
+            } else {
+                sidebar.style.width = '16rem';
+                sidebar.style.padding = '1.5rem';
+                sidebar.style.overflow = 'visible';
+                toggleBtn.style.left = 'calc(16rem + 1rem)';
+                sidebarIcon.setAttribute('data-lucide', 'panel-left-close');
+            }
+            lucide.createIcons();
+        }
+
         function toggleAIMode() {
             aiMode = !aiMode;
             const quoteContainer = document.getElementById('duck-quote-container');
@@ -1843,6 +1932,16 @@
                 toggleBtn.classList.replace('from-slate-500', 'from-indigo-500');
                 toggleBtn.classList.replace('to-slate-500', 'to-purple-500');
                 lucide.createIcons();
+                // Clear conversation when exiting chat mode
+                const responseArea = document.getElementById('ai-response-area');
+                responseArea.innerHTML = `
+                    <div class="flex gap-2 items-start">
+                        <div class="flex-shrink-0 w-8 h-8 bg-yellow-100 dark:bg-yellow-900/40 rounded-full flex items-center justify-center text-xl">🦆</div>
+                        <div class="flex-1 bg-slate-100 dark:bg-slate-700/50 rounded-2xl rounded-tl-none px-4 py-2 text-sm ai-content">
+                            <p>我是你的鸭鸭助手，可以陪你聊天、出题、或者解释名词哦！🦆</p>
+                        </div>
+                    </div>
+                `;
             }
         }
         function handleEnter(e) { if (e.key === 'Enter') askDuck(); }
@@ -1852,13 +1951,62 @@
             const responseArea = document.getElementById('ai-response-area');
             const query = input.value.trim();
             if (!query) return;
-            input.value = ''; input.disabled = true;
-            responseArea.innerHTML = '<span class="animate-pulse">鸭鸭思考中...</span>';
+            
+            // Add user message to chat
+            const userMsg = document.createElement('div');
+            userMsg.className = 'flex gap-2 items-start justify-end';
+            userMsg.innerHTML = `
+                <div class="max-w-[80%] bg-indigo-500 text-white rounded-2xl rounded-tr-none px-4 py-2 text-sm">
+                    ${query.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+                </div>
+                <div class="flex-shrink-0 w-8 h-8 bg-indigo-100 dark:bg-indigo-900/40 rounded-full flex items-center justify-center text-sm">👤</div>
+            `;
+            responseArea.appendChild(userMsg);
+            
+            // Add loading message
+            const loadingMsg = document.createElement('div');
+            loadingMsg.className = 'flex gap-2 items-start';
+            loadingMsg.id = 'loading-msg';
+            loadingMsg.innerHTML = `
+                <div class="flex-shrink-0 w-8 h-8 bg-yellow-100 dark:bg-yellow-900/40 rounded-full flex items-center justify-center text-xl">🦆</div>
+                <div class="flex-1 bg-slate-100 dark:bg-slate-700/50 rounded-2xl rounded-tl-none px-4 py-2 text-sm">
+                    <span class="animate-pulse">鸭鸭思考中...</span>
+                </div>
+            `;
+            responseArea.appendChild(loadingMsg);
+            
+            // Scroll to bottom
+            responseArea.scrollTop = responseArea.scrollHeight;
+            
+            input.value = ''; 
+            input.disabled = true;
+            
             try {
                 const response = await callGemini(query, "duck");
-                responseArea.innerHTML = marked.parse(response);
+                
+                // Remove loading message
+                const loading = document.getElementById('loading-msg');
+                if (loading) loading.remove();
+                
+                // Add AI response
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'flex gap-2 items-start';
+                aiMsg.innerHTML = `
+                    <div class="flex-shrink-0 w-8 h-8 bg-yellow-100 dark:bg-yellow-900/40 rounded-full flex items-center justify-center text-xl">🦆</div>
+                    <div class="flex-1 bg-slate-100 dark:bg-slate-700/50 rounded-2xl rounded-tl-none px-4 py-2 text-sm ai-content">
+                        ${marked.parse(response)}
+                    </div>
+                `;
+                responseArea.appendChild(aiMsg);
+                responseArea.scrollTop = responseArea.scrollHeight;
+                renderMath('ai-response-area');
                 speakDuck(response);
-            } catch (error) { responseArea.innerHTML = '鸭鸭掉线了'; } 
+            } catch (error) { 
+                const loading = document.getElementById('loading-msg');
+                if (loading) {
+                    loading.querySelector('div:last-child').innerHTML = '<span class="text-red-500">鸭鸭掉线了</span>';
+                }
+            } 
             finally { input.disabled = false; input.focus(); }
         }
         
