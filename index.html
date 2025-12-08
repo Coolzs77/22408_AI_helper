@@ -1307,21 +1307,29 @@
             const outputId = type === 'small' ? 'eng-write-small-output' : 'eng-write-big-output';
             const saveBtnId = type === 'small' ? 'eng-write-small-save-btn' : 'eng-write-big-save-btn';
             const exportBtnId = type === 'small' ? 'eng-write-small-export-btn' : 'eng-write-big-export-btn';
+            const clearBtnId = type === 'small' ? 'eng-write-small-clear-btn' : 'eng-write-big-clear-btn';
             
-            const input = document.getElementById(inputId).value.trim();
+            const inputEl = document.getElementById(inputId);
+            const input = inputEl.value.trim();
             const btn = document.getElementById(btnId);
-            const output = document.getElementById(outputId);
             const saveBtn = document.getElementById(saveBtnId);
+            const exportBtn = document.getElementById(exportBtnId);
+            const clearBtn = document.getElementById(clearBtnId);
 
             if(!input) return alert("请输入关键词或主题");
 
             const buttonText = type === 'small' ? "生成小作文模板 & 技巧" : "生成大作文模板 & 技巧";
             btn.disabled = true; btn.innerText = "正在生成模版...";
-            const loadingColor = type === 'small' ? 'text-green-500' : 'text-blue-500';
-            output.classList.remove('hidden'); output.innerHTML = `<span class="animate-pulse ${loadingColor}">正在构建高分模板...</span>`;
-            saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById(exportBtnId);
-            if (exportBtn) exportBtn.classList.add('hidden');
+            const output = document.getElementById(outputId);
+            output.classList.remove('hidden');
+            
+            // Add loading entry
+            const entry = addConversationEntry(outputId, `主题：${input}`, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             const typeStr = type === 'small' ? "Small Composition (Letter/Notice)" : "Big Composition (Chart/Graph)";
             const prompt = `Generate a template for English II (考研英语二) ${typeStr}.
@@ -1335,27 +1343,52 @@
 
             try {
                 const res = await callGemini(prompt, "eng-tutor");
-                output.innerHTML = marked.parse(res);
-                saveBtn.classList.remove('hidden');
-                if (exportBtn) exportBtn.classList.remove('hidden');
-            } catch(e) { output.innerHTML = "生成失败"; }
-            finally { btn.disabled = false; btn.innerText = buttonText; }
+                
+                // Remove loading and add complete entry
+                entry.remove();
+                addConversationEntry(outputId, `主题：${input}`, marked.parse(res), false);
+                
+                // Clear input for next question
+                inputEl.value = '';
+            } catch(e) { 
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            生成失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
+            }
+            finally { 
+                btn.disabled = false; 
+                btn.innerText = buttonText;
+                lucide.createIcons();
+            }
         }
 
-        // 3. Code Templates (Modified)
+        // 3. Code Templates - Multi-turn
         async function explainCode() {
-            const input = document.getElementById('code-input').value.trim();
+            const inputEl = document.getElementById('code-input');
+            const input = inputEl.value.trim();
             const btn = document.getElementById('code-btn');
             const output = document.getElementById('code-output');
             const saveBtn = document.getElementById('code-save-btn');
+            const exportBtn = document.getElementById('code-export-btn');
+            const clearBtn = document.getElementById('code-clear-btn');
 
             if(!input) return;
 
             btn.disabled = true; btn.innerText = "正在生成...";
-            output.classList.remove('hidden'); output.innerHTML = '<span class="animate-pulse text-blue-400">正在手写代码...</span>';
-            saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById('code-export-btn');
-            if (exportBtn) exportBtn.classList.add('hidden');
+            output.classList.remove('hidden');
+            
+            // Add loading entry
+            const entry = addConversationEntry('code-output', `算法：${input}`, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             const prompt = `Generate a standard C++ code template for the algorithm/data structure: "${input}".
             Target: 408 Computer Science Exam (Handwriting style).
@@ -1367,30 +1400,57 @@
 
             try {
                 const res = await callGemini(prompt, "tutor");
-                output.innerHTML = marked.parse(res);
+                
+                // Remove loading and add complete entry
+                entry.remove();
+                addConversationEntry('code-output', `算法：${input}`, marked.parse(res), false);
                 renderMath('code-output');
-                saveBtn.classList.remove('hidden');
-                const exportBtn = document.getElementById('code-export-btn');
-                if (exportBtn) exportBtn.classList.remove('hidden');
-            } catch(e) { output.innerHTML = "生成失败"; }
-            finally { btn.disabled = false; btn.innerText = "生成代码模板"; }
+                
+                // Clear input
+                inputEl.value = '';
+            } catch(e) { 
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            生成失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
+            }
+            finally { 
+                btn.disabled = false; 
+                btn.innerText = "生成代码模板";
+                lucide.createIcons();
+            }
         }
 
-        // 4. Sentence Breakdown (Image Supported)
+        // 4. Sentence Breakdown - Multi-turn
         async function breakSentence() {
-            const text = document.getElementById('sentence-input').value.trim();
+            const inputEl = document.getElementById('sentence-input');
+            const text = inputEl.value.trim();
             const img = document.getElementById('sentence-preview');
             const btn = document.getElementById('sentence-btn');
             const output = document.getElementById('sentence-output');
             const saveBtn = document.getElementById('sentence-save-btn');
+            const exportBtn = document.getElementById('sentence-export-btn');
+            const clearBtn = document.getElementById('sentence-clear-btn');
 
             if(!text && !img.dataset.base64) return alert("请输入句子或上传图片");
 
+            let questionText = text || '(查看上传的句子图片)';
+            if (img.dataset.base64) questionText += ' [含图片]';
+
             btn.disabled = true; btn.innerText = "解析中...";
-            output.classList.remove('hidden'); output.innerHTML = '<span class="animate-pulse text-indigo-500">正在拆解长难句...</span>';
-            saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById('sentence-export-btn');
-            if (exportBtn) exportBtn.classList.add('hidden');
+            output.classList.remove('hidden');
+            
+            // Add loading entry
+            const entry = addConversationEntry('sentence-output', questionText, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             const prompt = `Analyze this English sentence (for English II exam).
             Text: "${text}"
@@ -1403,29 +1463,56 @@
 
             try {
                 const res = await callGemini(prompt, "eng-tutor", img.dataset.base64 ? {base64: img.dataset.base64, mimeType: img.dataset.mimeType} : null);
-                output.innerHTML = marked.parse(res);
-                saveBtn.classList.remove('hidden');
-                const exportBtn = document.getElementById('sentence-export-btn');
-                if (exportBtn) exportBtn.classList.remove('hidden');
-            } catch(e) { output.innerHTML = "解析失败"; }
-            finally { btn.disabled = false; btn.innerText = "一键拆解"; }
+                
+                // Remove loading and add complete entry
+                entry.remove();
+                addConversationEntry('sentence-output', questionText, marked.parse(res), false);
+                
+                // Clear input
+                inputEl.value = '';
+            } catch(e) { 
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            解析失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
+            }
+            finally { 
+                btn.disabled = false; 
+                btn.innerText = "一键拆解";
+                lucide.createIcons();
+            }
         }
 
         // 5. Politics Standard Template (Modified)
         async function solvePolitics() {
-            const text = document.getElementById('pol-q-input').value.trim();
+            const inputEl = document.getElementById('pol-q-input');
+            const text = inputEl.value.trim();
             const img = document.getElementById('pol-preview');
             const btn = document.getElementById('pol-grade-btn');
             const output = document.getElementById('pol-result');
             const saveBtn = document.getElementById('pol-save-btn');
+            const exportBtn = document.getElementById('pol-export-btn');
+            const clearBtn = document.getElementById('pol-clear-btn');
 
             if(!text && !img.dataset.base64) return alert("请输入关键词或上传图片");
 
+            let questionText = text || '(查看上传的题目图片)';
+            if (img.dataset.base64) questionText += ' [含图片]';
+
             btn.disabled = true; btn.innerText = "生成中...";
-            output.classList.remove('hidden'); output.innerHTML = '<span class="animate-pulse text-orange-500">正在检索标准答案...</span>';
-            saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById('pol-export-btn');
-            if (exportBtn) exportBtn.classList.add('hidden');
+            output.classList.remove('hidden');
+            
+            // Add loading entry
+            const entry = addConversationEntry('pol-result', questionText, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             const prompt = `Based on the input (Politics Question/Keywords), provide a STANDARD ANSWER TEMPLATE suitable for memorization.
             Input: "${text}".
@@ -1437,28 +1524,53 @@
 
             try {
                 const res = await callGemini(prompt, "pol-tutor", img.dataset.base64 ? {base64: img.dataset.base64, mimeType: img.dataset.mimeType} : null);
-                output.innerHTML = marked.parse(res);
-                saveBtn.classList.remove('hidden');
-                const exportBtn = document.getElementById('pol-export-btn');
-                if (exportBtn) exportBtn.classList.remove('hidden');
-            } catch(e) { output.innerHTML = "生成失败"; }
-            finally { btn.disabled = false; btn.innerText = "生成标准答题模板"; }
+                
+                // Remove loading and add complete entry
+                entry.remove();
+                addConversationEntry('pol-result', questionText, marked.parse(res), false);
+                
+                // Clear input
+                inputEl.value = '';
+            } catch(e) { 
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            生成失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
+            }
+            finally { 
+                btn.disabled = false; 
+                btn.innerText = "生成标准答题模板";
+                lucide.createIcons();
+            }
         }
 
-        // 6. CS 408 Grader (NEW)
+        // 6. CS 408 Grader - Multi-turn
         async function gradeCS() {
             const img = document.getElementById('cs-grader-preview');
             const btn = document.getElementById('cs-grade-btn');
             const output = document.getElementById('cs-grade-result');
             const saveBtn = document.getElementById('cs-save-btn');
+            const exportBtn = document.getElementById('cs-export-btn');
+            const clearBtn = document.getElementById('cs-clear-btn');
 
             if(!img.dataset.base64) return alert("请上传图片");
 
+            const questionText = '(查看上传的408题目) [含图片]';
+
             btn.disabled = true; btn.innerText = "阅卷中...";
-            output.classList.remove('hidden'); output.innerHTML = '<span class="animate-pulse text-purple-500">AI 正在批改...</span>';
-            saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById('cs-export-btn');
-            if (exportBtn) exportBtn.classList.add('hidden');
+            output.classList.remove('hidden');
+            
+            // Add loading entry
+            const entry = addConversationEntry('cs-grade-result', questionText, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             const prompt = `You are a grader for the 408 Computer Science exam. 
             Analyze the image (Question + Handwritten Answer).
@@ -1468,13 +1580,26 @@
 
             try {
                 const res = await callGemini(prompt, "grader", {base64: img.dataset.base64, mimeType: img.dataset.mimeType});
-                output.innerHTML = marked.parse(res);
+                
+                // Remove loading and add complete entry
+                entry.remove();
+                addConversationEntry('cs-grade-result', questionText, marked.parse(res), false);
                 renderMath('cs-grade-result');
-                saveBtn.classList.remove('hidden');
-                const exportBtn = document.getElementById('cs-export-btn');
-                if (exportBtn) exportBtn.classList.remove('hidden');
-            } catch(e) { output.innerHTML = "批改失败"; }
-            finally { btn.disabled = false; btn.innerText = "开始 408 批改"; }
+            } catch(e) { 
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            批改失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
+            }
+            finally { 
+                btn.disabled = false; 
+                btn.innerText = "开始 408 批改";
+                lucide.createIcons();
+            }
         }
 
         // --- OTHER EXISTING FEATURES ---
@@ -1560,48 +1685,96 @@
         }
 
         async function generateMnemonic() {
-            const input = document.getElementById('memory-input').value;
+            const inputEl = document.getElementById('memory-input');
+            const input = inputEl.value.trim();
             const output = document.getElementById('memory-output');
             const btn = document.getElementById('memory-btn');
             const saveBtn = document.getElementById('memory-save-btn');
+            const exportBtn = document.getElementById('memory-export-btn');
+            const clearBtn = document.getElementById('memory-clear-btn');
             
             if(!input) return;
             btn.disabled = true;
-            output.classList.remove('hidden'); output.innerHTML = '生成中...';
-            saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById('memory-export-btn');
-            if (exportBtn) exportBtn.classList.add('hidden');
+            output.classList.remove('hidden');
+            
+            // Add loading entry
+            const entry = addConversationEntry('memory-output', `知识点：${input}`, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             try {
                 const res = await callGemini(`Create a mnemonic for: ${input}`, "tutor");
-                output.innerHTML = marked.parse(res);
-                saveBtn.classList.remove('hidden');
-                if (exportBtn) exportBtn.classList.remove('hidden');
-            } catch(e) { output.innerHTML = "失败"; }
-            finally { btn.disabled = false; }
+                
+                // Remove loading and add complete entry
+                entry.remove();
+                addConversationEntry('memory-output', `知识点：${input}`, marked.parse(res), false);
+                
+                // Clear input
+                inputEl.value = '';
+            } catch(e) { 
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            生成失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
+            }
+            finally { 
+                btn.disabled = false;
+                lucide.createIcons();
+            }
         }
 
         async function explainConcept() {
-            const input = document.getElementById('concept-input').value;
+            const inputEl = document.getElementById('concept-input');
+            const input = inputEl.value.trim();
             const output = document.getElementById('concept-output');
             const btn = document.getElementById('concept-btn');
             const saveBtn = document.getElementById('concept-save-btn');
+            const exportBtn = document.getElementById('concept-export-btn');
+            const clearBtn = document.getElementById('concept-clear-btn');
             
             if(!input) return;
             btn.disabled = true;
-            output.classList.remove('hidden'); output.innerHTML = '生成中...';
-            saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById('concept-export-btn');
-            if (exportBtn) exportBtn.classList.add('hidden');
+            output.classList.remove('hidden');
+            
+            // Add loading entry
+            const entry = addConversationEntry('concept-output', `概念：${input}`, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             try {
                 const res = await callGemini(`Explain concept: ${input} for exam.`, "tutor");
-                output.innerHTML = marked.parse(res);
+                
+                // Remove loading and add complete entry
+                entry.remove();
+                addConversationEntry('concept-output', `概念：${input}`, marked.parse(res), false);
                 renderMath('concept-output');
-                saveBtn.classList.remove('hidden');
-                if (exportBtn) exportBtn.classList.remove('hidden');
-            } catch(e) { output.innerHTML = "失败"; }
-            finally { btn.disabled = false; }
+                
+                // Clear input
+                inputEl.value = '';
+            } catch(e) { 
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            生成失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
+            }
+            finally { 
+                btn.disabled = false;
+                lucide.createIcons();
+            }
         }
 
         async function processDoc() {
@@ -1674,22 +1847,44 @@
             const btn = document.getElementById('eng-grade-btn');
             const out = document.getElementById('eng-result');
             const saveBtn = document.getElementById('eng-save-btn');
+            const exportBtn = document.getElementById('eng-grader-export-btn');
+            const clearBtn = document.getElementById('eng-clear-btn');
 
             if(!img.dataset.base64) return alert("请上传图片");
             
+            const questionText = '(查看上传的英语作文) [含图片]';
+
             btn.disabled = true;
-            out.classList.remove('hidden'); out.innerHTML = "阅卷中...";
-            saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById('eng-grader-export-btn');
-            if (exportBtn) exportBtn.classList.add('hidden');
+            out.classList.remove('hidden');
+            
+            // Add loading entry
+            const entry = addConversationEntry('eng-result', questionText, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             try {
                 const res = await callGemini("Grade this English Essay. Give score /25.", "grader", {base64: img.dataset.base64, mimeType: img.dataset.mimeType});
-                out.innerHTML = marked.parse(res);
-                saveBtn.classList.remove('hidden');
-                if (exportBtn) exportBtn.classList.remove('hidden');
-            } catch(e) { out.innerHTML = "Error"; }
-            finally { btn.disabled = false; }
+                
+                // Remove loading and add complete entry
+                entry.remove();
+                addConversationEntry('eng-result', questionText, marked.parse(res), false);
+            } catch(e) { 
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            批改失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
+            }
+            finally { 
+                btn.disabled = false;
+                lucide.createIcons();
+            }
         }
 
         async function gradeTranslation() {
@@ -1698,14 +1893,23 @@
             const btn = document.getElementById('trans-grade-btn');
             const out = document.getElementById('trans-result');
             const saveBtn = document.getElementById('trans-save-btn');
+            const exportBtn = document.getElementById('trans-export-btn');
+            const clearBtn = document.getElementById('trans-clear-btn');
 
             if(!src.dataset.base64 || !tgt.dataset.base64) return alert("请上传两张图");
 
+            const questionText = '(查看上传的翻译双图) [原文+译文]';
+
             btn.disabled = true;
-            out.classList.remove('hidden'); out.innerHTML = "比对中...";
-            saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById('trans-export-btn');
-            if (exportBtn) exportBtn.classList.add('hidden');
+            out.classList.remove('hidden');
+            
+            // Add loading entry
+            const entry = addConversationEntry('trans-result', questionText, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             const imgs = [
                 {base64: src.dataset.base64, mimeType: src.dataset.mimeType},
@@ -1714,11 +1918,24 @@
 
             try {
                 const res = await callGemini("Compare Source and Translation. Grade it.", "grader", imgs);
-                out.innerHTML = marked.parse(res);
-                saveBtn.classList.remove('hidden');
-                if (exportBtn) exportBtn.classList.remove('hidden');
-            } catch(e) { out.innerHTML = "Error"; }
-            finally { btn.disabled = false; }
+                
+                // Remove loading and add complete entry
+                entry.remove();
+                addConversationEntry('trans-result', questionText, marked.parse(res), false);
+            } catch(e) { 
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            批改失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
+            }
+            finally { 
+                btn.disabled = false;
+                lucide.createIcons();
+            }
         }
 
         // --- NOTEBOOK SAVE SYSTEM ---
