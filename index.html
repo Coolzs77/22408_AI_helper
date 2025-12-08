@@ -424,10 +424,13 @@
                             
                             <button onclick="analyzeImage()" id="vision-btn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">开始解析</button>
                         </div>
-                        <div id="vision-output" class="hidden ai-content bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
-                        <div class="flex items-center justify-between mt-2">
-                            <button onclick="saveResultToNotebook('vision', 'vision-text', 'vision-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500" id="vision-save-btn"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                            <button onclick="exportToPDF('vision-output', 'AI智囊团', '拍照搜题')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="vision-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        <div id="vision-output" class="hidden bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-5 text-sm shadow-sm max-h-[600px] overflow-y-auto space-y-4"></div>
+                        <div class="flex items-center justify-between mt-2 gap-2">
+                            <button onclick="clearConversation('vision-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-red-500" id="vision-clear-btn"><i data-lucide="trash-2" class="w-3 h-3"></i> 清空对话</button>
+                            <div class="flex gap-2 ml-auto">
+                                <button onclick="saveResultToNotebook('vision', 'vision-text', 'vision-output')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-indigo-500" id="vision-save-btn"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                                <button onclick="exportToPDF('vision-output', 'AI智囊团', '拍照搜题')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500" id="vision-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                            </div>
                         </div>
                     </div>
 
@@ -1140,23 +1143,100 @@
 
         // --- FEATURE LOGIC ---
 
-        // 1. Vision (Photo + Text)
+        /**
+         * Helper function to add a conversation entry (question + answer)
+         */
+        function addConversationEntry(outputId, question, answer, isLoading = false) {
+            const output = document.getElementById(outputId);
+            const entry = document.createElement('div');
+            entry.className = 'conversation-entry space-y-2 pb-4 border-b border-slate-200 dark:border-slate-700 last:border-b-0 last:pb-0';
+            
+            if (isLoading) {
+                entry.innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center text-xs">👤</div>
+                        <div class="flex-1 bg-white dark:bg-slate-800 rounded-lg rounded-tl-none px-3 py-2 text-sm">
+                            <strong class="text-indigo-600 dark:text-indigo-400">问题：</strong>
+                            <div>${question.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-2 loading-response">
+                        <div class="flex-shrink-0 w-6 h-6 bg-indigo-100 dark:bg-indigo-900/40 rounded-full flex items-center justify-center text-xs">🤖</div>
+                        <div class="flex-1 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm">
+                            <span class="animate-pulse text-indigo-500">AI 正在思考...</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                entry.innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center text-xs">👤</div>
+                        <div class="flex-1 bg-white dark:bg-slate-800 rounded-lg rounded-tl-none px-3 py-2 text-sm">
+                            <strong class="text-indigo-600 dark:text-indigo-400">问题：</strong>
+                            <div>${question.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-indigo-100 dark:bg-indigo-900/40 rounded-full flex items-center justify-center text-xs">🤖</div>
+                        <div class="flex-1 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm ai-content prose dark:prose-invert max-w-none">
+                            ${answer}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            output.appendChild(entry);
+            output.scrollTop = output.scrollHeight;
+            return entry;
+        }
+
+        /**
+         * Helper function to clear conversation history
+         */
+        function clearConversation(outputId) {
+            if (!confirm('确定要清空对话历史吗？')) return;
+            const output = document.getElementById(outputId);
+            output.innerHTML = '';
+            output.classList.add('hidden');
+            
+            // Hide associated buttons
+            const clearBtn = document.getElementById(outputId.replace('-output', '-clear-btn'));
+            const saveBtn = document.getElementById(outputId.replace('-output', '-save-btn'));
+            const exportBtn = document.getElementById(outputId.replace('-output', '-export-btn'));
+            if (clearBtn) clearBtn.classList.add('hidden');
+            if (saveBtn) saveBtn.classList.add('hidden');
+            if (exportBtn) exportBtn.classList.add('hidden');
+        }
+
+        // 1. Vision (Photo + Text) - Multi-turn conversation support
         async function analyzeImage() {
             const text = document.getElementById('vision-text').value.trim();
             const img = document.getElementById('vision-preview');
             const output = document.getElementById('vision-output');
             const btn = document.getElementById('vision-btn');
             const saveBtn = document.getElementById('vision-save-btn');
+            const exportBtn = document.getElementById('vision-export-btn');
+            const clearBtn = document.getElementById('vision-clear-btn');
 
             if (!text && !img.dataset.base64) return alert("请输入问题描述或上传图片！");
+
+            // Create question text
+            let questionText = text || '(查看上传的图片)';
+            if (img.dataset.base64) {
+                questionText += ' [含图片]';
+            }
 
             btn.disabled = true;
             btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4 inline"></i> AI 思考中...';
             output.classList.remove('hidden');
-            output.innerHTML = '<span class="animate-pulse text-indigo-500">正在解析...</span>';
-            saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById('vision-export-btn');
-            if (exportBtn) exportBtn.classList.add('hidden');
+            
+            // Add loading entry
+            const entry = addConversationEntry('vision-output', questionText, '', true);
+            
+            // Show buttons
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
+            if (clearBtn) clearBtn.classList.remove('hidden');
 
             const prompt = `User Question: "${text}". 
             (There may be an image associated with this question).
@@ -1167,16 +1247,27 @@
 
             try {
                 const res = await callGemini(prompt, "tutor", img.dataset.base64 ? { base64: img.dataset.base64, mimeType: img.dataset.mimeType } : null);
-                output.innerHTML = marked.parse(res);
+                
+                // Remove loading entry and add complete entry
+                entry.remove();
+                addConversationEntry('vision-output', questionText, marked.parse(res), false);
                 renderMath('vision-output');
-                saveBtn.classList.remove('hidden');
-                const exportBtn = document.getElementById('vision-export-btn');
-                if (exportBtn) exportBtn.classList.remove('hidden');
+                
+                // Clear input
+                document.getElementById('vision-text').value = '';
             } catch (e) {
-                output.innerHTML = "解析失败，请检查 API Key。";
+                entry.querySelector('.loading-response').innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="flex-shrink-0 w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-xs">❌</div>
+                        <div class="flex-1 bg-red-50 dark:bg-red-900/20 rounded-lg rounded-tl-none px-3 py-2 text-sm text-red-600">
+                            解析失败，请检查 API Key。
+                        </div>
+                    </div>
+                `;
             } finally {
                 btn.disabled = false;
-                btn.innerText = "开始解析";
+                btn.innerHTML = '开始解析';
+                lucide.createIcons();
             }
         }
 
