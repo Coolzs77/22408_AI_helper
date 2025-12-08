@@ -356,8 +356,8 @@
             </div>
 
             <!-- AI Knowledge Center -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2 glass-card p-6 relative group min-h-[350px]">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <div class="lg:col-span-3 glass-card p-6 relative group min-h-[350px]">
                     <h3 class="font-bold text-slate-700 dark:text-slate-200 mb-3 text-sm flex items-center gap-2">
                         <i data-lucide="book-open-check" class="w-4 h-4 text-indigo-500"></i> AI 智囊团
                     </h3>
@@ -368,8 +368,11 @@
                         <button onclick="switchAiTab('quiz')" id="tab-quiz" class="tab-btn whitespace-nowrap text-xs font-bold text-slate-500 pb-2 flex items-center gap-1">
                             <i data-lucide="graduation-cap" class="w-3 h-3"></i> 每日一练
                         </button>
-                        <button onclick="switchAiTab('eng-write')" id="tab-eng-write" class="tab-btn whitespace-nowrap text-xs font-bold text-slate-500 pb-2 hover:text-slate-800 dark:hover:text-slate-200 transition-colors flex items-center gap-1">
-                            <i data-lucide="pen-tool" class="w-3 h-3"></i> 英语作文
+                        <button onclick="switchAiTab('eng-write-small')" id="tab-eng-write-small" class="tab-btn whitespace-nowrap text-xs font-bold text-slate-500 pb-2 hover:text-slate-800 dark:hover:text-slate-200 transition-colors flex items-center gap-1">
+                            <i data-lucide="pen-tool" class="w-3 h-3"></i> 英语小作文
+                        </button>
+                        <button onclick="switchAiTab('eng-write-big')" id="tab-eng-write-big" class="tab-btn whitespace-nowrap text-xs font-bold text-slate-500 pb-2 hover:text-slate-800 dark:hover:text-slate-200 transition-colors flex items-center gap-1">
+                            <i data-lucide="pen-tool" class="w-3 h-3"></i> 英语大作文
                         </button>
                         <button onclick="switchAiTab('sentence')" id="tab-sentence" class="tab-btn whitespace-nowrap text-xs font-bold text-slate-500 pb-2 hover:text-slate-800 dark:hover:text-slate-200 transition-colors flex items-center gap-1">
                             <i data-lucide="languages" class="w-3 h-3"></i> 长难句拆解
@@ -440,18 +443,31 @@
                         </div>
                     </div>
 
-                    <!-- Content: English Writing (NEW) -->
-                    <div id="content-eng-write" class="hidden space-y-4">
-                        <div class="flex gap-2">
-                            <button onclick="setEngType('small')" id="eng-type-small" class="flex-1 py-2 rounded-lg border text-sm font-bold bg-green-500 text-white border-green-500">英语二·小作文</button>
-                            <button onclick="setEngType('big')" id="eng-type-big" class="flex-1 py-2 rounded-lg border text-sm font-bold bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700">英语二·大作文</button>
+                    <!-- Content: English Small Composition -->
+                    <div id="content-eng-write-small" class="hidden space-y-4">
+                        <div class="bg-green-50 dark:bg-green-900/10 p-3 rounded-lg border border-green-100 dark:border-green-900/50">
+                            <p class="text-xs text-green-600 dark:text-green-300">📝 英语二·小作文模板生成（书信类：通知、邀请、建议、感谢、道歉等）</p>
                         </div>
-                        <textarea id="eng-write-input" class="w-full h-24 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:outline-none focus:border-green-400 resize-none" placeholder="输入作文关键词/主题（例如：通知，邀请信，柱状图，手机依赖，环保...）"></textarea>
-                        <button onclick="generateEngComposition()" id="eng-write-btn" class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">生成背诵模板 & 技巧</button>
-                        <div id="eng-write-output" class="hidden ai-content bg-green-50/50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
+                        <textarea id="eng-write-small-input" class="w-full h-24 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:outline-none focus:border-green-400 resize-none" placeholder="输入小作文关键词/主题（例如：通知、邀请信、建议信、感谢信、道歉信...）"></textarea>
+                        <button onclick="generateEngComposition('small')" id="eng-write-small-btn" class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">生成小作文模板 & 技巧</button>
+                        <div id="eng-write-small-output" class="hidden ai-content bg-green-50/50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
                         <div class="flex items-center justify-between mt-2">
-                            <button onclick="saveResultToNotebook('eng-write', 'eng-write-input', 'eng-write-output')" id="eng-write-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-green-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
-                            <button onclick="exportToPDF('eng-write-output', 'AI智囊团', '英语作文')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="eng-write-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                            <button onclick="saveResultToNotebook('eng-write-small', 'eng-write-small-input', 'eng-write-small-output')" id="eng-write-small-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-green-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                            <button onclick="exportToPDF('eng-write-small-output', 'AI智囊团', '英语小作文')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="eng-write-small-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
+                        </div>
+                    </div>
+
+                    <!-- Content: English Big Composition -->
+                    <div id="content-eng-write-big" class="hidden space-y-4">
+                        <div class="bg-blue-50 dark:bg-blue-900/10 p-3 rounded-lg border border-blue-100 dark:border-blue-900/50">
+                            <p class="text-xs text-blue-600 dark:text-blue-300">📊 英语二·大作文模板生成（图表类：柱状图、饼图、折线图、表格等）</p>
+                        </div>
+                        <textarea id="eng-write-big-input" class="w-full h-24 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:outline-none focus:border-blue-400 resize-none" placeholder="输入大作文关键词/主题（例如：柱状图、饼图、折线图、手机依赖、环保、教育...）"></textarea>
+                        <button onclick="generateEngComposition('big')" id="eng-write-big-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">生成大作文模板 & 技巧</button>
+                        <div id="eng-write-big-output" class="hidden ai-content bg-blue-50/50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl p-5 text-sm text-slate-700 dark:text-slate-300 shadow-sm prose dark:prose-invert max-w-none"></div>
+                        <div class="flex items-center justify-between mt-2">
+                            <button onclick="saveResultToNotebook('eng-write-big', 'eng-write-big-input', 'eng-write-big-output')" id="eng-write-big-save-btn" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-blue-500"><i data-lucide="bookmark-plus" class="w-3 h-3"></i> 存入错题本</button>
+                            <button onclick="exportToPDF('eng-write-big-output', 'AI智囊团', '英语大作文')" class="hidden text-xs flex items-center gap-1 text-slate-400 hover:text-pink-500 ml-auto" id="eng-write-big-export-btn"><i data-lucide="file-down" class="w-3 h-3"></i> 导出 PDF</button>
                         </div>
                     </div>
 
@@ -939,8 +955,6 @@
             "“深呼吸——吸气——呼气——大脑重启成功！”"
         ];
 
-        let engWriteType = 'small'; // 'small' or 'big'
-
         // --- INIT ---
         document.addEventListener('DOMContentLoaded', init);
 
@@ -1091,7 +1105,7 @@
         }
 
         function switchAiTab(tab) {
-            const contents = ['vision', 'quiz', 'eng-write', 'sentence', 'code', 'memory', 'concept', 'interview', 'doc'];
+            const contents = ['vision', 'quiz', 'eng-write-small', 'eng-write-big', 'sentence', 'code', 'memory', 'concept', 'interview', 'doc'];
             contents.forEach(t => {
                 const content = document.getElementById(`content-${t}`);
                 const btn = document.getElementById(`tab-${t}`);
@@ -1156,35 +1170,30 @@
             }
         }
 
-        // 2. English Writing (NEW)
-        function setEngType(type) {
-            engWriteType = type;
-            const btnS = document.getElementById('eng-type-small');
-            const btnB = document.getElementById('eng-type-big');
-            if(type === 'small') {
-                btnS.className = "flex-1 py-2 rounded-lg border text-sm font-bold bg-green-500 text-white border-green-500 transition-colors";
-                btnB.className = "flex-1 py-2 rounded-lg border text-sm font-bold bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 transition-colors";
-            } else {
-                btnB.className = "flex-1 py-2 rounded-lg border text-sm font-bold bg-green-500 text-white border-green-500 transition-colors";
-                btnS.className = "flex-1 py-2 rounded-lg border text-sm font-bold bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 transition-colors";
-            }
-        }
-
-        async function generateEngComposition() {
-            const input = document.getElementById('eng-write-input').value.trim();
-            const btn = document.getElementById('eng-write-btn');
-            const output = document.getElementById('eng-write-output');
-            const saveBtn = document.getElementById('eng-write-save-btn');
+        // 2. English Writing - Separate Small and Big Composition
+        async function generateEngComposition(type) {
+            const inputId = type === 'small' ? 'eng-write-small-input' : 'eng-write-big-input';
+            const btnId = type === 'small' ? 'eng-write-small-btn' : 'eng-write-big-btn';
+            const outputId = type === 'small' ? 'eng-write-small-output' : 'eng-write-big-output';
+            const saveBtnId = type === 'small' ? 'eng-write-small-save-btn' : 'eng-write-big-save-btn';
+            const exportBtnId = type === 'small' ? 'eng-write-small-export-btn' : 'eng-write-big-export-btn';
+            
+            const input = document.getElementById(inputId).value.trim();
+            const btn = document.getElementById(btnId);
+            const output = document.getElementById(outputId);
+            const saveBtn = document.getElementById(saveBtnId);
 
             if(!input) return alert("请输入关键词或主题");
 
+            const buttonText = type === 'small' ? "生成小作文模板 & 技巧" : "生成大作文模板 & 技巧";
             btn.disabled = true; btn.innerText = "正在生成模版...";
-            output.classList.remove('hidden'); output.innerHTML = '<span class="animate-pulse text-green-500">正在构建高分模板...</span>';
+            const loadingColor = type === 'small' ? 'text-green-500' : 'text-blue-500';
+            output.classList.remove('hidden'); output.innerHTML = `<span class="animate-pulse ${loadingColor}">正在构建高分模板...</span>`;
             saveBtn.classList.add('hidden');
-            const exportBtn = document.getElementById('eng-write-export-btn');
+            const exportBtn = document.getElementById(exportBtnId);
             if (exportBtn) exportBtn.classList.add('hidden');
 
-            const typeStr = engWriteType === 'small' ? "Small Composition (Letter/Notice)" : "Big Composition (Chart/Graph)";
+            const typeStr = type === 'small' ? "Small Composition (Letter/Notice)" : "Big Composition (Chart/Graph)";
             const prompt = `Generate a template for English II (考研英语二) ${typeStr}.
             Topic/Keywords: "${input}".
             
@@ -1198,10 +1207,9 @@
                 const res = await callGemini(prompt, "eng-tutor");
                 output.innerHTML = marked.parse(res);
                 saveBtn.classList.remove('hidden');
-                const exportBtn = document.getElementById('eng-write-export-btn');
                 if (exportBtn) exportBtn.classList.remove('hidden');
             } catch(e) { output.innerHTML = "生成失败"; }
-            finally { btn.disabled = false; btn.innerText = "生成背诵模板 & 技巧"; }
+            finally { btn.disabled = false; btn.innerText = buttonText; }
         }
 
         // 3. Code Templates (Modified)
