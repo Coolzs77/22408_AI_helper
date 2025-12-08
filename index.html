@@ -1074,10 +1074,14 @@
             'AIzaSyBAP7TbN-nTt1BjZp_jtkh38rqrZophFPE'
         ];
         
-        // Available models - using exact names from Google AI Studio
+        // Available models - using official model IDs with version snapshots from Google AI Studio
         const MODELS = [
-            'gemini-1.5-flash',               // Highest priority - most stable
-            'gemini-1.5-flash-8b'             // Fallback - lightweight
+            'gemini-1.5-flash',               // Default - original stable model
+            'gemini-2.5-flash-001',           // 2.5 首选 - 高吞吐量标准答案
+            'gemini-2.5-flash-lite-001',      // 2.5 轻量版 - 成本极低，海量日志分析
+            'gemini-2.0-flash-001',           // 2.0 经典版本 - 稳定可靠
+            'gemini-2.0-flash-lite-001',      // 2.0 轻量版
+            'gemini-1.5-flash-8b'             // 1.5 最轻量版 - 最后备用
         ];
 
         function toggleKeyModal() {
