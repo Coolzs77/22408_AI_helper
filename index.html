@@ -1045,9 +1045,9 @@
                 renderMathInElement(element, {
                     delimiters: [
                         {left: '$$', right: '$$', display: true},
-                        {left: '$', right: '$', display: false},
-                        {left: '\\(', right: '\\)', display: false},
-                        {left: '\\[', right: '\\]', display: true}
+                        {left: '$', right: '$', display: false}
+                        // Removed \(...\) and \[...\] delimiters as they conflict with regular () and [] in text
+                        // Use $ and $$ for reliable math rendering
                     ],
                     throwOnError: false,
                     maxSize: 500,  // Increased from default to support long formulas
@@ -1501,9 +1501,9 @@
                     renderMathInElement(entry, {
                         delimiters: [
                             {left: '$$', right: '$$', display: true},
-                            {left: '$', right: '$', display: false},
-                            {left: '\\(', right: '\\)', display: false},
-                            {left: '\\[', right: '\\]', display: true}
+                            {left: '$', right: '$', display: false}
+                            // Removed \(...\) and \[...\] delimiters as they conflict with regular () and [] in text
+                            // Use $ and $$ for reliable math rendering
                         ],
                         throwOnError: false,
                         maxSize: 500,  // Support long formulas
