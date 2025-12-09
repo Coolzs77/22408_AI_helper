@@ -1051,7 +1051,8 @@
                     ],
                     throwOnError: false,
                     maxSize: 500,  // Increased from default to support long formulas
-                    maxExpand: 1000  // Support for complex nested expressions
+                    maxExpand: 1000,  // Support for complex nested expressions
+                    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
                 });
             }
         }
@@ -1506,7 +1507,8 @@
                         ],
                         throwOnError: false,
                         maxSize: 500,  // Support long formulas
-                        maxExpand: 1000  // Support complex nested expressions
+                        maxExpand: 1000,  // Support complex nested expressions
+                        ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
                     });
                 }, 0);
             }
