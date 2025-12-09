@@ -1049,7 +1049,9 @@
                         {left: '\\(', right: '\\)', display: false},
                         {left: '\\[', right: '\\]', display: true}
                     ],
-                    throwOnError: false
+                    throwOnError: false,
+                    maxSize: 500,  // Increased from default to support long formulas
+                    maxExpand: 1000  // Support for complex nested expressions
                 });
             }
         }
@@ -1491,8 +1493,22 @@
                         </div>
                     </div>
                 `;
-                // Apply bold colors after adding content
-                setTimeout(() => applyBoldColors(entry), 0);
+                // Apply bold colors and render LaTeX math after adding content
+                setTimeout(() => {
+                    applyBoldColors(entry);
+                    // Render math formulas in this specific entry
+                    renderMathInElement(entry, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '$', right: '$', display: false},
+                            {left: '\\(', right: '\\)', display: false},
+                            {left: '\\[', right: '\\]', display: true}
+                        ],
+                        throwOnError: false,
+                        maxSize: 500,  // Support long formulas
+                        maxExpand: 1000  // Support complex nested expressions
+                    });
+                }, 0);
             }
             
             output.appendChild(entry);
