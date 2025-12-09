@@ -242,13 +242,19 @@
 
     <!-- SIDEBAR -->
     <aside id="sidebar" class="w-64 bg-sidebar dark:bg-darksidebar border-r border-slate-100 dark:border-slate-800 hidden md:flex flex-col p-6 z-50 transition-all duration-300">
-        <div class="flex items-center gap-3 mb-10 px-2">
+        <div class="flex items-center gap-3 mb-6 px-2">
             <div class="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/50 rounded-full flex items-center justify-center text-xl shadow-sm">🦆</div>
             <div>
                 <h1 class="font-black text-slate-700 dark:text-slate-200 tracking-tight text-lg">22408 小窝</h1>
                 <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Target: 380+</p>
             </div>
         </div>
+        
+        <!-- API Key Settings Button (Top Position) -->
+        <button onclick="toggleKeyModal()" class="w-full flex items-center justify-center gap-2 py-2.5 mb-6 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900/20 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors shadow-sm">
+            <i data-lucide="key" class="w-4 h-4"></i>
+            <span id="key-status-text">设置 API Key</span>
+        </button>
         
         <nav class="space-y-2 flex-1">
             <button onclick="showView('dashboard')" id="nav-dashboard" class="nav-item active w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
@@ -269,12 +275,6 @@
         </nav>
 
         <div class="space-y-3 mt-auto">
-            <!-- API Key Settings Button -->
-            <button onclick="toggleKeyModal()" class="w-full flex items-center justify-center gap-2 py-2 rounded-2xl border border-indigo-100 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-900/20 text-xs font-bold text-indigo-500 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors">
-                <i data-lucide="key" class="w-4 h-4"></i>
-                <span id="key-status-text">设置 API Key</span>
-            </button>
-            
             <button onclick="toggleDarkMode()" class="w-full flex items-center justify-center gap-2 py-2 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                 <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
                 <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
@@ -937,16 +937,12 @@
                 <button onclick="toggleKeyModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             
-            <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 mb-4">
-                <p class="text-xs text-green-700 dark:text-green-300 font-semibold">
-                    ✅ 已内置 5 个API Key，可直接使用！
-                </p>
-            </div>
+
             
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
-                如需添加更多Key以提升使用次数，请在下方填入您的 Google Gemini API Key。<br>
-                <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-500 underline font-bold hover:text-indigo-600">点击这里获取免费 Key</a><br>
-                <span class="text-indigo-600 font-semibold">💡 自动策略：先用当前模型尝试所有Keys → Keys全部受限后降级模型</span>
+                ⚠️ <strong class="text-red-600 dark:text-red-400">请添加您自己的 Google Gemini API Key 才能使用AI功能。</strong><br>
+                <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-500 underline font-bold hover:text-indigo-600">👉 点击这里获取免费 API Key</a><br>
+                <span class="text-indigo-600 font-semibold">💡 支持多Key轮换：添加多个Key（每行一个）可自动轮换提升使用次数</span>
             </p>
 
             <div class="space-y-4">
@@ -958,11 +954,11 @@
                 </div>
                 
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 mb-1 uppercase tracking-wide">添加额外的 API Keys (可选，每行一个)</label>
-                    <textarea id="user-api-key-input" rows="3" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 transition-colors font-mono" placeholder="AIzaSy...&#10;AIzaSy...&#10;(可选，留空则使用内置Key)"></textarea>
+                    <label class="block text-xs font-bold text-slate-500 mb-1 uppercase tracking-wide">🔑 输入您的 API Keys (每行一个，支持多个Key)</label>
+                    <textarea id="user-api-key-input" rows="5" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 transition-colors font-mono" placeholder="AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXX&#10;AIzaSyYYYYYYYYYYYYYYYYYYYYYYYYYYY&#10;AIzaSyZZZZZZZZZZZZZZZZZZZZZZZZZZZ&#10;&#10;(添加多个Key可提升使用次数)"></textarea>
                 </div>
-                <button onclick="saveUserApiKey()" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2.5 rounded-lg transition-all active:scale-95">保存配置</button>
-                <p class="text-[10px] text-center text-slate-400">Key 仅保存在你的本地浏览器中，不会上传到任何服务器。<br>您的Keys会与内置Keys一起参与自动轮换。</p>
+                <button onclick="saveUserApiKey()" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2.5 rounded-lg transition-all active:scale-95">💾 保存 API Keys</button>
+                <p class="text-[10px] text-center text-slate-400">🔒 Key 仅保存在您的本地浏览器中，不会上传到任何服务器。<br>多个Keys会自动轮换：先用当前模型尝试所有Keys → 全部受限后降级模型。</p>
             </div>
         </div>
     </div>
@@ -1065,14 +1061,9 @@
         let currentKeyIndex = parseInt(localStorage.getItem('current_key_index') || '0');
         let currentModel = localStorage.getItem('current_model') || 'gemini-2.5-flash-preview-09-2025';
         
-        // Pre-configured API Keys (built-in)
-        const BUILTIN_KEYS = [
-            'AIzaSyDP0SP8HqyBea3nbHGGkLaZoz2K0RWjomc',
-            'AIzaSyDJhGbL27jJKSQkkF3IYdzHo4HCDloWb2w',
-            'AIzaSyAbHDLrxSRHgg92CnV3SAUFbREs9m-V4eY',
-            'AIzaSyDJ7o3CzmlSG2va4HCfIzgRwU8IA8rNOTQ',
-            'AIzaSyBAP7TbN-nTt1BjZp_jtkh38rqrZophFPE'
-        ];
+        // No built-in API keys for security reasons
+        // Users must configure their own keys via the Settings button
+        const BUILTIN_KEYS = [];
         
         // Available models - using official model IDs from Google AI Studio (no 1.5 models)
         const MODELS = [
