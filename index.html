@@ -1192,11 +1192,34 @@
             checkApiKeyStatus();
         }
 
-        async function callGemini(userQuery, persona, imageData = null, retryCount = 0) {
+        // Debounce map to track active API calls per button/function
+        const activeApiCalls = new Map();
+        
+        // Debounce function to prevent rapid repeated API calls
+        function debounceApiCall(functionName, callback) {
+            if (activeApiCalls.get(functionName)) {
+                showToast('请等待当前请求完成', 'warning');
+                return Promise.reject(new Error('请等待当前请求完成'));
+            }
+            
+            activeApiCalls.set(functionName, true);
+            
+            return callback()
+                .finally(() => {
+                    activeApiCalls.delete(functionName);
+                });
+        }
+
+        async function callGemini(userQuery, persona, imageData = null, retryCount = 0, networkRetryCount = 0) {
             const userKey = getCurrentKey();
             if (!userKey) {
                 toggleKeyModal();
                 throw new Error("Missing API Key");
+            }
+
+            // Validate API key format before making request (basic validation)
+            if (!userKey || userKey.length < 20 || !/^[A-Za-z0-9_-]+$/.test(userKey)) {
+                throw new Error("API Key 格式不正确，请检查后重新输入");
             }
 
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${userKey}`;
@@ -1291,12 +1314,19 @@
                 systemInstruction: { parts: [{ text: systemPrompt }] }
             };
 
+            // Add request timeout handling (30 seconds)
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000);
+
             try {
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(payload),
+                    signal: controller.signal
                 });
+
+                clearTimeout(timeoutId);
 
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
@@ -1323,7 +1353,7 @@
                             rotateToNextKey();
                             const newKeyNum = currentKeyIndex + 1;
                             showToast(`Key #${currentKeyNum} 受限，切换到 Key #${newKeyNum}/${keys.length}...`, 'info');
-                            return await callGemini(userQuery, persona, imageData, retryCount + 1);
+                            return await callGemini(userQuery, persona, imageData, retryCount + 1, 0);
                         }
                         
                         // Strategy 2: All keys exhausted with current model, try lighter model
@@ -1331,7 +1361,7 @@
                             currentKeyIndex = 0;  // Reset to first key
                             localStorage.setItem('current_key_index', '0');
                             showToast(`所有Keys都受限，降级到 ${getModelDisplayName(currentModel)} 并重试...`, 'warning');
-                            return await callGemini(userQuery, persona, imageData, 0);
+                            return await callGemini(userQuery, persona, imageData, 0, 0);
                         }
                         
                         // All strategies exhausted
@@ -1352,6 +1382,24 @@
                 
                 return result;
             } catch (e) {
+                clearTimeout(timeoutId);
+                
+                // Handle timeout errors
+                if (e.name === 'AbortError') {
+                    throw new Error('请求超时（30秒），请检查网络连接后重试');
+                }
+                
+                // Handle network errors with retry logic (not for API errors)
+                if (e.name === 'TypeError' && (e.message.includes('fetch') || e.message.includes('network'))) {
+                    if (networkRetryCount < 2) {
+                        console.warn(`Network error, retrying... (attempt ${networkRetryCount + 1}/3)`);
+                        showToast(`网络错误，正在重试 (${networkRetryCount + 1}/3)...`, 'warning');
+                        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retry
+                        return await callGemini(userQuery, persona, imageData, retryCount, networkRetryCount + 1);
+                    }
+                    throw new Error('网络连接失败，请检查网络后重试');
+                }
+                
                 throw e;
             }
         }
@@ -1538,12 +1586,13 @@
 
         // 1. Vision (Photo + Text) - Multi-turn conversation support
         async function analyzeImage() {
-            const text = document.getElementById('vision-text').value.trim();
-            const img = document.getElementById('vision-preview');
-            const output = document.getElementById('vision-output');
-            const btn = document.getElementById('vision-btn');
-            const saveBtn = document.getElementById('vision-save-btn');
-            const exportBtn = document.getElementById('vision-export-btn');
+            return debounceApiCall('analyzeImage', async () => {
+                const text = document.getElementById('vision-text').value.trim();
+                const img = document.getElementById('vision-preview');
+                const output = document.getElementById('vision-output');
+                const btn = document.getElementById('vision-btn');
+                const saveBtn = document.getElementById('vision-save-btn');
+                const exportBtn = document.getElementById('vision-export-btn');
             const clearBtn = document.getElementById('vision-clear-btn');
 
             if (!text && !img.dataset.base64) return alert("请输入问题描述或上传图片！");
@@ -1597,25 +1646,27 @@
                 btn.innerHTML = '开始解析';
                 lucide.createIcons();
             }
+            });
         }
 
         // 2. English Writing - Separate Small and Big Composition
         async function generateEngComposition(type) {
-            const inputId = type === 'small' ? 'eng-write-small-input' : 'eng-write-big-input';
-            const btnId = type === 'small' ? 'eng-write-small-btn' : 'eng-write-big-btn';
-            const outputId = type === 'small' ? 'eng-write-small-output' : 'eng-write-big-output';
-            const saveBtnId = type === 'small' ? 'eng-write-small-save-btn' : 'eng-write-big-save-btn';
-            const exportBtnId = type === 'small' ? 'eng-write-small-export-btn' : 'eng-write-big-export-btn';
-            const clearBtnId = type === 'small' ? 'eng-write-small-clear-btn' : 'eng-write-big-clear-btn';
-            
-            const inputEl = document.getElementById(inputId);
-            const input = inputEl.value.trim();
-            const btn = document.getElementById(btnId);
-            const saveBtn = document.getElementById(saveBtnId);
-            const exportBtn = document.getElementById(exportBtnId);
-            const clearBtn = document.getElementById(clearBtnId);
+            return debounceApiCall(`generateEngComposition_${type}`, async () => {
+                const inputId = type === 'small' ? 'eng-write-small-input' : 'eng-write-big-input';
+                const btnId = type === 'small' ? 'eng-write-small-btn' : 'eng-write-big-btn';
+                const outputId = type === 'small' ? 'eng-write-small-output' : 'eng-write-big-output';
+                const saveBtnId = type === 'small' ? 'eng-write-small-save-btn' : 'eng-write-big-save-btn';
+                const exportBtnId = type === 'small' ? 'eng-write-small-export-btn' : 'eng-write-big-export-btn';
+                const clearBtnId = type === 'small' ? 'eng-write-small-clear-btn' : 'eng-write-big-clear-btn';
+                
+                const inputEl = document.getElementById(inputId);
+                const input = inputEl.value.trim();
+                const btn = document.getElementById(btnId);
+                const saveBtn = document.getElementById(saveBtnId);
+                const exportBtn = document.getElementById(exportBtnId);
+                const clearBtn = document.getElementById(clearBtnId);
 
-            if(!input) return alert("请输入关键词或主题");
+                if(!input) return alert("请输入关键词或主题");
 
             const buttonText = type === 'small' ? "生成小作文模板 & 技巧" : "生成大作文模板 & 技巧";
             btn.disabled = true; btn.innerText = "正在生成模版...";
@@ -1664,6 +1715,7 @@
                 btn.innerText = buttonText;
                 lucide.createIcons();
             }
+            });
         }
 
         // 3. Code Templates - Multi-turn
@@ -1726,16 +1778,17 @@
 
         // 4. Sentence Breakdown - Multi-turn
         async function breakSentence() {
-            const inputEl = document.getElementById('sentence-input');
-            const text = inputEl.value.trim();
-            const img = document.getElementById('sentence-preview');
-            const btn = document.getElementById('sentence-btn');
-            const output = document.getElementById('sentence-output');
-            const saveBtn = document.getElementById('sentence-save-btn');
-            const exportBtn = document.getElementById('sentence-export-btn');
-            const clearBtn = document.getElementById('sentence-clear-btn');
+            return debounceApiCall('breakSentence', async () => {
+                const inputEl = document.getElementById('sentence-input');
+                const text = inputEl.value.trim();
+                const img = document.getElementById('sentence-preview');
+                const btn = document.getElementById('sentence-btn');
+                const output = document.getElementById('sentence-output');
+                const saveBtn = document.getElementById('sentence-save-btn');
+                const exportBtn = document.getElementById('sentence-export-btn');
+                const clearBtn = document.getElementById('sentence-clear-btn');
 
-            if(!text && !img.dataset.base64) return alert("请输入句子或上传图片");
+                if(!text && !img.dataset.base64) return alert("请输入句子或上传图片");
 
             let questionText = text || '(查看上传的句子图片)';
             if (img.dataset.base64) questionText += ' [含图片]';
@@ -1784,10 +1837,12 @@
                 btn.innerText = "一键拆解";
                 lucide.createIcons();
             }
+            });
         }
 
         // 5. Politics Standard Template (Modified)
         async function solvePolitics() {
+            return debounceApiCall('solvePolitics', async () => {
             const inputEl = document.getElementById('pol-q-input');
             const text = inputEl.value.trim();
             const img = document.getElementById('pol-preview');
@@ -1845,10 +1900,12 @@
                 btn.innerText = "生成标准答题模板";
                 lucide.createIcons();
             }
+            });
         }
 
         // 6. CS 408 Grader - Multi-turn
         async function gradeCS() {
+            return debounceApiCall('gradeCS', async () => {
             const img = document.getElementById('cs-grader-preview');
             const btn = document.getElementById('cs-grade-btn');
             const output = document.getElementById('cs-grade-result');
@@ -1899,10 +1956,12 @@
                 btn.innerText = "开始 408 批改";
                 lucide.createIcons();
             }
+            });
         }
 
         // --- OTHER EXISTING FEATURES ---
         async function generateQuiz() {
+            return debounceApiCall('generateQuiz', async () => {
             const subject = document.getElementById('quiz-subject').value;
             const output = document.getElementById('quiz-output');
             const btn = document.getElementById('quiz-btn');
@@ -1981,9 +2040,11 @@
                 btn.innerHTML = '出题';
                 lucide.createIcons();
             }
+            });
         }
 
         async function generateMnemonic() {
+            return debounceApiCall('generateMnemonic', async () => {
             const inputEl = document.getElementById('memory-input');
             const input = inputEl.value.trim();
             const output = document.getElementById('memory-output');
@@ -2027,9 +2088,11 @@
                 btn.disabled = false;
                 lucide.createIcons();
             }
+            });
         }
 
         async function explainConcept() {
+            return debounceApiCall('explainConcept', async () => {
             const inputEl = document.getElementById('concept-input');
             const input = inputEl.value.trim();
             const output = document.getElementById('concept-output');
@@ -2074,9 +2137,11 @@
                 btn.disabled = false;
                 lucide.createIcons();
             }
+            });
         }
 
         async function processDoc() {
+            return debounceApiCall('processDoc', async () => {
             const img = document.getElementById('doc-preview');
             const output = document.getElementById('doc-summary');
             const text = document.getElementById('doc-text');
@@ -2094,6 +2159,7 @@
                 text.innerText = res; // Simple fallback
             } catch(e) { output.innerHTML = "失败"; }
             finally { btn.disabled = false; }
+            });
         }
 
         function copyDocText() {
@@ -2102,23 +2168,26 @@
         }
 
         async function startInterview() {
-            const topic = document.getElementById('interview-topic').value;
-            const qDiv = document.getElementById('interview-question');
-            const area = document.getElementById('interview-area');
-            const btn = document.getElementById('interview-start-btn');
+            return debounceApiCall('startInterview', async () => {
+                const topic = document.getElementById('interview-topic').value;
+                const qDiv = document.getElementById('interview-question');
+                const area = document.getElementById('interview-area');
+                const btn = document.getElementById('interview-start-btn');
 
-            area.classList.remove('hidden');
-            btn.disabled = true;
-            qDiv.innerText = "面试官思考中...";
-            
-            try {
-                const res = await callGemini(`Ask a tough interview question about ${topic}`, "tutor");
-                qDiv.innerText = res;
-            } catch(e) { qDiv.innerText = "Error"; }
-            finally { btn.disabled = false; }
+                area.classList.remove('hidden');
+                btn.disabled = true;
+                qDiv.innerText = "面试官思考中...";
+                
+                try {
+                    const res = await callGemini(`Ask a tough interview question about ${topic}`, "tutor");
+                    qDiv.innerText = res;
+                } catch(e) { qDiv.innerText = "Error"; }
+                finally { btn.disabled = false; }
+            });
         }
 
         async function submitInterviewAnswer() {
+            return debounceApiCall('submitInterviewAnswer', async () => {
             const q = document.getElementById('interview-question').innerText;
             const a = document.getElementById('interview-answer').value;
             const fb = document.getElementById('interview-feedback');
@@ -2139,9 +2208,11 @@
                 if (exportBtn) exportBtn.classList.remove('hidden');
             } catch(e) { fb.innerHTML = "Error"; }
             finally { btn.disabled = false; }
+            });
         }
         
         async function gradeEssay(type) {
+            return debounceApiCall('gradeEssay', async () => {
             const img = document.getElementById('eng-preview');
             const btn = document.getElementById('eng-grade-btn');
             const out = document.getElementById('eng-result');
@@ -2184,9 +2255,11 @@
                 btn.disabled = false;
                 lucide.createIcons();
             }
+            });
         }
 
         async function gradeTranslation() {
+            return debounceApiCall('gradeTranslation', async () => {
             const src = document.getElementById('trans-source-preview');
             const tgt = document.getElementById('trans-target-preview');
             const btn = document.getElementById('trans-grade-btn');
@@ -2235,6 +2308,7 @@
                 btn.disabled = false;
                 lucide.createIcons();
             }
+            });
         }
 
         // --- NOTEBOOK SAVE SYSTEM ---
@@ -2850,12 +2924,21 @@
             const timestamp = now.toISOString().replace(/:/g, '-').replace(/\..+/, '').replace('T', '_');
             const filename = `AI智囊团_模拟面试_${timestamp}.pdf`;
             
+            // Direct PDF generation without intermediate image conversion
+            // Use custom page size like exportToPDF
+            const a4Width = 210; // mm
+            const customWidth = a4Width * 1.8; // 378mm
             const opt = {
                 margin: 10,
                 filename: filename,
-                image: { type: 'jpeg', quality: 0.95 },
                 html2canvas: { scale: 2, useCORS: true, logging: false },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: [customWidth, 1000], 
+                    orientation: 'portrait',
+                    compress: true
+                },
+                pagebreak: { mode: 'avoid-all' }
             };
 
             try {
@@ -2912,12 +2995,21 @@
             const timestamp = now.toISOString().replace(/:/g, '-').replace(/\..+/, '').replace('T', '_');
             const filename = `AI智囊团_文档提取_${timestamp}.pdf`;
             
+            // Direct PDF generation without intermediate image conversion
+            // Use custom page size like exportToPDF
+            const a4Width = 210; // mm
+            const customWidth = a4Width * 1.8; // 378mm
             const opt = {
                 margin: 10,
                 filename: filename,
-                image: { type: 'jpeg', quality: 0.95 },
                 html2canvas: { scale: 2, useCORS: true, logging: false },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: [customWidth, 1000], 
+                    orientation: 'portrait',
+                    compress: true
+                },
+                pagebreak: { mode: 'avoid-all' }
             };
 
             try {
@@ -3075,12 +3167,12 @@
             pdfWrapper.appendChild(contentClone);
 
             // Configure PDF options - Single page, wider format (1.8x A4 width)
+            // Direct PDF generation without intermediate image conversion
             const a4Width = 210; // mm
             const customWidth = a4Width * 1.8; // 378mm
             const opt = {
                 margin: 10,
                 filename: filename,
-                image: { type: 'jpeg', quality: 0.95 },
                 html2canvas: { 
                     scale: 2,
                     useCORS: true,
@@ -3088,7 +3180,7 @@
                 },
                 jsPDF: { 
                     unit: 'mm', 
-                    format: [customWidth, 2000], // Very tall page to fit all content without pagination
+                    format: [customWidth, 1000], // Reduced height from 2000 to 1000
                     orientation: 'portrait',
                     compress: true
                 },
