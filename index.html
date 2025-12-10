@@ -1210,7 +1210,7 @@
                 });
         }
 
-        async function callGemini(userQuery, persona, imageData = null, retryCount = 0) {
+        async function callGemini(userQuery, persona, imageData = null, retryCount = 0, networkRetryCount = 0) {
             const userKey = getCurrentKey();
             if (!userKey) {
                 toggleKeyModal();
@@ -1353,7 +1353,7 @@
                             rotateToNextKey();
                             const newKeyNum = currentKeyIndex + 1;
                             showToast(`Key #${currentKeyNum} 受限，切换到 Key #${newKeyNum}/${keys.length}...`, 'info');
-                            return await callGemini(userQuery, persona, imageData, retryCount + 1);
+                            return await callGemini(userQuery, persona, imageData, retryCount + 1, 0);
                         }
                         
                         // Strategy 2: All keys exhausted with current model, try lighter model
@@ -1361,7 +1361,7 @@
                             currentKeyIndex = 0;  // Reset to first key
                             localStorage.setItem('current_key_index', '0');
                             showToast(`所有Keys都受限，降级到 ${getModelDisplayName(currentModel)} 并重试...`, 'warning');
-                            return await callGemini(userQuery, persona, imageData, 0);
+                            return await callGemini(userQuery, persona, imageData, 0, 0);
                         }
                         
                         // All strategies exhausted
@@ -1391,12 +1391,11 @@
                 
                 // Handle network errors with retry logic (not for API errors)
                 if (e.name === 'TypeError' && (e.message.includes('fetch') || e.message.includes('network'))) {
-                    const networkRetryCount = retryCount & 0xFF; // Use lower 8 bits for network retry
                     if (networkRetryCount < 2) {
                         console.warn(`Network error, retrying... (attempt ${networkRetryCount + 1}/3)`);
                         showToast(`网络错误，正在重试 (${networkRetryCount + 1}/3)...`, 'warning');
                         await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retry
-                        return await callGemini(userQuery, persona, imageData, (retryCount & 0xFFFFFF00) | (networkRetryCount + 1));
+                        return await callGemini(userQuery, persona, imageData, retryCount, networkRetryCount + 1);
                     }
                     throw new Error('网络连接失败，请检查网络后重试');
                 }
