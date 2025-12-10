@@ -1217,8 +1217,8 @@
                 throw new Error("Missing API Key");
             }
 
-            // Validate API key format before making request
-            if (!/^[A-Za-z0-9_-]{39}$/.test(userKey)) {
+            // Validate API key format before making request (basic validation)
+            if (!userKey || userKey.length < 20 || !/^[A-Za-z0-9_-]+$/.test(userKey)) {
                 throw new Error("API Key 格式不正确，请检查后重新输入");
             }
 
