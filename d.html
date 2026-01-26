@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026寒假复试与毕设详细计划</title>
+    
+    <!-- Simple inline Markdown parser -->
+    <script>
+        // Lightweight markdown parser
+        function parseMarkdown(text) {
+            // Escape HTML
+            const escapeHtml = (str) => {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            };
+            
+            let html = text;
+            
+            // Headers
+            html = html.replace(/^#### (.*$)/gim, '<h4>$1</h4>');
+            html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+            html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+            html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+            
+            // Bold
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // Code blocks
+            html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+            
+            // Inline code
+            html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+            
+            // Horizontal rules
+            html = html.replace(/^---$/gim, '<hr>');
+            
+            // Links
+            html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+            
+            // Lists - unordered
+            html = html.replace(/^\- (.*$)/gim, '<li>$1</li>');
+            html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+            
+            // Line breaks to paragraphs
+            const lines = html.split('\n');
+            let result = '';
+            let inList = false;
+            let inCodeBlock = false;
+            let paragraph = '';
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                if (line.startsWith('<pre>')) inCodeBlock = true;
+                if (line.endsWith('</pre>')) inCodeBlock = false;
+                if (line.startsWith('<ul>') || line.startsWith('<ol>')) inList = true;
+                if (line.startsWith('</ul>') || line.startsWith('</ol>')) inList = false;
+                
+                if (line.startsWith('<h') || line.startsWith('<hr') || line.startsWith('<ul') || line.startsWith('<ol') || line.startsWith('<pre') || line === '') {
+                    if (paragraph) {
+                        result += '<p>' + paragraph + '</p>\n';
+                        paragraph = '';
+                    }
+                    result += line + '\n';
+                } else if (inCodeBlock || inList || line.startsWith('<li>')) {
+                    result += line + '\n';
+                } else {
+                    if (paragraph) paragraph += ' ';
+                    paragraph += line;
+                }
+            }
+            
+            if (paragraph) {
+                result += '<p>' + paragraph + '</p>\n';
+            }
+            
+            return result;
+        }
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 60px;
+            background: white;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+        
+        /* Markdown styling */
+        .markdown-content h1 {
+            color: #667eea;
+            font-size: 2.2em;
+            margin: 40px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .markdown-content h1:first-child {
+            margin-top: 0;
+        }
+        
+        .markdown-content h2 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin: 35px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        .markdown-content h3 {
+            color: #5a67d8;
+            font-size: 1.5em;
+            margin: 30px 0 12px 0;
+        }
+        
+        .markdown-content h4 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin: 25px 0 10px 0;
+        }
+        
+        .markdown-content p {
+            margin: 15px 0;
+            text-align: justify;
+        }
+        
+        .markdown-content ul, .markdown-content ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        
+        .markdown-content li {
+            margin: 8px 0;
+        }
+        
+        .markdown-content blockquote {
+            border-left: 4px solid #667eea;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #666;
+            background: #f8f9ff;
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .markdown-content code {
+            background: #f5f7ff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: "Consolas", "Monaco", "Courier New", monospace;
+            font-size: 0.9em;
+            color: #e83e8c;
+        }
+        
+        .markdown-content pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+        
+        .markdown-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .markdown-content table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .markdown-content table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .markdown-content table tr:hover {
+            background: #f8f9ff;
+        }
+        
+        .markdown-content hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #667eea, transparent);
+            margin: 40px 0;
+        }
+        
+        .markdown-content strong {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .markdown-content a {
+            color: #667eea;
+            text-decoration: none;
+            border-bottom: 1px solid #667eea;
+            transition: all 0.3s;
+        }
+        
+        .markdown-content a:hover {
+            color: #764ba2;
+            border-bottom-color: #764ba2;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 1.2em;
+        }
+        
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+        
+        .footer {
+            background: #f8f9ff;
+            padding: 30px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #eee;
+        }
+        
+        .footer p {
+            margin: 5px 0;
+        }
+        
+        .error {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 2026寒假复试与毕设详细计划</h1>
+            <p>执行周期：2026年1月25日 - 2月27日</p>
+        </div>
+        
+        <div class="content">
+            <div id="loading" class="loading">正在加载内容</div>
+            <div id="content" class="markdown-content" style="display: none;"></div>
+            <div id="error" style="display: none;"></div>
+        </div>
+        
+        <div class="footer">
+            <p><strong>文档版本：</strong>v1.0</p>
+            <p><strong>生成日期：</strong>2026年1月25日</p>
+            <p>祝学习顺利，复试成功！💪</p>
+        </div>
+    </div>
+    
+    <script>
+        // Load and render d.txt content
+        async function loadContent() {
+            const loadingEl = document.getElementById('loading');
+            const contentEl = document.getElementById('content');
+            const errorEl = document.getElementById('error');
+            
+            try {
+                const response = await fetch('d.txt');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const text = await response.text();
+                
+                // Parse markdown and render
+                const html = parseMarkdown(text);
+                contentEl.innerHTML = html;
+                
+                // Hide loading, show content
+                loadingEl.style.display = 'none';
+                contentEl.style.display = 'block';
+                
+                // Smooth scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+            } catch (error) {
+                console.error('Error loading content:', error);
+                loadingEl.style.display = 'none';
+                errorEl.style.display = 'block';
+                errorEl.className = 'error';
+                errorEl.innerHTML = `
+                    <h3>⚠️ 加载失败</h3>
+                    <p>无法加载 d.txt 文件。请确保文件存在于同一目录下。</p>
+                    <p><strong>错误信息：</strong>${error.message}</p>
+                `;
+            }
+        }
+        
+        // Load content when page loads
+        document.addEventListener('DOMContentLoaded', loadContent);
+    </script>
+</body>
+</html>
