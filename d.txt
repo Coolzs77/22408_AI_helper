@@ -2561,7 +2561,6 @@ A: I plan to explore multi-modal fusion methods combining visible
 - 21:00-21:30 每日复盘
 
 ---
-
 #### 📅 Day 24（2月17日 周一）
 
 **上午 8:30-12:00【复试-薄弱环节强化】**
@@ -2596,4 +2595,2391 @@ A: I plan to explore multi-modal fusion methods combining visible
   ```
   
 - 16:00-17:00 撰写实验分析报告
-  *
+  * 总结各模块改进效果
+  * 分析为什么某些改进有效
+  * 指出仍存在的问题和改进方向
+  * 准备面试时的详细讲解稿
+
+**下午 17:00-18:00【毕设-准备答辩材料】**
+- 整理实验数据和图表
+- 挑选最能体现效果的可视化结果
+- 准备对比视频（改进前vs改进后）
+- 更新毕设PPT
+
+**晚上 19:00-21:30【复试-跟踪算法理论复习】**
+- 19:00-20:30 深入学习跟踪算法理论
+  * DeepSORT原理：
+    - 卡尔曼滤波：状态预测和更新
+    - 匈牙利算法：数据关联
+    - ReID特征：深度学习提取外观特征
+    - 级联匹配：先匹配最近出现的目标
+  
+  * ByteTrack原理：
+    - 高分检测框：第一次关联
+    - 低分检测框：第二次关联（挽救遮挡目标）
+    - 不需要ReID：纯运动信息关联
+  
+  * 对比分��：
+    - 适用场景
+    - 优缺点
+    - 在红外图像上的表现
+  
+- 20:30-21:00 专业词汇复习
+  * 多目标跟踪相关术语：
+    - Multi-Object Tracking (MOT)
+    - Identity Switch (IDSW)
+    - Track Fragmentation
+    - False Positive/Negative
+    - MOTA, MOTP, IDF1等评价指标
+  
+- 21:00-21:30 每日复盘
+
+---
+
+#### 📅 Day 25（2月18日 周二）
+
+**上午 8:30-12:00【复试-面试问题集中训练】**
+- 8:30-10:30 专业知识快速问答训练
+  * 设置计时器，每个问题限时2-3分钟回答
+  * 覆盖操作系统、计算机网络、数据库各20题
+  * 录音自查，改进表达
+  
+  训练方式：
+  1. 随机抽取问题
+  2. 不看答案，直接回答
+  3. 对照标准答案，找差距
+  4. 重新组织语言，再答一遍
+  
+- 10:30-12:00 深度学习基础问答训练
+  * CNN基础知识
+  * 损失函数和优化器
+  * 过拟合解决方案
+  * 目标检测算法对比
+  * 模型部署相关问题
+
+**下午 14:00-17:00【毕设-跟踪算法实现】**
+- 14:00-15:30 集成跟踪算法到检测流程
+  * 编写完整的检测+跟踪pipeline
+  * 处理输入输出接口
+  * 优化推理速度
+  
+  ```python
+  # track_demo.py
+  import cv2
+  from yolov5_detector import YOLOv5
+  from byte_track import BYTETracker
+  
+  def main():
+      # 初始化检测器
+      detector = YOLOv5('best.pt')
+      
+      # 初始化跟踪器
+      tracker = BYTETracker(
+          track_thresh=0.5,
+          track_buffer=30,
+          match_thresh=0.8
+      )
+      
+      # 读取视频
+      cap = cv2.VideoCapture('test_video.mp4')
+      
+      while True:
+          ret, frame = cap.read()
+          if not ret:
+              break
+          
+          # 检测
+          detections = detector.detect(frame)
+          
+          # 跟踪
+          online_targets = tracker.update(detections)
+          
+          # 可视化
+          for track in online_targets:
+              draw_box(frame, track)
+          
+          cv2.imshow('Tracking', frame)
+          if cv2.waitKey(1) == ord('q'):
+              break
+      
+      cap.release()
+      cv2.destroyAllWindows()
+  ```
+  
+- 15:30-17:00 测试跟踪效果
+  * 在多个红外视频序列上测试
+  * 观察ID切换情况
+  * 记录跟踪指标
+  * 截取典型跟踪效果图
+
+**下午 17:00-18:00【毕设-可视化结果制作】**
+- 制作跟踪轨迹可视化
+- 绘制ID保持率曲线
+- 对比不同跟踪算法的效果视频
+- 准备答辩演示素材
+
+**晚上 19:00-21:30【复试-完整面试模拟3】**
+- 19:00-20:30 第三次完整面试模拟
+  * 完整流程走一遍
+  * 邀请家人或朋友当面试官
+  * 录像记录
+  * 注意时间控制
+  
+- 20:30-21:30 观看录像，详细分析
+  * 语言表达：是否清晰流畅？
+  * 肢体语言：是否自然得体？
+  * 内容完整性：是否遗漏重点？
+  * 时间把控：是否超时或过短？
+  * 应变能力：面对追问是否从容？
+  
+  记录需要改进的地方，明天针对性练习
+
+---
+
+#### 📅 Day 26（2月19日 周三）
+
+**上午 8:30-12:00【复试-算法综合训练】**
+- 8:30-10:00 回溯算法复习
+  * 回顾全排列、组合、子集问题模板
+  * 总结剪枝技巧
+  
+- 10:00-12:00 LeetCode回溯专题强化
+  * LC 77. 组合 (Medium)
+  * LC 39. 组合总和 (Medium)
+  * LC 22. 括号生成 (Medium) - 经典题
+  * LC 79. 单词搜索 (Medium) - 矩阵回溯
+
+**下午 14:00-17:00【毕设-跟踪算法优化】**
+- 14:00-15:30 跟踪算法参数调优
+  * 调整跟踪阈值（track_thresh）
+  * 调整匹配阈值（match_thresh）
+  * 调整轨迹缓存（track_buffer）
+  * 测试不同参数组合的效果
+  
+  实验记录：
+  ```markdown
+  | track_thresh | match_thresh | track_buffer | MOTA | IDSW | FPS |
+  |--------------|--------------|--------------|------|------|-----|
+  | 0.4 | 0.7 | 20 | 59.8% | 112 | 53 |
+  | 0.5 | 0.8 | 30 | 61.2% | 89 | 52 |
+  | 0.6 | 0.8 | 30 | 60.5% | 76 | 52 |
+  | 0.5 | 0.9 | 40 | 59.3% | 68 | 51 |
+  ```
+  
+- 15:30-17:00 特殊场景测试
+  * 目标遮挡场景
+  * 目标快速运动场景
+  * 多目标密集场景
+  * 目标进入/离开画面场景
+  * 分析算法在各场景的表现
+
+**下午 17:00-18:00【毕设-论文撰写准备】**
+- 整理实验章节内容
+- 准备实验数据表格
+- 绘制对比曲线图
+- 撰写实验结果分析
+
+**晚上 19:00-21:30【复试-面试细节打磨】**
+- 19:00-20:00 毕设介绍细节优化
+  * 根据昨天模拟的反馈修改
+  * 优化PPT排版和内容
+  * 准备板书演示（如需要画架构图）
+  * 练习流畅表达，减少停顿
+  
+- 20:00-21:00 准备常见追问的回答
+  * 列出20个最可能的追问
+  * 每个问题准备2-3分钟的详细回答
+  * 确保回答有深度，展现技术理解
+  
+  重点追问示例：
+  1. **为什么选择YOLOv5而不是更新的版本？**
+     答：YOLOv5在速度和精度上有很好的平衡，社区支持完善，
+         部署资源丰富。虽然v7/v8精度略高，但复杂度增加，
+         对于轻量化部署目标，v5更适合作为baseline。
+  
+  2. **轻量化后精度反而提升了，为什么？**
+     答：主要有两个原因：①Ghost/Shuffle模块虽然减少参数，
+         但通过特殊设计保持了特征表达能力；②减少参数
+         降低了过拟合风险，在我们的数据集上泛化性更好。
+  
+  3. **如何解决红外图像的小目标检测问题？**
+     答：①使用注意力机制增强特征；②调整anchor尺寸
+         适配小目标；③���据增强（Mosaic、Copy-Paste）；
+         ④使用更高分辨率输入（权衡速度）。
+  
+- 21:00-21:30 每日复盘
+
+---
+
+#### 📅 Day 27（2月20日 周四）
+
+**上午 8:30-12:00【复试-模拟机试4】**
+- 8:30-11:30 第四次完整模拟机试（3小时）
+  * 从LeetCode/牛客选择新题
+  * 严格限时，模拟真实环境
+  * 题目难度组合：
+    - 1道Easy（20分钟）
+    - 2道Medium（各50分钟）
+    - 1道Medium-Hard（60分钟）
+  
+- 11:30-12:00 模拟考试复盘
+  * 对比前几次模拟的进步
+  * 分析时间分配策略
+  * 总结常见错误和改进方法
+
+**下午 14:00-17:00【毕设-嵌入式部署前置工作】**
+- 14:00-15:00 学习RKNN部署流程
+  * 阅读RV1126芯片手册
+  * 了解NPU架构和算力
+  * 学习RKNN Toolkit使用方法
+  * 查看官方部署示例
+  
+  RV1126关键参数：
+  - CPU：4核Cortex-A7
+  - NPU：2.0 TOPS算力
+  - 支持INT8量化
+  - RKNN Toolkit版本：1.7.3
+  
+- 15:00-16:00 模型导出准备
+  * 简化模型结构（去除不必要的操作）
+  * 固定输入尺寸
+  * 导出ONNX模型
+  
+  ```bash
+  python export.py \
+    --weights runs/improve/best.pt \
+    --include onnx \
+    --imgsz 640 \
+    --simplify \
+    --opset 11
+  ```
+  
+- 16:00-17:00 ONNX模型验证
+  * 使用onnxruntime测试ONNX模型
+  * 对比PyTorch模型和ONNX模型的输出差异
+  * 确保导出正确
+  
+  ```python
+  import onnxruntime as ort
+  import torch
+  
+  # PyTorch推理
+  model = torch.load('best.pt')
+  output_pt = model(img)
+  
+  # ONNX推理
+  session = ort.InferenceSession('best.onnx')
+  output_onnx = session.run(None, {input_name: img})
+  
+  # 对比输出差异
+  diff = np.abs(output_pt - output_onnx).mean()
+  print(f'Output difference: {diff}')  # 应该很小
+  ```
+
+**下午 17:00-18:00【毕设-量化准备】**
+- 准备量化校准数据集
+  * 从训练集中随机选择200-500张图像
+  * 确保涵盖各种场景和目标
+  * 创建dataset.txt文件
+
+**晚上 19:00-21:30【复试-综合知识复习】**
+- 19:00-20:00 操作系统核心知识点背诵
+  * 进程调度算法（必考）
+  * 死锁处理（必考）
+  * 内存管理（必考）
+  * 页面置换算法
+  
+- 20:00-21:00 计算机网络核心知识点背诵
+  * TCP/UDP对比（必考）
+  * TCP三次握手四次挥手（必考）
+  * TCP流量控制拥塞控制
+  * HTTP/HTTPS
+  * IP地址与子网划分
+  
+- 21:00-21:30 每日复盘
+
+---
+
+#### 📅 Day 28（2月21日 周五）- 第四周结束
+
+**上午 8:30-12:00【复试-查漏补缺】**
+- 8:30-10:00 回顾所有错题本
+  * LeetCode错题重做
+  * 专业课错题重做
+  * 确保不再犯同样的错误
+  
+- 10:00-12:00 知识盲区突破
+  * 列出仍然不熟悉的知识点
+  * 集中攻克
+  * 做相关练习题巩固
+
+**下午 14:00-17:00【毕设-RKNN模型转换】**
+- 14:00-15:00 安装RKNN Toolkit
+  * 安装依赖环境
+  * 安装RKNN Toolkit 1.7.3
+  * 测试安装是否成功
+  
+  ```bash
+  pip install rknn-toolkit-1.7.3-cp38-cp38-linux_x86_64.whl
+  python -c "from rknn.api import RKNN; print('RKNN Toolkit installed!')"
+  ```
+  
+- 15:00-16:30 编写RKNN转换脚本
+  ```python
+  # convert_to_rknn.py
+  from rknn.api import RKNN
+  
+  def convert_onnx_to_rknn():
+      rknn = RKNN(verbose=True)
+      
+      # 配置模型
+      print('--> Config model')
+      rknn.config(
+          mean_values=[[0, 0, 0]],
+          std_values=[[255, 255, 255]],
+          target_platform='rv1126',
+          quantized_dtype='asymmetric_quantized-u8',
+          optimization_level=3
+      )
+      
+      # 加载ONNX模型
+      print('--> Loading ONNX model')
+      ret = rknn.load_onnx(model='best.onnx')
+      if ret != 0:
+          print('Load model failed!')
+          return
+      
+      # 构建RKNN模型（INT8量化）
+      print('--> Building model')
+      ret = rknn.build(
+          do_quantization=True,
+          dataset='./dataset.txt',
+          rknn_batch_size=1
+      )
+      if ret != 0:
+          print('Build model failed!')
+          return
+      
+      # 导出RKNN模型
+      print('--> Export RKNN model')
+      ret = rknn.export_rknn('./best.rknn')
+      if ret != 0:
+          print('Export model failed!')
+          return
+      
+      print('Export RKNN model success!')
+      
+      # 性能评估
+      print('--> Evaluate model performance')
+      rknn.init_runtime()
+      
+      # 测试推理
+      import cv2
+      import numpy as np
+      img = cv2.imread('test.jpg')
+      img = cv2.resize(img, (640, 640))
+      img = np.expand_dims(img, axis=0)
+      
+      outputs = rknn.inference(inputs=[img])
+      print('Inference success!')
+      
+      rknn.release()
+  
+  if __name__ == '__main__':
+      convert_onnx_to_rknn()
+  ```
+  
+- 16:30-17:00 运行转换脚本
+  * 执行RKNN转换
+  * 观察转换日志
+  * 检查是否有警告或错误
+  * 记录量化层信息
+
+**下午 17:00-18:00【毕设-第四周总结】**
+- 整理本周毕设成果：
+  * 跟踪算法集成完成✓
+  * 跟踪性能测试完成✓
+  * ONNX模型导出完成✓
+  * RKNN模型转换完成✓
+  
+- 更新实验记录和文档
+- 规划下周工作重点
+
+**晚上 19:00-21:30【复试-第四周复盘】**
+- 19:00-20:00 本周复试准备总结
+  * 刷题进度：本周____题，累计____题
+  * 知识点掌握情况
+  * 面试准备完成度
+  * 薄弱环节识别
+  
+- 20:00-21:00 调整下周计划
+  * 最后一周冲刺重点
+  * 查漏补缺清单
+  * 时间分配调整
+  
+- 21:00-21:30 本周总复盘和放松
+  * 肯定自己的进步
+  * 适当放松心态
+
+---
+
+#### 📅 Day 29（2月22日 周六）- 第五周开始
+
+**上午 8:30-12:00【复试-算法模板总结】**
+- 8:30-10:30 整理算法模板库
+  * 创建完整的算法模板文档
+  * 分类整理常用算法
+  * 确保能快速默写
+  
+  模板分类：
+  1. **排序算法**
+     - 快速排序
+     - 归并排序
+     - 堆排序
+  
+  2. **搜索算法**
+     - 二分查找及变体
+     - DFS模板
+     - BFS模板
+  
+  3. **动态规划**
+     - 01背包
+     - 完全背包
+     - LCS（最长公共子序列）
+     - LIS（最长递增子序列）
+     - 编辑距离
+  
+  4. **图算法**
+     - 拓扑排序
+     - Dijkstra最短路径
+     - 并查集
+  
+  5. **数据结构**
+     - 单调栈
+     - 单调队列
+     - 前缀树（Trie）
+     - LRU缓存
+  
+- 10:30-12:00 手写核心算法
+  * 不看代码，手写10个最重要的算法
+  * 编译运行验证正确性
+  * 确保面试时能流畅写出
+
+**下午 14:00-17:00【毕设-量化精度测试】**
+- 14:00-15:00 测试RKNN模型精度
+  * 在PC端使用RKNN模拟器测试
+  * 在验证集上评估量化后的mAP
+  * 对比量化前后的精度差异
+  
+  ```python
+  # test_rknn_accuracy.py
+  from rknn.api import RKNN
+  import cv2
+  import numpy as np
+  
+  def evaluate_rknn_model():
+      rknn = RKNN()
+      
+      # 加载RKNN模型
+      print('--> Load RKNN model')
+      ret = rknn.load_rknn('./best.rknn')
+      
+      # 初始化运行时环境
+      print('--> Init runtime environment')
+      ret = rknn.init_runtime()
+      
+      # 测试推理
+      correct = 0
+      total = 0
+      
+      for img_path in test_images:
+          img = preprocess(img_path)
+          outputs = rknn.inference(inputs=[img])
+          detections = post_process(outputs)
+          
+          # 计算精度指标
+          # ...
+      
+      mAP = calculate_mAP(all_detections, all_groundtruth)
+      print(f'RKNN model mAP: {mAP:.2f}%')
+      
+      rknn.release()
+  ```
+  
+- 15:00-16:00 分析精度损失
+  * 如果精度损失<3%：可接受
+  * 如果精度损失3-5%：调整量化参数
+  * 如果精度损失>5%：检查模型转换是否有问题
+  
+  记录精度对比：
+  ```markdown
+  | 模型类型 | mAP@0.5 | 精度损失 | 模型大小 |
+  |----------|---------|----------|----------|
+  | PyTorch FP32 | 74.8% | - | 10.6 MB |
+  | ONNX FP32 | 74.7% | -0.1% | 10.5 MB |
+  | RKNN INT8 | 72.3% | -2.5% | 2.8 MB |
+  ```
+  
+- 16:00-17:00 优化量化策略（如果精度损失较大）
+  * 增加校准数据集数量
+  * 调整量化参数
+  * 尝试混合精度量化（部分层保持FP16）
+
+**下午 17:00-18:00【毕设-C++部署代码准备】**
+- 学习RKNN C API接口
+- 阅读官方C++部署示例
+- 规划C++代码结构
+
+**晚上 19:00-21:30【复试-综合模拟】**
+- 19:00-20:00 专业知识快速问答测试
+  * 随机抽取50个问题
+  * 快速回答，检验掌握程度
+  * 标记不熟悉的问题���重点复习
+  
+- 20:00-21:00 英语准备强化
+  * 背诵专业英语词汇
+  * 练习英文自我介绍（录音）
+  * 练习英文回答专业问题
+  
+  常见英文问题：
+  1. Can you introduce your graduation project?
+  2. What's the main challenge in your research?
+  3. Why did you choose this topic?
+  4. What's your future research plan?
+  
+- 21:00-21:30 每日复盘
+
+---
+
+#### 📅 Day 30（2月23日 周日）
+
+**上午 8:30-12:00【复试-错题集总复习】**
+- 8:30-10:30 LeetCode错题集完整复习
+  * 重做所有做错的题目
+  * 确保每道题都理解透彻
+  * 总结解题思路和技巧
+  
+- 10:30-12:00 专业课错题集复习
+  * 复习操作系统错题
+  * 复习计算机网络错题
+  * 复习数据库错题
+  * 强化记忆薄弱知识点
+
+**下午 14:00-17:00【休息调整日】**
+- 适当放松，调整状态
+- 可以：
+  * 户外运动（但不要过度疲劳）
+  * 看轻松的电影
+  * 与家人朋友交流
+  * 整理复试材料
+  
+- 不要：
+  * 完全不学习（保持学习状态）
+  * 过度焦虑（放松心态）
+  * 熬夜（保证睡眠）
+
+**下午 17:00-18:00【周计划与复盘】**
+- 第四周完整总结
+- 第五周详细规划（最后冲刺）
+- 复试准备完成度评估
+- 调整最后一周策略
+
+**晚上 19:00-21:30【复试-完整面试模拟4】**
+- 19:00-20:30 第四次完整面试模拟
+  * 严格按照真实流程
+  * 邀请他人扮演面试官
+  * 录像记录全过程
+  * 计时，控制节奏
+  
+  模拟流程：
+  1. 英文自我介绍（2min）
+  2. 中文自我介绍（3min）
+  3. 毕设详细介绍（15min）
+  4. 专业知识问答（10min，准备10个问题）
+  5. 英语问答（5min）
+  6. 提问环节（3min）
+  
+- 20:30-21:30 详细复盘
+  * 观看录像，逐项评估
+  * 对比前几次模拟的进步
+  * 列出最后需要改进的地方
+  * 制定最后一周优化方案
+
+---
+
+#### 📅 Day 31（2月24日 周一）
+
+**上午 8:30-12:00【复试-重点难点突破】**
+- 8:30-10:00 攻克最难的知识点
+  * 操作系统：虚拟内存管理（如果不熟）
+  * 计算机网络：拥塞控制算法（如果不熟）
+  * 动态规划：状态转移方程推导（如果不熟）
+  
+- 10:00-12:00 高频重点题目强化
+  * LeetCode Hot 100中的Top 20高频题
+  * 确保这些题目能快速AC
+  * 总结通用解题模式
+
+**下午 14:00-17:00【毕设-C++部署代码实现】**
+- 14:00-15:30 编写RKNN C++推理代码
+  
+  ```cpp
+  // yolov5_rknn.cpp
+  #include "rknn_api.h"
+  #include <opencv2/opencv.hpp>
+  #include <vector>
+  
+  class YOLOv5Detector {
+  private:
+      rknn_context ctx;
+      int input_width = 640;
+      int input_height = 640;
+      int input_channels = 3;
+      
+      // 输出层信息
+      rknn_output_attr output_attrs[3];
+      
+  public:
+      int init(const char* model_path);
+      std::vector<Detection> detect(const cv2::Mat& img);
+      void release();
+      
+  private:
+      cv::Mat preprocess(const cv::Mat& img);
+      std::vector<Detection> post_process(rknn_output outputs[]);
+      std::vector<Detection> nms(std::vector<Detection>& dets, float threshold);
+  };
+  
+  int YOLOv5Detector::init(const char* model_path) {
+      // 读取RKNN模型文件
+      FILE* fp = fopen(model_path, "rb");
+      if (!fp) {
+          printf("Open model file failed!\n");
+          return -1;
+      }
+      
+      fseek(fp, 0, SEEK_END);
+      int model_len = ftell(fp);
+      fseek(fp, 0, SEEK_SET);
+      
+      void* model = malloc(model_len);
+      if (!model) {
+          printf("Malloc model buffer failed!\n");
+          fclose(fp);
+          return -1;
+      }
+      
+      size_t read_size = fread(model, 1, model_len, fp);
+      fclose(fp);
+      
+      // 初始化RKNN上下文
+      int ret = rknn_init(&ctx, model, model_len, 0, NULL);
+      free(model);
+      
+      if (ret < 0) {
+          printf("rknn_init failed! ret=%d\n", ret);
+          return -1;
+      }
+      
+      // 查询模型输入输出信息
+      rknn_input_output_num io_num;
+      ret = rknn_query(ctx, RKNN_QUERY_IN_OUT_NUM, &io_num, sizeof(io_num));
+      printf("Model input num: %d, output num: %d\n", io_num.n_input, io_num.n_output);
+      
+      // 查询输出层属性
+      for (int i = 0; i < io_num.n_output; i++) {
+          output_attrs[i].index = i;
+          ret = rknn_query(ctx, RKNN_QUERY_OUTPUT_ATTR, &output_attrs[i], sizeof(rknn_output_attr));
+      }
+      
+      return 0;
+  }
+  
+  std::vector<Detection> YOLOv5Detector::detect(const cv::Mat& img) {
+      // 预处理
+      cv::Mat preprocessed = preprocess(img);
+      
+      // 设置输入
+      rknn_input inputs[1];
+      memset(inputs, 0, sizeof(inputs));
+      inputs[0].index = 0;
+      inputs[0].type = RKNN_TENSOR_UINT8;
+      inputs[0].size = input_width * input_height * input_channels;
+      inputs[0].fmt = RKNN_TENSOR_NHWC;
+      inputs[0].buf = preprocessed.data;
+      
+      int ret = rknn_inputs_set(ctx, 1, inputs);
+      if (ret < 0) {
+          printf("rknn_inputs_set failed! ret=%d\n", ret);
+          return {};
+      }
+      
+      // 执行推理
+      ret = rknn_run(ctx, NULL);
+      if (ret < 0) {
+          printf("rknn_run failed! ret=%d\n", ret);
+          return {};
+      }
+      
+      // 获取输出
+      rknn_output outputs[3];
+      memset(outputs, 0, sizeof(outputs));
+      for (int i = 0; i < 3; i++) {
+          outputs[i].index = i;
+          outputs[i].want_float = 1;
+      }
+      
+      ret = rknn_outputs_get(ctx, 3, outputs, NULL);
+      if (ret < 0) {
+          printf("rknn_outputs_get failed! ret=%d\n", ret);
+          return {};
+      }
+      
+      // 后处理
+      std::vector<Detection> detections = post_process(outputs);
+      
+      // 释放输出
+      rknn_outputs_release(ctx, 3, outputs);
+      
+      return detections;
+  }
+  
+  cv::Mat YOLOv5Detector::preprocess(const cv::Mat& img) {
+      cv::Mat resized;
+      cv::resize(img, resized, cv::Size(input_width, input_height));
+      // 如果需要，转换颜色空间
+      // cv::cvtColor(resized, resized, cv::COLOR_BGR2RGB);
+      return resized;
+  }
+  
+  std::vector<Detection> YOLOv5Detector::post_process(rknn_output outputs[]) {
+      std::vector<Detection> all_dets;
+      
+      // 解析三个输出层
+      // outputs[0]: 80x80特征图
+      // outputs[1]: 40x40特征图  
+      // outputs[2]: 20x20特征图
+      
+      for (int i = 0; i < 3; i++) {
+          float* output = (float*)outputs[i].buf;
+          int grid_size = (i == 0) ? 80 : ((i == 1) ? 40 : 20);
+          int stride = (i == 0) ? 8 : ((i == 1) ? 16 : 32);
+          
+          // 解析每个grid cell
+          for (int h = 0; h < grid_size; h++) {
+              for (int w = 0; w < grid_size; w++) {
+                  for (int a = 0; a < 3; a++) {  // 3个anchor
+                      int base_index = (h * grid_size + w) * 3 * 85 + a * 85;
+                      
+                      float obj_score = output[base_index + 4];
+                      if (obj_score < 0.25) continue;  // 置信度阈值
+                      
+                      // 解析bbox
+                      float cx = output[base_index + 0];
+                      float cy = output[base_index + 1];
+                      float w = output[base_index + 2];
+                      float h = output[base_index + 3];
+                      
+                      // 解析类别
+                      int max_class = 0;
+                      float max_score = 0;
+                      for (int c = 0; c < 80; c++) {
+                          float score = output[base_index + 5 + c];
+                          if (score > max_score) {
+                              max_score = score;
+                              max_class = c;
+                          }
+                      }
+                      
+                      float confidence = obj_score * max_score;
+                      if (confidence < 0.45) continue;
+                      
+                      Detection det;
+                      det.bbox = {cx, cy, w, h};
+                      det.class_id = max_class;
+                      det.confidence = confidence;
+                      all_dets.push_back(det);
+                  }
+              }
+          }
+      }
+      
+      // NMS
+      std::vector<Detection> final_dets = nms(all_dets, 0.45);
+      
+      return final_dets;
+  }
+  
+  std::vector<Detection> YOLOv5Detector::nms(std::vector<Detection>& dets, float threshold) {
+      // NMS实现
+      // ...
+      return dets;
+  }
+  
+  void YOLOv5Detector::release() {
+      rknn_destroy(ctx);
+  }
+  ```
+  
+- 15:30-17:00 编写CMakeLists和编译
+  
+  ```cmake
+  # CMakeLists.txt
+  cmake_minimum_required(VERSION 3.10)
+  project(yolov5_rknn)
+  
+  set(CMAKE_CXX_STANDARD 11)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  
+  # 设置交叉编译工具链（如果需要）
+  # set(CMAKE_C_COMPILER arm-linux-gnueabihf-gcc)
+  # set(CMAKE_CXX_COMPILER arm-linux-gnueabihf-g++)
+  
+  # OpenCV
+  find_package(OpenCV REQUIRED)
+  include_directories(${OpenCV_INCLUDE_DIRS})
+  
+  # RKNN
+  set(RKNN_API_PATH /path/to/rknn/runtime/RV1126)
+  include_directories(${RKNN_API_PATH}/include)
+  link_directories(${RKNN_API_PATH}/lib)
+  
+  # 源文件
+  add_executable(yolov5_demo
+      yolov5_rknn.cpp
+      main.cpp
+  )
+  
+  target_link_libraries(yolov5_demo
+      ${OpenCV_LIBS}
+      rknn_api
+      pthread
+  )
+  ```
+  
+  编译：
+  ```bash
+  mkdir build && cd build
+  cmake ..
+  make
+  ```
+
+**下午 17:00-18:00【毕设-板卡准备】**
+- 检查RV1126开发板
+- 配置网络连接
+- 安装必要的依赖库
+- 准备测试图像和视频
+
+**晚上 19:00-21:30【复试-知识点快速过滤】**
+- 19:00-20:30 快速过滤所有知识点
+  * 操作系统：20分钟快速回顾
+  * 计算机网络：20分钟快速回顾
+  * 数据库：15分钟快速回顾
+  * 数据结构与算法：30分钟快速回顾
+  * 深度学习基础：15分钟快速回顾
+  
+  方法：看笔记目录，回忆每个知识点内容，
+       卡壳的立即翻看详细内容
+  
+- 20:30-21:00 专业英语词汇最后复习
+  * 快速过滤1400个词汇
+  * 标记不熟悉的，重点记忆
+  
+- 21:00-21:30 每日复盘
+
+---
+
+#### 📅 Day 32（2月25日 周二）
+
+**上午 8:30-12:00【复试-模拟机试5】**
+- 8:30-11:30 第五次也是最后一次模拟机试
+  * 选择中等难度的题目
+  * 不要太难（避免打击信心）
+  * 不要太简单（保持紧张感）
+  * 重点练习代码规范和调试
+  
+- 11:30-12:00 总结五次模拟的进步
+  * 对比时间分配
+  * 对比正确率
+  * 对比代码质量
+  * 总结经验教训
+  * 建立信心
+
+**下午 14:00-17:00【毕设-板卡实际测试】**
+- 14:00-15:00 将程序部署到RV1126
+  * 通过scp传输可执行文件和模型
+  * 传输测试数据
+  * 检查文件完整性
+  
+  ```bash
+  # 传输文件到开发板
+  scp yolov5_demo root@192.168.1.100:/root/
+  scp best.rknn root@192.168.1.100:/root/
+  scp test.jpg root@192.168.1.100:/root/
+  
+  # SSH登录开发板
+  ssh root@192.168.1.100
+  
+  # 设置权限
+  chmod +x yolov5_demo
+  
+  # 运行测试
+  ./yolov5_demo
+  ```
+  
+- 15:00-16:30 板卡性能测试
+  * 测试单张图像推理时间
+  * 测试视频流实时检测FPS
+  * 测试CPU/NPU占用率
+  * 测试内存使用情况
+  * 测试功耗（如果有工具）
+  
+  记录性能数据：
+  ```markdown
+  ## RV1126实际部署性能
+  
+  ### 硬件配置
+  - 芯片：RV1126
+  - CPU：4核Cortex-A7 @1.5GHz
+  - NPU：2.0 TOPS
+  - 内存：1GB DDR3
+  
+  ### 性能指标
+  - 模型：YOLOv5s + 轻量化 + INT8量化
+  - 输入尺寸：640×640
+  - **推理时间**：35ms/帧
+  - **实际FPS**：28.6fps ✓ (目标>25fps)
+  - **CPU占用**：45%
+  - **NPU占用**：85%
+  - **内存占用**：156MB
+  - **功耗**：2.8W
+  
+  ### 精度指标
+  - mAP@0.5：72.3%（量化后）
+  - 精度损失：-2.5%（相比FP32）
+  ```
+  
+- 16:30-17:00 录制演示视频
+  * 实时检测视频
+  * 展示检测框、类别、置信度
+  * 展示FPS信息
+  * 准备答辩演示
+
+**下午 17:00-18:00【毕设-部署文档整理】**
+- 撰写完整的部署文档
+  
+  ```markdown
+  # YOLOv5红外目标检测 RV1126部署指南
+  
+  ## 一、环境准备
+  
+  ### 1.1 开发环境
+  - Ubuntu 18.04/20.04
+  - Python 3.8
+  - RKNN Toolkit 1.7.3
+  
+  ### 1.2 交叉编译环境
+  - GCC交叉编译工具链
+  - CMake 3.10+
+  - OpenCV 4.5.0（ARM版本）
+  
+  ## 二、模型转换
+  
+  ### 2.1 PyTorch导出ONNX
+  ```bash
+  python export.py --weights best.pt --include onnx --simplify
+  ```
+  
+  ### 2.2 ONNX转RKNN
+  ```python
+  # 详细转换代码...
+  ```
+  
+  ## 三、C++部署代码
+  
+  ### 3.1 代码结构
+  - yolov5_rknn.h/cpp：推理类
+  - main.cpp：主程序
+  - CMakeLists.txt：编译配置
+  
+  ### 3.2 编译
+  ```bash
+  mkdir build && cd build
+  cmake ..
+  make
+  ```
+  
+  ## 四、板卡部署
+  
+  ### 4.1 文件传输
+  ### 4.2 运行测试
+  ### 4.3 性能优化
+  
+  ## 五、常见问题
+  
+  ### 5.1 精度损失过大
+  - 检查量化数据集是否充分
+  - 尝试混合精度量化
+  
+  ### 5.2 推理速度慢
+  - 检查NPU是否正常工作
+  - 优化预处理和后处理
+  
+  ### 5.3 内存不足
+  - 减小batch size
+  - 优化内存分配策略
+  ```
+
+**晚上 19:00-21:30【复试-最终准备】**
+- 19:00-20:00 毕设PPT最终检查
+  * 内容完整性检查
+  * 逻辑清晰度检查
+  * 时间控制练习（15分钟）
+  * 确保能流畅讲解
+  
+- 20:00-21:00 面试材料最终整理
+  * 打印简历
+  * 准备成绩单和证书
+  * U盘备份所有材料
+  * 检查PPT在不同电脑上的兼容性
+  
+- 21:00-21:30 每日复盘
+
+---
+
+#### 📅 Day 33（2月26日 周三）
+
+**上午 8:30-12:00【复试-综合复习】**
+- 8:30-10:00 核心知识点默写
+  * 不看资料，默写20个核心知识点
+  * 例如：TCP三次握手、死锁四个条件、LRU算法等
+  * 对照标准答案，查缺补漏
+  
+- 10:00-11:00 算法模板默写
+  * 快速排序
+  * 二分查找
+  * DFS/BFS
+  * 动态规划经典题（背包、LCS）
+  
+- 11:00-12:00 轻松刷几道简单题
+  * 找感觉，保持手感
+  * 不要做新的难题
+  * 建立信心
+
+**下午 14:00-17:00【毕设-材料整理】**
+- 14:00-15:00 整理GitHub代码仓库
+  * 代码结构清晰
+  * README.md完善
+    ```markdown
+    # 基于轻量化AI算法的红外多目标检测与跟踪
+    
+    ## 项目简介
+    本项目针对红外图像特点，设计轻量化AI算法...
+    
+    ## 环境配置
+    ### 训练环境
+    - Python 3.8
+    - PyTorch 1.10.0
+    - CUDA 11.3
+    
+    ### 部署环境
+    - RV1126开发板
+    - RKNN Toolkit 1.7.3
+    
+    ## 项目结构
+    ```
+    ├── data/                 # 数据集
+    ├── models/               # 模型定义
+    ├── utils/                # 工具函数
+    ├── train.py              # 训练脚本
+    ├── detect.py             # 检测脚本
+    ├── track.py              # 跟踪脚本
+    ├── export.py             # 模型导出
+    ├── deploy/               # 部署代码
+    │   ├── convert_to_rknn.py
+    │   ├── yolov5_rknn.cpp
+    │   └── CMakeLists.txt
+    └── README.md
+    ```
+    
+    ## 快速开始
+    ### 训练
+    ```bash
+    python train.py --data flir.yaml --cfg yolov5s.yaml --epochs 100
+    ```
+    
+    ### 检测
+    ```bash
+    python detect.py --weights best.pt --source test.jpg
+    ```
+    
+    ### 跟踪
+    ```bash
+    python track.py --weights best.pt --source test_video.mp4
+    ```
+    
+    ## 实验结果
+    | 模型 | mAP@0.5 | 参数量 | FLOPs | FPS(GPU) | FPS(RV1126) |
+    |------|---------|--------|-------|----------|-------------|
+    | YOLOv5s | 68.5% | 7.2M | 16.5G | 45 | - |
+    | Ours | 72.3% | 5.3M | 12.8G | 52 | 28.6 |
+    
+    ## 部署
+    详见 [部署文档](deploy/README.md)
+    
+    ## 致谢
+    - YOLOv5: https://github.com/ultralytics/yolov5
+    - ByteTrack: https://github.com/ifzhang/ByteTrack
+    ```
+  
+  * 代码注释补充
+  * 删除调试代码和无用文件
+  * 提交最终版本
+  
+- 15:00-16:00 整理实验数据和图表
+  * 训练曲线图
+  * 性能对比表
+  * 检测效果图
+  * 跟踪轨迹图
+  * 分类保存，便于答辩使用
+  
+- 16:00-17:00 撰写实验总结
+  * 完成的工作
+  * 实验结果
+  * 创新点
+  * 存在的不足
+  * 未来工作
+
+**下午 17:00-18:00【毕设-论文初稿（如果要求）】**
+- 如果开题后需要提交阶段性论文：
+  * 整理已完成的章节
+  * 补充实验结果章节
+  * 检查格式规范
+  * 导出PDF
+
+**晚上 19:00-21:30【复试-心态调整】**
+- 19:00-20:00 最后一次完整面试模拟
+  * 不录像，轻松演练
+  * 感受流畅的讲解
+  * 建立自信
+  
+- 20:00-21:00 放松活动
+  * 不要高强度学习
+  * 适当娱乐
+  * 与家人交流
+  * 早点休息
+  
+- 21:00-21:30 积极心理暗示
+  * "我已经准备充分"
+  * "我一定能发挥好"
+  * "相信自己"
+
+---
+
+#### 📅 Day 34（2月27日 周四）- 寒假最后一天
+
+**上午 8:30-12:00【复试-最后检查】**
+- 8:30-9:30 知识点清单最后过滤
+  * 快速浏览笔记目录
+  * 回忆关键知识点
+  * 不确定的快速看一眼
+  * 不要深入学习新内容
+  
+- 9:30-10:30 算法模板最后确认
+  * 确保能默写核心算法
+  * 快速过一遍LeetCode收藏夹
+  * 找找感觉
+  
+- 10:30-11:30 自我介绍最后练习
+  * 中英文各练习一遍
+  * 确保流利自然
+  * 控制时间
+  
+- 11:30-12:00 放松心态
+  * 深呼吸
+  * 积极心理暗示
+  * 相信自己
+
+**下午 14:00-17:00【寒假总结】**
+- 14:00-15:30 完整的寒假复盘
+  
+  ```markdown
+  # 2026寒假学习总结（1.25-2.27）
+  
+  ## 一、整体完成情况
+  
+  ### 1.1 时间投入
+  - 总天数：34天
+  - 学习天数：30天（周日适当放松）
+  - 平均每天学习时长：9-10小时
+  - 总学习时长：约270-300小时
+  
+  ### 1.2 完成度统计
+  - 复试准备：90%
+  - 毕设工作：85%
+  - 身体锻炼：90%
+  
+  ## 二、复试准备成果
+  
+  ### 2.1 LeetCode刷题
+  - 目标：90题
+  - 实际完成：____题
+  - 完成率：____%
+  - 涵盖题型：
+    * 数组/字符串 ✓
+    * 链表 ✓
+    * 栈/队列 ✓
+    * 哈希表 ✓
+    * 二叉树 ✓
+    * 图论 ✓
+    * 动态规划 ✓
+    * 回溯 ✓
+    * 贪心 ✓
+  
+  ### 2.2 专业课复习
+  - **操作系统**：掌握度 ____%
+    * 核心章节全部复习 ✓
+    * 重点知识点背诵 ✓
+    * 习题练习完成 ✓
+  
+  - **计算机网络**：掌握度 ____%
+    * 核心章节全部复习 ✓
+    * TCP/IP深入理解 ✓
+    * 习题练习完成 ✓
+  
+  - **数据库**：掌握度 ____%
+    * 核心知识点掌握 ✓
+    * SQL练习完成 ✓
+  
+  ### 2.3 英语准备
+  - 专业词汇积累：____/1400个
+  - 自我介绍：中英文熟练背诵 ✓
+  - 常见问答：准备完成 ✓
+  
+  ### 2.4 面试准备
+  - 毕设PPT：完成 ✓
+  - 毕设讲解：流畅（15分钟）✓
+  - 专业知识问答：准备50+问题 ✓
+  - 模拟面试：5次 ✓
+  - 材料准备：完成 ✓
+  
+  ## 三、毕设工作成果
+  
+  ### 3.1 检测模块
+  - YOLOv5基准模型：✓
+    * mAP@0.5: 68.5%
+  
+  - 轻量化改进：✓
+    * 骨干网络优化（Ghost/Shuffle）
+    * mAP@0.5: 69.2%
+    * 参数量：-29%
+    * FLOPs：-25%
+  
+  - 损失函数优化：✓
+    * EIoU Loss
+    * mAP@0.5: 71.5%
+  
+  - 注意力机制：✓
+    * CBAM
+    * mAP@0.5: 74.8%
+  
+  ### 3.2 跟踪模块
+  - DeepSORT集成：✓
+  - ByteTrack集成：✓
+  - 性能对比：✓
+  - 最优方案选择：ByteTrack ✓
+    * MOTA: 61.2%
+    * IDSW: 89（减少43%）
+  
+  ### 3.3 部署模块
+  - ONNX导出：✓
+  - RKNN转换：✓
+  - C++部署代码：✓
+  - RV1126测试：✓
+    * FPS: 28.6fps（超过25fps目标）✓
+    * 精度损失：-2.5%（可接受）✓
+  
+  ### 3.4 文档整理
+  - 实验记录：✓
+  - 代码注释：✓
+  - GitHub整理：✓
+  - 部署文档：✓
+  
+  ## 四、身体健康
+  
+  - 运动打卡：____/30天（目标28天）
+  - 平均睡眠：____小时/天
+  - 身体状态：优秀/良好/一般
+  
+  ## 五、收获与成长
+  
+  ### 5.1 知识技能
+  1. 算法能力显著提升，能独立解决中等难度题目
+  2. 操作系统和计算机网络理解更深入
+  3. 深度学习实践能力增强，掌握完整项目流程
+  4. 嵌入式部署经验积累
+  
+  ### 5.2 软实力
+  1. 时间管理能力提升
+  2. 自我驱动和自律能力增强
+  3. 问题解决能力提升
+  4. 表达和演讲能力改善
+  
+  ### 5.3 心态调整
+  1. 更加自信
+  2. 抗压能力增强
+  3. 学会享受学习过程
+  
+  ## 六、不足与反思
+  
+  ### 6.1 不足之处
+  4. __________________________
+  5. __________________________
+  6. __________________________
+  
+  ### 6.2 改进方向
+  7. __________________________
+  8. __________________________
+  9. __________________________
+  
+  ## 七、对即将到来的复试的展望
+  
+  ### 7.1 信心评估
+  - 我已经准备充分 ✓
+  - 我有信心发挥好 ✓
+  - 我期待展示自己 ✓
+  
+  ### 7.2 心态调整
+  - 保持平常心
+  - 专注当下，不过度焦虑
+  - 相信努力会有回报
+  
+  ### 7.3 最后提醒
+  - 早睡早起，保证精神状态
+  - 提前到达考场，熟悉环境
+  - 礼貌自信，从容应对
+  - 享受面试过程
+  
+  ## 八、感谢
+  
+  感谢自己这34天的坚持和努力！
+  感谢家人的支持和理解！
+  相信自己，一定能成功！
+  
+  **加油！💪**
+  ```
+  
+- 15:30-17:00 材料最后检查
+  * 身份证、准考证 ✓
+  * 简历、成绩单、证书 ✓
+  * U盘（备份PPT、视频）✓
+  * 笔记本电脑、充电器 ✓
+  * 笔、笔记本 ✓
+  * 正装/整洁衣服 ✓
+  
+  * 检查PPT能否正常打开
+  * 检查视频能否正常播放
+  * 准备一份纸质简历和成绩单
+
+**下午 17:00-18:00【准备明日行程】**
+- 查看复试通知时间地点
+- 规划路线和交通方式
+- 预留充足时间，避免迟到
+- 设置多个闹钟
+
+**晚上 19:00-21:30【放松与准备】**
+- 19:00-20:00 轻度复习
+  * 翻翻笔记，看看熟悉的内容
+  * 不要学习新东西
+  * 建立信心
+  
+- 20:00-21:00 放松活动
+  * 听音乐
+  * 散步
+  * 与家人聊天
+  * 看轻松的视频
+  
+- 21:00-21:30 最终准备
+  * 整理明天要带的东西
+  * 设置闹钟
+  * 积极心理暗示
+  * **早点睡觉！保证睡眠！**
+
+---
+
+## 八、每日时间表模板
+
+### 8.1 工作日标准作息
+
+```
+时间段         活动内容                   时长    备注
+─────────────────────────────────────────────────
+07:00-07:30    起床、洗漱                30min   
+07:30-08:00    晨跑+拉伸                 30min   保持运动习惯
+08:00-08:30    早餐                      30min   
+08:30-10:00    上午学习模块1             90min   专注度最高
+10:00-10:15    休息                      15min   远眺、活动
+10:15-12:00    上午学习模块2             105min  
+12:00-12:30    午餐                      30min   
+12:30-14:00    午休                      90min   保证下午精力
+14:00-15:30    下午学习模块1             90min   
+15:30-15:45    休息+加餐                 15min   
+15:45-17:00    下午学习模块2             75min   
+17:00-18:00    毕设工作/运动             60min   灵活安排
+18:00-19:00    晚餐+休息                 60min   
+19:00-20:30    晚间学习模块1             90min   
+20:30-21:00    晚间学习模块2             30min   
+21:00-21:30    每日复盘+明日计划         30min   记录学习日志
+21:30-23:00    自由活动/放松             90min   
+23:00-23:30    洗漱准备睡觉              30min   
+23:30         就寝                              保证睡眠7.5h
+```
+
+### 8.2 周日调整作息
+
+```
+时间段         活动内容                   备注
+───────────────────────────────────────────
+07:00-08:00    起床、晨练、早餐
+08:30-12:00    上午：本周总结+下周规划
+12:00-14:00    午餐+午休
+14:00-17:00    自由活动时间              放松充电
+17:00-18:00    本周材料整理
+18:00-19:00    晚餐
+19:00-21:00    轻度学习/查漏补缺         不安排高强度任务
+21:00-23:00    休闲娱乐
+23:30         就寝
+```
+
+### 8.3 学习时间分配原则
+
+**每日学习时间分配（约9-10小时）：**
+- 复试准备：6-7小时
+  * 机试训练：2-3小时
+  * 专业课复习：2-3小时
+  * 英语准备：1小时
+  * 面试准备：1小时
+  
+- 毕设工作：3-4小时
+  * 理论学习：1小时
+  * 编程实现：2-3小时
+
+**每日运动时间：1小时**
+
+**每日休息时间：充足（保证学习效率）**
+
+---
+
+## 九、学习资源清单
+
+### 9.1 在线平台
+
+#### 编程刷题
+1. **LeetCode** (主力)
+   - 网址：https://leetcode.cn
+   - 使用建议：
+     * 先刷Hot 100
+     * 按标签分类刷题
+     * 使用"题解"功能学习优秀解法
+     * 订阅会员可看官方题解和视频讲解
+   
+2. **牛客网**
+   - 网址：https://www.nowcoder.com
+   - 使用建议：
+     * 专项练习（剑指Offer）
+     * 名企真题
+     * 西工大往年机试题（如果有）
+     * 在线编程环境测试
+   
+3. **洛谷**
+   - 网址：https://www.luogu.com.cn
+   - 使用建议：算法模板学习
+
+#### 视频课程
+1. **Bilibili**
+   - 操作系统：
+     * 王道考研操作系统课程
+     * 清华大学操作系统课程（向勇）
+     * 哈工大操作系统课程（李治军）
+   
+   - 计算机网络：
+     * 王道考研计算机网络
+     * 中科大郑烇计算机网络
+     * 韩立刚计算机网络
+   
+   - 深度学习：
+     * 李沐《动手学深度学习》
+     * 吴恩达深度学习课程（中文字幕）
+     * 跟李沐学AI系列
+   
+2. **中国大学MOOC**
+   - 计算机网络（哈工大）
+   - 操作系统（清华大学）
+   - 数据库系统概论（中国人民大学）
+
+### 9.2 书籍资料
+
+#### 专业课教材
+```markdown
+1. 操作系统
+   - 《操作系统概念》（恐龙书）- 经典权威
+   - 《现代操作系统》（Tanenbaum）- 通俗易懂
+   - 《深入理解计算机系统》（CSAPP）- 深入底层
+   - 《王道考研操作系统》- 考研复习
+
+2. 计算机网络
+   - 《计算机网络：自顶向下方法》- 强烈推荐
+   - 《计算机网络》（谢希仁）- 国内经典
+   - 《TCP/IP详解 卷1》- 深入学习TCP/IP
+   - 《王道考研计算机网络》
+
+3. 数据结构与算法
+   - 《算法导论》- 权威但较难
+   - 《算法（第4版）》- 更易读
+   - 《剑指Offer》- 面试必备
+   - 《编程珠玑》- 提升思维
+   - 《王道考研数据结构》
+
+4. 数据库
+   - 《数据库系统概念》- 经典教材
+   - 《高性能MySQL》- 实战必读
+   - 《王道考研数据库》
+```
+
+#### 深度学习/计算机视觉
+```markdown
+1. 深度学习基础
+   - 《深度学习》（花书，Goodfellow）- 理论权威
+   - 《动手学深度学习》（李沐）- 实践性强
+   - 《神经网络与深度学习》（邱锡鹏）- 国内优秀教材
+
+2. 计算机视觉
+   - 《计算机视觉：算法与应用》（Szeliski）
+   - 《深度学习与计算机视觉》（叶韵）
+   - 《OpenCV计算机视觉编程攻略》
+
+3. 目标检测
+   - 论文：You Only Look Once (YOLO) 系列
+   - 论文：Faster R-CNN
+   - 综述论文：Object Detection in 20 Years: A Survey
+```
+
+### 9.3 工具软件
+
+#### 开发环境
+```markdown
+1. Python开发
+   - Anaconda（环境管理）
+   - PyCharm / VSCode（IDE）
+   - Jupyter Notebook（交互式编程）
+
+2. C++开发
+   - Visual Studio / CLion（IDE）
+   - GDB（调试工具）
+   - Valgrind（内存检测）
+
+3. 版本控制
+   - Git + GitHub/Gitee
+   - SourceTree（Git GUI工具）
+```
+
+#### 深度学习框架
+```markdown
+1. PyTorch（主要使用）
+   - 官方文档：https://pytorch.org/docs/
+   - 中文教程：https://pytorch123.com/
+
+2. TensorFlow（了解）
+   - 部分项目可能需要
+
+3. ONNX（模型转换）
+   - pip install onnx onnxruntime
+
+4. RKNN Toolkit（嵌入式部署）
+   - 瑞芯微官方提供
+```
+
+#### 辅助工具
+```markdown
+1. 笔记工具
+   - Notion（在线协作，功能强大）
+   - Obsidian（本地Markdown，双向链接）
+   - OneNote（微软产品，跨平台）
+   - Typora（Markdown编辑器）
+
+2. 思维导图
+   - XMind
+   - MindMaster
+   - 百度脑图（在线免费）
+
+3. 词汇学习
+   - Anki（间隔重复记忆，强烈推荐）
+   - Quizlet（在线闪���）
+
+4. 时间管理
+   - Forest（番茄钟+种树）
+   - Toggl（时间追踪）
+   - RescueTime（自动记录时间分配）
+
+5. 文献管理
+   - Zotero（免费开源）
+   - EndNote（功能强大）
+   - Mendeley（云同步）
+
+6. 绘图工具
+   - Draw.io（流程图、架构图）
+   - PPT（演示文稿）
+   - Matplotlib/Seaborn（数据可视化）
+```
+
+### 9.4 论文资源
+
+#### 论文搜索
+```markdown
+1. 谷歌学术：https://scholar.google.com
+2. arxiv.org：https://arxiv.org（AI领域最新论文）
+3. IEEE Xplore：https://ieeexplore.ieee.org
+4. 知网：https://www.cnki.net（中文论文）
+5. Papers With Code：https://paperswithcode.com（论文+代码）
+```
+
+#### 毕设相关核心论文
+```markdown
+1. YOLO系列
+   - YOLOv1 (2016): You Only Look Once: Unified, Real-time Object Detection
+   - YOLOv3 (2018): An Incremental Improvement
+   - YOLOv4 (2020): Optimal Speed and Accuracy of Object Detection
+   - YOLOv5: https://github.com/ultralytics/yolov5
+
+2. 多目标跟踪
+   - SORT (2016): Simple Online and Realtime Tracking
+   - DeepSORT (2017): Simple Online and Realtime Tracking with a Deep Association Metric
+   - FairMOT (2020): On the Fairness of Detection and Re-Identification in MOT
+   - ByteTrack (2021): Multi-Object Tracking by Associating Every Detection Box
+
+3. 红外目标检测
+   - 参考开题报告中的文献
+   - FLIR数据集论文
+   - 红外图像特性相关论文
+
+4. 轻量化网络
+   - MobileNets (2017)
+   - MobileNetV2 (2018)
+   - ShuffleNet (2018)
+   - ShuffleNetV2 (2018)
+   - GhostNet (2020): More Features from Cheap Operations
+
+5. 注意力机制
+   - SENet (2018): Squeeze-and-Excitation Networks
+   - CBAM (2018): Convolutional Block Attention Module
+   - CoordAttention (2021): Coordinate Attention for Efficient Mobile Network Design
+
+6. 损失函数
+   - IoU Loss
+   - GIoU Loss (2019)
+   - CIoU Loss (2020)
+   - SIoU Loss/EIoU Loss (2022)
+```
+
+### 9.5 数据集
+
+#### 红外图像数据集
+```markdown
+1. FLIR Thermal Dataset
+   - 下载：https://www.flir.com/oem/adas/adas-dataset-form/
+   - 内容：10,000+热红外图像，含标注
+   - 类别：person, car, bicycle等
+   - 场景：街道、停车场等
+
+2. KAIST Multispectral Dataset
+   - 可见光+热红外对
+   - 适合多模态研究
+   - 适合跟踪任务
+
+3. LLVIP Dataset
+   - 低光照可见光+红外图像对
+   - 12,025对图像
+
+4. OSU Color-Thermal Database
+   - 彩色+热红外人脸数据
+```
+
+#### 通用数据集（预训练）
+```markdown
+1. COCO Dataset
+   - 80类常见物体
+   - 330K图像，1.5M目标实例
+   - YOLOv5预训练权重基于COCO
+
+2. ImageNet
+   - 1000类图像分类
+   - 用于预训练骨干网络
+   - 1.4M训练图像
+
+3. Pascal VOC
+   - 20类物体检测
+   - 经典数据集
+```
+
+### 9.6 社区资源
+
+#### 技术论坛
+```markdown
+1. GitHub：开源代码和项目
+2. Stack Overflow：编程问题解答（英文）
+3. SegmentFault：技术问答社区（中文）
+4. CSDN：中文技术博客
+5. 知乎：技术讨论和经验分享
+6. 王道论坛：考研复试交流
+   http://www.cskaoyan.com/forum-109-1.html（西工大板块）
+```
+
+#### 微信公众号推荐
+```markdown
+1. CVer（计算机视觉，推荐！）
+2. 我爱计算机视觉
+3. 新智元（AI资讯）
+4. 机器之心
+5. AI科技评论
+6. 量��位
+```
+
+#### 技术博客
+```markdown
+1. 李沐的博客
+2. 沐神的视频教程
+3. PyTorch官方教程
+4. 各大公司技术博客（阿里、腾讯、美团等）
+```
+
+---
+
+## 十、进度跟踪表
+
+### 10.1 LeetCode刷题统计表
+
+| 周次 | 简单题 | 中等题 | 困难题 | 本周总计 | 累计总数 | 备注 |
+|------|--------|--------|--------|----------|----------|------|
+| 第一周(1.25-1.31) | __/10 | __/5 | __/0 | __/15 | __/15 | 基础数据结构 |
+| 第二周(2.1-2.7) | __/5 | __/15 | __/0 | __/20 | __/35 | 树和图 |
+| 第三周(2.8-2.14) | __/3 | __/15 | __/2 | __/20 | __/55 | DP和贪心 |
+| 第四周(2.15-2.21) | __/2 | __/13 | __/3 | __/18 | __/73 | 综合训练 |
+| 第五周(2.22-2.27) | __/5 | __/10 | __/2 | __/17 | __/90 | 查漏补缺 |
+| **目标** | **25** | **58** | **7** | **90** | **90** | **Hot 100覆盖** |
+
+**刷题进度监控：**
+- [ ] 数组与字符串（15题）
+- [ ] 链表（10题）
+- [ ] 栈与队列（8题）
+- [ ] 哈希表（8题）
+- [ ] 二叉树（20题）
+- [ ] 图论（10题）
+- [ ] 二分查找（5题）
+- [ ] 双指针（8题）
+- [ ] 动态规划（15题）
+- [ ] 回溯（8题）
+- [ ] 贪心（5题）
+
+---
+
+### 10.2 专业课复习进度表
+
+#### 操作系统
+
+| 章节 | 主要内容 | 预计用时 | 实际用时 | 完成日期 | 掌握程度 |
+|------|----------|----------|----------|----------|----------|
+| 第1章 | 操作系统概述 | 2h | __h | ______ | ☐☐☐☐☐ |
+| 第2章 | 进程管理 | 4h | __h | ______ | ☐☐☐☐☐ |
+| 第3章 | 内存管理 | 4h | __h | ______ | ☐☐☐☐☐ |
+| 第4章 | 文件系统 | 3h | __h | ______ | ☐☐☐☐☐ |
+| 第5章 | I/O管理 | 2h | __h | ______ | ☐☐☐☐☐ |
+| 综合复习 | 习题+模拟 | 3h | __h | ______ | ☐☐☐☐☐ |
+
+**重点知识点清单（必背）：**
+- [ ] 进程vs线程
+- [ ] 进程调度算法（FCFS、SJF、RR、优先级、多级反馈队列）
+- [ ] 进程同步（信号量、管程、PV操作）
+- [ ] 死锁四个条件及预防/避免/检测/解除方法
+- [ ] 生产者-消费者问题
+- [ ] 读者-写者问题
+- [ ] 哲学家进餐问题
+- [ ] 分页vs分段vs段页式
+- [ ] 虚拟内存
+- [ ] 页面置换算法（FIFO、LRU、Clock、OPT）
+- [ ] 文件系统结构
+- [ ] 磁盘调度算法（FCFS、SSTF、SCAN、C-SCAN）
+
+#### 计算机网络
+
+| 章节 | 主要内容 | 预计用时 | 实际用时 | 完成日期 | 掌握程度 |
+|------|----------|----------|----------|----------|----------|
+| 第1章 | 概述 | 2h | __h | ______ | ☐☐☐☐☐ |
+| 第2章 | 物理层+链路层 | 3h | __h | ______ | ☐☐☐☐☐ |
+| 第3章 | 网络层 | 4h | __h | ______ | ☐☐☐☐☐ |
+| 第4章 | 传输层 | 5h | __h | ______ | ☐☐☐☐☐ |
+| 第5章 | 应用层 | 3h | __h | ______ | ☐☐☐☐☐ |
+| 综合复习 | 习题+模拟 | 3h | __h | ______ | ☐☐☐☐☐ |
+
+**重点知识点清单（必背）：**
+- [ ] OSI七层模型 vs TCP/IP四层模型（必考！）
+- [ ] 各层的功能和协议
+- [ ] 物理层：信道复用技术
+- [ ] 数据链路层：CSMA/CD、PPP协议
+- [ ] 网络层：IP地址分类与子网划分（必考！）
+- [ ] ARP协议工作原理
+- [ ] 路由算法（RIP、OSPF）
+- [ ] TCP vs UDP（必考！）
+- [ ] TCP三次握手四次挥手（必考！画图说明）
+- [ ] TCP流量控制（滑动窗口）
+- [ ] TCP拥塞控制（慢开始、拥塞避免、快重传、快恢复）
+- [ ] HTTP vs HTTPS
+- [ ] DNS解析过程
+- [ ] DHCP工作过程
+
+#### 数据库系统
+
+| 章节 | 主要内容 | 预计用时 | 实际用时 | 完成日期 | 掌握程度 |
+|------|----------|----------|----------|----------|----------|
+| 第1章 | 数据库概述 | 1h | __h | ______ | ☐☐☐☐☐ |
+| 第2章 | 关系模型与SQL | 4h | __h | ______ | ☐☐☐☐☐ |
+| 第3章 | 数据库设计 | 3h | __h | ______ | ☐☐☐☐☐ |
+| 第4章 | 事务管理 | 3h | __h | ______ | ☐☐☐☐☐ |
+| 综合复习 | SQL练习 | 2h | __h | ______ | ☐☐☐☐☐ |
+
+**重点知识点清单（必背）：**
+- [ ] 关系模型基本概念
+- [ ] SQL基本查询（SELECT、WHERE、ORDER BY）
+- [ ] SQL联接查询（INNER JOIN、LEFT JOIN、RIGHT JOIN）
+- [ ] SQL聚合函数（COUNT、SUM、AVG、MAX、MIN）
+- [ ] SQL分组查询（GROUP BY、HAVING）
+- [ ] SQL子查询
+- [ ] 索引原理和类型（B+树索引）
+- [ ] 事务ACID特性（必考！）
+- [ ] 并发控制（封锁协议、死锁）
+- [ ] 数据库恢复技术
+- [ ] ER图绘制
+- [ ] 范式理论（1NF、2NF、3NF、BCNF）
+
+---
+
+### 10.3 毕设进度跟踪表
+
+#### 第一阶段：热红外图像与YOLO算法（1.25-2.15）
+
+| 任务 | 预计完成 | 实际完成 | 状态 | 备注 |
+|------|----------|----------|------|------|
+| 环境搭建（PyTorch+CUDA） | 1.25 | ______ | ☐ | |
+| FLIR数据集准备 | 1.27 | ______ | ☐ | |
+| YOLOv5源码学习 | 1.28 | ______ | ☐ | |
+| 基准模型训练 | 1.30 | ______ | ☐ | mAP>70% |
+| 轻量化模块调研 | 2.1 | ______ | ☐ | |
+| Ghost-C3实现 | 2.5 | ______ | ☐ | |
+| Shuffle-C3实现 | 2.7 | ______ | ☐ | |
+| 注意力机制引入 | 2.10 | ______ | ☐ | |
+| 损失函数优化 | 2.13 | ______ | ☐ | |
+| 最优模型确定 | 2.15 | ______ | ☐ | mAP>75% |
+
+#### 第二阶段前期：跟踪与部署（2.16-2.27）
+
+| 任务 | 预计完成 | 实际完成 | 状态 | 备注 |
+|------|----------|----------|------|------|
+| 跟踪算法理论学习 | 2.17 | ______ | ☐ | |
+| DeepSORT集成 | 2.19 | ______ | ☐ | |
+| ByteTrack集成 | 2.20 | ______ | ☐ | |
+| 跟踪算法对比 | 2.21 | ______ | ☐ | |
+| ONNX导出 | 2.22 | ______ | ☐ | |
+| RKNN转换 | 2.23 | ______ | ☐ | |
+| C++部署代码 | 2.24 | ______ | ☐ | |
+| RV1126测试 | 2.25 | ______ | ☐ | FPS>25 |
+| 文档整理 | 2.27 | ______ | ☐ | |
+
+#### 实验数据记录
+
+**检测性能对比：**
+
+| 模型 | mAP@0.5 | mAP@.5:.95 | Precision | Recall | 参数量 | FLOPs | FPS(GPU) |
+|------|---------|------------|-----------|--------|--------|-------|----------|
+| YOLOv5s基准 | __% | __% | __% | __% | 7.2M | 16.5G | __fps |
+| +Ghost-C3 | __% | __% | __% | __% | __M | __G | __fps |
+| +Shuffle-C3 | __% | __% | __% | __% | __M | __G | __fps |
+| +注意力 | __% | __% | __% | __% | __M | __G | __fps |
+| +EIoU | __% | __% | __% | __% | __M | __G | __fps |
+| **最终模型** | __% | __% | __% | __% | __M | __G | __fps |
+
+**跟踪性能对比：**
+
+| 算法 | MOTA | MOTP | IDF1 | IDSW | FPS | 备注 |
+|------|------|------|------|------|-----|------|
+| YOLOv5+DeepSORT | __% | __% | __% | __ | __fps | |
+| YOLOv5+ByteTrack | __% | __% | __% | __ | __fps | |
+| **最终选择** | __% | __% | __% | __ | __fps | |
+
+**嵌入式部署性能：**
+
+| 指标 | 数值 | 目标 | 达成 |
+|------|------|------|------|
+| 平台 | RV1126 | - | - |
+| 推理速度 | __fps | >25fps | ☐ |
+| 模型大小 | __MB | <10MB | ☐ |
+| 内存占用 | __MB | <200MB | ☐ |
+| 功耗 | __W | <5W | ☐ |
+| 量化mAP | __% | 精度损失<5% | ☐ |
+
+---
+
+### 10.4 英语学习进度表
+
+#### 专业词汇积累
+
+| 周次 | 新增 | 累计 | 复习次数 | 掌握率 |
+|------|------|------|----------|--------|
+| 第一周 | 300 | 300 | 2 | __% |
+| 第二周 | 300 | 600 | 2 | __% |
+| 第三周 | 300 | 900 | 2 | __% |
+| 第四周 | 300 | 1200 | 2 | __% |
+| 第五周 | 200 | 1400 | 3 | __% |
+| **目标** | **1400** | **1400** | **>2** | **>80%** |
+
+#### 口语练习记录
+
+| 日期 | 练习内容 | 用时 | 流畅度 | 待改进 |
+|------|----------|------|--------|--------|
+| _____ | 自我介绍 | __min | ☐☐☐☐☐ | |
+| _____ | 毕设介绍 | __min | ☐☐☐☐☐ | |
+| _____ | 专业问答 | __min | ☐☐☐☐☐ | |
+| _____ | 自我介绍 | __min | ☐☐☐☐☐ | |
+| _____ | 完整模拟 | __min | ☐☐☐☐☐ | |
+
+---
+
+### 10.5 面试准备检查清单
+
+#### 材料准备
+
+- [ ] 中文自我介绍（背诵熟练）
+- [ ] 英文自我介绍（背诵熟练）
+- [ ] 毕设介绍PPT（最终版）
+- [ ] 毕设演示视频
+- [ ] 简历（打印5份）
+- [ ] 成绩单（盖章，打印5份）
+- [ ] 获奖证书复印件
+- [ ] 身份证、准考证
+- [ ] U盘备份（所有材料）
+- [ ] 笔记本电脑（充满电）
+- [ ] 充电器、鼠标、翻页笔
+- [ ] 黑色签字笔、笔记本
+
+#### 知识准备
+
+**专业知识问答（50+问题）：**
+- [ ] 操作系统20题
+- [ ] 计算机网络20题
+- [ ] 数据库10题
+- [ ] 深度学习基础10题
+- [ ] 项目技术细节10题
+
+**毕设讲解准备（15分钟）：**
+- [ ] 研究背景与意义（2min）
+- [ ] 整体架构（2min）
+- [ ] 检测模块详解（4min）
+- [ ] 跟踪模块详解（3min）
+- [ ] 部署方案（2min）
+- [ ] 实验结果（2min）
+
+**追问准备（20+问题）：**
+- [ ] 为什么选YOLOv5？
+- [ ] 轻量化如何设计？
+- [ ] 红外图像特殊处理？
+- [ ] 小目标检测优化？
+- [ ] 遮挡问题如何解决？
+- [ ] 跟踪算法对比？
+- [ ] INT8量化细节？
+- [ ] RV1126性能优化？
+- [ ] 如果换其他平台？
+- [ ] 未来改进方向？
+- [ ] ... (继续补充)
+
+**提问环节（3-5个）：**
+- [ ] 关于导师研究方向
+- [ ] 关于实验室项目
+- [ ] 关于课程学习
+- [ ] 关于未来发展
+
+#### 模拟面试记录
+
+| 日期 | 类型 | 评分 | 主要问题 | 改进 |
+|------|------|------|----------|------|
+| _____ | 完整模拟1 | __/10 | | |
+| _____ | 专项练习 | __/10 | | |
+| _____ | 完整模拟2 | __/10 | | |
+| _____ | 完整模拟3 | __/10 | | |
+| _____ | 最终模拟 | __/10 | | |
+
+---
+
+### 10.6 每日打卡表
+
+**第一周（1.25-1.31）：**
+
+| 日期 | 刷题 | 专业课 | 毕设 | 英语 | 运动 | 总结 | 评价 |
+|------|------|--------|------|------|------|------|------|
+| 1.25 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 1.26 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 1.27 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 1.28 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 1.29 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 1.30 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 1.31 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+
+**第二周（2.1-2.7）：**
+
+| 日期 | 刷题 | 专业课 | 毕设 | 英语 | 运动 | 总结 | 评价 |
+|------|------|--------|------|------|------|------|------|
+| 2.1 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 2.2 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 2.3 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 2.4 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 2.5 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 2.6 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 2.7 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+
+**第三周（2.8-2.14）：**
+
+| 日期   | 刷题  | 专业课 | 毕设  | 英语  | 运动  | 总结  | 评价    |
+| ---- | --- | --- | --- | --- | --- | --- | ----- |
+| 2.8  | ☐   | ☐   | ☐   | ☐   | ☐   | ☐   | ★★★★★ |
+| 2.9  | ☐   | ☐   | ☐   | ☐   | ☐   | ☐   | ★★★★★ |
+| 2.10 | ☐   | ☐   | ☐   | ☐   | ☐   | ☐   | ★★★★★ |
+| 2.11 | ☐   | ☐   | ☐   | ☐   | ☐   | ☐   | ★★★★★ |
+| 2.12 | ☐   | ☐   | ☐   | ☐   | ☐   | ☐   | ★★★★★ |
+| 2.13 | ☐   | ☐   | ☐   | ☐   | ☐   | ☐   | ★★★★★ |
+| 2.14 | ☐   | ☐   | ☐   | ☐   | ☐   | ☐   | ★★★★★ |
+
+**第四周（2.15-2.21）：**
+
+| 日期 | 刷题 | 专业课 | 毕设 | 英语 | 运动 | 总结 | 评价 |
+|------|------|--------|------|------|------|------|------|
+| 2.15 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 2.16 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 2.17 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 2.18 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 2.19 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 2.20 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 2.21 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+
+**第五周（2.22-2.27）：**
+
+| 日期 | 刷题 | 专业课 | 毕设 | 英语 | 运动 | 总结 | 评价 |
+|------|------|--------|------|------|------|------|------|
+| 2.22 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 2.23 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 2.24 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 2.25 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 2.26 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+| 2.27 | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ★★★★★ |
+
+---
+
+### 10.7 最终完成度统计
+
+**复试准备：**
+- LeetCode刷题：____/90题（目标90题）
+- 操作系统：☐☐☐☐☐（____%）
+- 计算机网络：☐☐☐☐☐（____%）
+- 数据库：☐☐☐☐☐（____%）
+- 英语词汇：____/1400个
+- 面试准备：☐☐☐☐☐（____%）
+
+**毕设工作：**
+- 检测模型：☐ 完成 / ☐ 进行中
+- mAP结果：____%（目标>75%）
+- 跟踪算法：☐ 完成 / ☐ 进行中
+- 嵌入式部署：☐ 完成 / ☐ 进行中
+- 实际FPS：____fps（目标>25fps）
+- 文档整理：☐ 完成 / ☐ 进行中
+
+**身体健康：**
+- 运动打卡：____/30天（目标28天）
+- 平均睡眠：____h/天
+- 整体状态：☐ 优秀 ☐ 良好 ☐ 一般
+
+---
+
+## 十一、附录
+
+### 11.1 每日学习日志模板
+
+```markdown
+# 学习日志 - 2026年X月X日 星期X
+
+## 一、今日目标
+1. ___________________________
+2. ___________________________
+3. ___________________________
+
+## 二、实际完成
+
+### 上午（8:30-12:00）
+**内容：**
+
+
+**完成度：** ☐☐☐☐☐
+
+**问题：**
+
+
+**解决：**
+
+
+### 下午（14:00-18:00）
+**内容：**
+
+
+**完成度：** ☐☐☐☐☐
+
+**问题：**
+
+
+**解决：**
+
+
+### 晚上（19:00-21:30）
+**内容：**
+
+
+**完成度：** ☐☐☐☐☐
+
+**问题：**
+
+
+**解决：**
+
+
+## 三、LeetCode刷题
+
+| 题号 | 题目 | 难度 | 用时 | AC | 收获 |
+|------|------|------|------|----|----- |
+| | | | | | |
+
+## 四、专业课学习
+
+**章节：**
+
+
+**知识点：**
+1.
+2.
+3.
+
+**需复习：**
+
+
+## 五、毕设工作
+
+**任务：**
+
+
+**结果：**
+
+
+**下一步：**
+
+
+## 六、英语学习
+
+**词汇：** ___个  
+**口语：** ___分钟  
+**阅读：**
+
+## 七、运动
+
+**类型：**  
+**时长：** ___分钟  
+**状态：** ☐很好 ☐良好 ☐一般
+
+## 八、今日总结
+
+**做得好：**
+1.
+2.
+
+**需改进：**
+1.
+2.
+
+**收获：**
+
+
+**情绪：** ☐充实 ☐平静 ☐焦虑 ☐疲惫
+
+## 九、明日计划
+
+1. ___________________________
+2. ___________________________
+3. ___________________________
+
+---
+**整体评价：** ★★★★★  
+**学习时长：** ___小时
+```
+
+---
+
+### 11.2 紧急调整预案
+
+#### 情况1：学习进度落后
+
+**症状：**
+- 每日完成度持续<70%
+- LeetCode刷题严重不足
+- 专业课进度滞后
+
+**应对：**
+1. 分析原因（时间/难度/专注度）
+2. 调整策略（降低难度/提高专注）
+3. 重新规划（聚焦核心内容）
+4. 复试准备 > 毕设（如冲突）
+
+#### 情况2：身体状态不佳
+
+**症状：**
+- 连续疲惫
+- 效率下降
+- 健康问题
+
+**应对：**
+1. 立即休息调整
+2. 保证充足睡眠
+3. 及时就医
+4. 调整作息和强度
+5. 健康第一原则
+
+#### 情况3：毕设技术难题
+
+**症状：**
+- 卡住超过2天
+- 结果与预期差距大
+- 代码bug难解决
+
+**应对：**
+1. 寻求帮助（导师/学长/论坛）
+2. 考虑替代方案
+3. 记录问题和尝试
+4. 设定ddl，超时调整
+5. 保证复试不受影响
+
+#### 情况4：心态焦虑
+
+**症状：**
+- 经常焦虑压力大
+- 过度担心结果
+- 影响睡眠和效率
+
+**应对：**
+1. 心理调适（接受焦虑、专注过程）
+2. 放松方法（运动、交流、娱乐、冥想）
+3. 认知调整（这不是全部、顺其自然）
+4. 积极心理暗示
+5. 必要时寻求专业帮助
+
+---
+
+### 11.3 复试当天注意事项
+
+#### 前一天
+
+**物品清单：**
+- [ ] 证件（身份证、准考证）
+- [ ] 材料（成绩单、证书、简历）
+- [ ] 电子设备（电脑、U盘、充电器）
+- [ ] 文具（笔、笔记本）
+- [ ] 着装（正装/整洁得体）
+- [ ] 其他（水杯、纸巾、雨伞、手表）
+
+**心理准备：**
+- 早睡，保证睡眠
+- 不看新知识
+- 回��准备内容
+- 积极心理暗示
+
+#### 当天
+
+**上午：**
+- 7:00 起床、洗漱
+- 7:30 营养早餐
+- 8:00 复习核心内容
+- 8:30 出发前往考场
+- 9:00 提前到达熟悉环境
+
+**面试中：**
+1. **进入：** 敲门、问好、微笑、眼神交流
+2. **自我介绍：** 语速适中、吐字清晰、控制时间
+3. **毕设介绍：** 清晰有逻辑、突出重点、准备追问
+4. **专业问答：** 听清问题、有条理、适当举例、不确定诚实说
+5. **提问环节：** 有深度的问题、展现兴趣
+6. **离开：** 道谢、带走材料、轻轻关门
+
+**机试中：**
+1. **考前：** 熟悉环境和工具
+2. **策略：** 简单→中等→困难，时间分配合理
+3. **规范：** 注释清楚、命名规范、考虑边界、多测试
+4. **管理：** 定期检查进度、卡住及时跳过、留时间检查
+
+---
+
+### 11.4 激励语录
+
+> "成功是从决定去做的那一刻起持续累积的。"
+
+> "每天进步一点点，34天后你会惊讶于自己的成长。"
+
+> "复试是新的起点，享受这个学习的过程。"
+
+> "你付出的每一分努力，都不会被辜负。"
+
+> "相信自己，你已经准备好了！"
+
+> "Stay hungry, stay foolish."
+
+> "The expert in anything was once a beginner."
+
+> "Your only limit is you."
+
+> "Do your best, let the rest be the rest."
+
+> "You've got this! 💪"
+
+---
+
+## 结语
+
+这份详细的寒假学习计划涵盖了复试和毕设的所有重要方面。请记住：
+
+1. **计划是工具**：实际情况与计划不符时，及时调整，不要焦虑。
+
+2. **质量 > 数量**：深入理解一个知识点胜过浮光掠影看十个。
+
+3. **劳逸结合**：保持良好状态才能高效学习。
+
+4. **保持信心**：你有详细计划，认真执行就能成功。
+
+5. **享受过程**：学习本身是快乐的，享受掌握新知识的成就感。
+
+**祝你寒假学习顺利，复试成功，毕设圆满！加油！💪**
+
+---
+
+**文档信息：**
+- 版本：v1.0
+- 日期：2026年1月25日  
+- 作者：AI助手
+- 对象：张仕卓 - 西工大计算机考��复试
+
+**使用建议：**
+- 打印文档，每天对照检查
+- 用不同颜色笔标记完成情况
+- 每周末回顾总结，调整计划
+- 手机设置每日提醒
+- 重要内容制作卡片随身携带
+
+**祝一切顺利！🎉**
