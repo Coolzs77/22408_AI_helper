@@ -8,15 +8,12 @@
     <!-- Simple inline Markdown parser -->
     <script>
         // Lightweight markdown parser
+        // Note: This parser processes trusted content from d.txt (repository file)
         function parseMarkdown(text) {
-            // Escape HTML
-            const escapeHtml = (str) => {
-                const div = document.createElement('div');
-                div.textContent = str;
-                return div.innerHTML;
-            };
-            
             let html = text;
+            
+            // Code blocks (process first to protect code content)
+            html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
             
             // Headers
             html = html.replace(/^#### (.*$)/gim, '<h4>$1</h4>');
@@ -27,9 +24,6 @@
             // Bold
             html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             
-            // Code blocks
-            html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-            
             // Inline code
             html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
             
@@ -39,39 +33,70 @@
             // Links
             html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
             
-            // Lists - unordered
-            html = html.replace(/^\- (.*$)/gim, '<li>$1</li>');
-            html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
-            
-            // Line breaks to paragraphs
+            // Process lines and handle lists properly
             const lines = html.split('\n');
             let result = '';
-            let inList = false;
             let inCodeBlock = false;
+            let listItems = [];
             let paragraph = '';
             
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i].trim();
                 
-                if (line.startsWith('<pre>')) inCodeBlock = true;
-                if (line.endsWith('</pre>')) inCodeBlock = false;
-                if (line.startsWith('<ul>') || line.startsWith('<ol>')) inList = true;
-                if (line.startsWith('</ul>') || line.startsWith('</ol>')) inList = false;
+                // Track code blocks
+                if (line.includes('<pre><code>')) inCodeBlock = true;
+                if (line.includes('</code></pre>')) {
+                    inCodeBlock = false;
+                    result += line + '\n';
+                    continue;
+                }
                 
-                if (line.startsWith('<h') || line.startsWith('<hr') || line.startsWith('<ul') || line.startsWith('<ol') || line.startsWith('<pre') || line === '') {
+                // Handle list items
+                if (line.match(/^- (.*)$/)) {
+                    // Close any open paragraph
+                    if (paragraph) {
+                        result += '<p>' + paragraph + '</p>\n';
+                        paragraph = '';
+                    }
+                    // Add to list items
+                    listItems.push(line.replace(/^- (.*)$/, '$1'));
+                    continue;
+                } else if (listItems.length > 0) {
+                    // Close the list
+                    result += '<ul>\n';
+                    listItems.forEach(item => {
+                        result += '<li>' + item + '</li>\n';
+                    });
+                    result += '</ul>\n';
+                    listItems = [];
+                }
+                
+                // Handle special tags (headers, hr, pre)
+                if (line.startsWith('<h') || line.startsWith('<hr') || line.startsWith('<pre') || line === '') {
                     if (paragraph) {
                         result += '<p>' + paragraph + '</p>\n';
                         paragraph = '';
                     }
                     result += line + '\n';
-                } else if (inCodeBlock || inList || line.startsWith('<li>')) {
+                } else if (inCodeBlock) {
                     result += line + '\n';
                 } else {
+                    // Regular text - accumulate into paragraph
                     if (paragraph) paragraph += ' ';
                     paragraph += line;
                 }
             }
             
+            // Close any remaining list
+            if (listItems.length > 0) {
+                result += '<ul>\n';
+                listItems.forEach(item => {
+                    result += '<li>' + item + '</li>\n';
+                });
+                result += '</ul>\n';
+            }
+            
+            // Close any remaining paragraph
             if (paragraph) {
                 result += '<p>' + paragraph + '</p>\n';
             }
