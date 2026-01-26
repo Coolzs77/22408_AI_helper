@@ -388,11 +388,21 @@
                 loadingEl.style.display = 'none';
                 errorEl.style.display = 'block';
                 errorEl.className = 'error';
-                errorEl.innerHTML = `
-                    <h3>⚠️ 加载失败</h3>
-                    <p>无法加载 d.txt 文件。请确保文件存在于同一目录下。</p>
-                    <p><strong>错误信息：</strong>${error.message}</p>
-                `;
+                // Sanitize error message before displaying
+                const errorHeading = document.createElement('h3');
+                errorHeading.textContent = '⚠️ 加载失败';
+                const errorPara1 = document.createElement('p');
+                errorPara1.textContent = '无法加载 d.txt 文件。请确保文件存在于同一目录下。';
+                const errorPara2 = document.createElement('p');
+                const errorStrong = document.createElement('strong');
+                errorStrong.textContent = '错误信息：';
+                errorPara2.appendChild(errorStrong);
+                errorPara2.appendChild(document.createTextNode(error.message));
+                
+                errorEl.innerHTML = '';
+                errorEl.appendChild(errorHeading);
+                errorEl.appendChild(errorPara1);
+                errorEl.appendChild(errorPara2);
             }
         }
         
